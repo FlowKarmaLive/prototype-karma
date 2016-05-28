@@ -25,9 +25,9 @@ from wsgiref.simple_server import make_server
 from server import Server
 
 
-def main(argv=None):
+def main(log, argv=None):
   args = get_args(argv)
-  server = Server()
+  server = Server(log)
   run(server, args.host, args.port)
 
 

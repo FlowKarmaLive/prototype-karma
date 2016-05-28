@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 #    Copyright © 2016 Simon Forman
@@ -26,7 +25,8 @@ from html import ok200, err500
 
 class Server(object):
 
-  def __init__(self):
+  def __init__(self, log):
+    self.log = log
     self._router = {}
     self.debug = False
 
@@ -41,7 +41,9 @@ class Server(object):
 
   def default_handler(self, environ):
     path = self.route(environ)
-    return 'You chose: ' + path
+    msg = 'You chose: ' + path
+    self.log.debug(msg)
+    return msg
 
   def __call__(self, environ, start_response):
     if self.debug:

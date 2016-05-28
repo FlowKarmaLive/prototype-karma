@@ -19,6 +19,8 @@
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
 from main import main
+from logs import setup_log
 
+log = setup_log()
 
-main()
+main(log)
