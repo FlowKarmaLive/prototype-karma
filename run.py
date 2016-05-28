@@ -21,6 +21,4 @@
 from main import main
 from logs import setup_log
 
-log = setup_log()
-
-main(log)
+main(setup_log())
