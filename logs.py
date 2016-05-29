@@ -20,20 +20,21 @@
 import logging
 
 
+F = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+
+
 def setup_log():
   log = logging.getLogger('mon')
   log.setLevel(logging.DEBUG)
 
   sh = logging.StreamHandler()
   sh.setLevel(logging.DEBUG)
-  sh.setFormatter(logging.Formatter(
-      '%(asctime)s %(name)s %(levelname)s %(message)s'
-      ))
+  sh.setFormatter(F)
   log.addHandler(sh)
 
   fh = logging.FileHandler('memestreamer.log')
-  fh.setLevel(logging.INFO)
-  fh.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
+  fh.setLevel(logging.DEBUG)
+  fh.setFormatter(F)
   log.addHandler(fh)
 
   return log

@@ -1,16 +1,16 @@
 #from memcache import Client
 import logging
 from urlparse import urlparse
-from sqlitey import get_tag, write_tag, get_conn, bumpdb, SQLITE_DB, MAKE_TABLES, T
+from sqlitey import get_tag, write_tag, get_conn, bumpdb, SQLITE_DB, T
 from tagly import tag_for
 
 
-log = logging.getLogger('mon')
+log = logging.getLogger('mon.db')
 
 
 #U2T = Client(['127.0.0.1:11213'], debug=True)
 #T2U = Client(['127.0.0.1:11214'], debug=True)
-conn = get_conn(SQLITE_DB, MAKE_TABLES)
+conn = get_conn(SQLITE_DB)
 
 
 def bump(sender, it, receiver):
@@ -39,9 +39,9 @@ def url2tag(url_):
 
   if result:
     conn.commit()
-    log.debug('Wrote to db %s %s', tag, url)
+    log.debug('Wrote %s %s', tag, url)
   else:
-    log.debug('Already in db %s %s', tag, url)
+    log.debug('Already tagged %s %s', tag, url)
 
   return bool(result), tag
 
@@ -53,9 +53,9 @@ def tag2url(tag):
   finally:
     c.close()
   if url:
-    log.debug('Found in DB %s %s', tag, url)
+    log.debug('Found %s %s', tag, url)
     return url
-  log.debug('Missed in DB %s', tag)
+  log.debug('Missed %s', tag)
   raise KeyError(tag)
 
 

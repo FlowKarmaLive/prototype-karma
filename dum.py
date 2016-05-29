@@ -1,7 +1,7 @@
-from sqlitey import get_tag, write_tag, get_conn, SQLITE_DB, MAKE_TABLES, T
+from sqlitey import get_tag, write_tag, get_conn, SQLITE_DB, T
 
 
-conn = get_conn(SQLITE_DB, MAKE_TABLES)
+conn = get_conn(SQLITE_DB)
 c = conn.cursor()
 
 print 'tagged URLs'

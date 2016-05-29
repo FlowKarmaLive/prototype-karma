@@ -4,14 +4,12 @@ import sqlite3
 
 
 SQLITE_DB = expanduser('~/memestreamer.sqlite')
-MAKE_TABLES = not exists(SQLITE_DB)
 
 
-def get_conn(db=':memory:', make_tables=False):
+def get_conn(db=':memory:'):
   conn = sqlite3.connect(db)
   conn.row_factory = VisibleRow
-  if make_tables:
-    print 'creating tables'
+  if db.startswith('/') and not exists(db) or db == ':memory:':
     create_tables(conn)
   return conn
 
@@ -77,5 +75,5 @@ def T():
   return int(round(time(), 3) * 1000)
 
 
-conn = get_conn(SQLITE_DB, MAKE_TABLES)
-c = conn.cursor()
+##conn = get_conn(SQLITE_DB)
+##c = conn.cursor()
