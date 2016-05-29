@@ -29,7 +29,7 @@ def url2tag(url_):
   url = normalize_url(url_)
   if not url:
     log.debug('Not normalized URL %r', url_)
-    return
+    raise ValueError('Not normalized URL %r' % (url_,))
 
   c, t, tag, result = conn.cursor(), T(), tag_for(url), None
   try:
