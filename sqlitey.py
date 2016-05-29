@@ -41,7 +41,7 @@ def get_tag(c, tag):
   return str(result[0]) if result else None
 
 
-def bump(c, when, from_, what, to):
+def bumpdb(c, when, from_, what, to):
   key = '%s:%s' % (what, to)
   return insert(
     c,

@@ -29,7 +29,7 @@ from html import (
   posting,
   static_page,
   )
-from stores import url2tag, tag2url
+from stores import url2tag, tag2url, bump
 
 
 class Server(object):
@@ -65,7 +65,8 @@ class Server(object):
     iframe_url = tag2url(it)
     receiver = form.getfirst('receiver')
     your_url = tag2url(receiver)
-    self.log.info('bump %s %s %s', sender, it, receiver)
+    if bump(sender, it, receiver):
+      self.log.info('bump %s %s %s', sender, it, receiver)
     return bump_page(
       sender, from_url,
       it, iframe_url,

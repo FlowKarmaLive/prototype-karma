@@ -1,7 +1,7 @@
 #from memcache import Client
 import logging
 from urlparse import urlparse
-from sqlitey import get_tag, write_tag, get_conn, SQLITE_DB, MAKE_TABLES, T
+from sqlitey import get_tag, write_tag, get_conn, bumpdb, SQLITE_DB, MAKE_TABLES, T
 from tagly import tag_for
 
 
@@ -11,6 +11,18 @@ log = logging.getLogger('mon')
 #U2T = Client(['127.0.0.1:11213'], debug=True)
 #T2U = Client(['127.0.0.1:11214'], debug=True)
 conn = get_conn(SQLITE_DB, MAKE_TABLES)
+
+
+def bump(sender, it, receiver):
+  c, t = conn.cursor(), T()
+  try:
+    result = bumpdb(c, t, sender, it, receiver)
+  finally:
+    c.close()
+  if result:
+    conn.commit()
+    return True
+  log.debug('duplicate bump %s %s %s', sender, it, receiver)
 
 
 def url2tag(url_):
@@ -36,7 +48,10 @@ def url2tag(url_):
 
 def tag2url(tag):
   c = conn.cursor()
-  url = get_tag(c, tag)
+  try:
+    url = get_tag(c, tag)
+  finally:
+    c.close()
   if url:
     log.debug('Found in DB %s %s', tag, url)
     return url
