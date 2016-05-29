@@ -73,7 +73,3 @@ class VisibleRow(sqlite3.Row):
 
 def T():
   return int(round(time(), 3) * 1000)
-
-
-##conn = get_conn(SQLITE_DB)
-##c = conn.cursor()

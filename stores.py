@@ -1,4 +1,3 @@
-#from memcache import Client
 import logging
 from urlparse import urlparse
 from sqlitey import get_tag, write_tag, get_conn, bumpdb, SQLITE_DB, T
@@ -6,10 +5,6 @@ from tagly import tag_for
 
 
 log = logging.getLogger('mon.db')
-
-
-#U2T = Client(['127.0.0.1:11213'], debug=True)
-#T2U = Client(['127.0.0.1:11214'], debug=True)
 conn = get_conn(SQLITE_DB)
 
 
@@ -58,23 +53,6 @@ def tag2url(tag):
   log.debug('Missed %s', tag)
   raise KeyError(tag)
 
-
-##def url2tag(url):
-##  url = str(url)
-##  tag = U2T.get(url)
-##  if not tag:
-##    tag = tag_for(url)
-##    U2T.set(url, tag)
-##    T2U.set(tag, url)
-##  return tag
-
-
-##def tag2url(tag):
-##  tag = str(tag)
-##  url = T2U.get(tag)
-##  if not url:
-##    raise KeyError(tag)
-##  return url
 
 def normalize_url(url):
   try:
