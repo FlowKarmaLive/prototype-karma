@@ -159,4 +159,3 @@ def home_page():
     body.hr
 
   return str(doc)
-
