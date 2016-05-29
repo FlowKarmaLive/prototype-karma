@@ -19,6 +19,7 @@
 #
 from os import makedirs
 from os.path import exists, join
+from cgi import FieldStorage
 from traceback import format_exc
 from html import (
   ok200,
@@ -29,6 +30,7 @@ from html import (
   labeled_textarea,
   posting,
   )
+from stores import url2tag
 
 
 class Server(object):
@@ -49,7 +51,8 @@ class Server(object):
       return self.root(environ)  # Poor man's redirect to home...
     form = self._enformenate(environ)
     url = form.getfirst('url')
-    return url
+    tag = url2tag(url, self.log)
+    return reg_happiness_page(url, tag)
 
   def handle_request(self, environ, start_response):
     path = self.route(environ)
@@ -84,6 +87,17 @@ class Server(object):
       environ=environ,
       keep_blank_values=True,
       )
+
+
+def reg_happiness_page(url, tag):
+  doc = HTML()
+  doc.head
+  with doc.body as body:
+    body += 'Tag'
+    body.h4(tag)
+    body += 'for URL'
+    body.h4(url)
+  return str(doc)
 
 
 def home_page():
