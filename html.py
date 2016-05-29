@@ -126,3 +126,13 @@ def labeled_textarea(form, label, name, value, **kw):
   form.label(label, for_=name)
   form.br
   form.textarea(value, name=name, **kw)
+
+
+def static_page(f):
+  c = None
+  def wrapped(*a, **b):
+    if c is None:
+      c = f(*a, **b)
+      assert c is not None
+    return c
+  return wrapped

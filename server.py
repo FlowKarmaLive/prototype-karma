@@ -17,8 +17,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
-from os import makedirs
-from os.path import exists, join
 from cgi import FieldStorage
 from traceback import format_exc
 from html import (
@@ -29,6 +27,7 @@ from html import (
   labeled_field,
   labeled_textarea,
   posting,
+  static_page,
   )
 from stores import url2tag, tag2url
 
@@ -134,6 +133,7 @@ def bump_page(sender, from_url, it, iframe_url, receiver, your_url):
   return str(doc)
 
 
+@static_page
 def home_page():
   doc = HTML()
   doc.head
@@ -141,47 +141,21 @@ def home_page():
     body.hr
     with body.form(action='/register', method='POST') as form:
       form.h4('Register')
-      labeled_field(
-        form,
-        'URL:',
-        'text',
-        'url',
-        '',
-        size='44',
-        placeholder='Enter an URL here...',
-        )
+      labeled_field(form, 'URL:', 'text', 'url', '', size='44', placeholder='Enter an URL here...')
       form.br
       fake_out_caching(form)
       form.input(type_='submit', value='post')
-
     body.hr
     with body.form(action='/bump', method='POST') as form:
       form.h4('Bump')
-      labeled_field(form, 'from:', 'text', 'sender', '',
-        size='44', placeholder='Enter an URL here...',
-        )
+      labeled_field(form, 'from:', 'text', 'sender', '', size='44', placeholder='Enter an URL here...')
       form.br
-      labeled_field(form, 'to:', 'text', 'receiver', '',
-        size='44', placeholder='Enter an URL here...',
-        )
+      labeled_field(form, 'to:', 'text', 'receiver', '', size='44', placeholder='Enter an URL here...')
       form.br
-      labeled_field(form, 'what:', 'text', 'it', '',
-        size='44', placeholder='Enter an URL here...',
-        )
+      labeled_field(form, 'what:', 'text', 'it', '', size='44', placeholder='Enter an URL here...')
       form.br
-##      labeled_textarea(
-##        form,
-##        'Description:',
-##        'description',
-##        '',
-##        cols='58',
-##        rows='15',
-##        placeholder='Describe what this URL links to...',
-##        )
-##      form.br
       fake_out_caching(form)
       form.input(type_='submit', value='post')
-
     body.hr
 
   return str(doc)
