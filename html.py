@@ -126,4 +126,3 @@ def labeled_textarea(form, label, name, value, **kw):
   form.label(label, for_=name)
   form.br
   form.textarea(value, name=name, **kw)
-

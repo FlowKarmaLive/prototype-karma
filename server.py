@@ -27,6 +27,7 @@ from html import (
   fake_out_caching,
   labeled_field,
   labeled_textarea,
+  posting,
   )
 
 
@@ -36,11 +37,19 @@ class Server(object):
     self.log = log
     self._router = {
       '/': self.root,
+      'register': self.register,
       }
     self.debug = False
 
   def root(self, environ):
     return home_page()
+
+  def register(self, environ):
+    if not posting(environ):
+      return self.root(environ)  # Poor man's redirect to home...
+    form = self._enformenate(environ)
+    url = form.getfirst('url')
+    return url
 
   def handle_request(self, environ, start_response):
     path = self.route(environ)
@@ -49,7 +58,10 @@ class Server(object):
     return ok200(start_response, response)
 
   def route(self, environ):
-    return environ['PATH_INFO']
+    path = environ['PATH_INFO']
+    if path.startswith('/register'):
+      return 'register'
+    return path
 
   def default_handler(self, environ):
     path = self.route(environ)
@@ -64,6 +76,14 @@ class Server(object):
       return self.handle_request(environ, start_response)
     except:
       return err500(start_response, format_exc())
+
+  def _enformenate(self, environ):
+    environ['QUERY_STRING'] = ''
+    return FieldStorage(
+      fp=environ['wsgi.input'],
+      environ=environ,
+      keep_blank_values=True,
+      )
 
 
 def home_page():
