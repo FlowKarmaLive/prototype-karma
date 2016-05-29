@@ -20,15 +20,27 @@
 from os import makedirs
 from os.path import exists, join
 from traceback import format_exc
-from html import ok200, err500
+from html import (
+  ok200,
+  err500,
+  HTML,
+  fake_out_caching,
+  labeled_field,
+  labeled_textarea,
+  )
 
 
 class Server(object):
 
   def __init__(self, log):
     self.log = log
-    self._router = {}
+    self._router = {
+      '/': self.root,
+      }
     self.debug = False
+
+  def root(self, environ):
+    return home_page()
 
   def handle_request(self, environ, start_response):
     path = self.route(environ)
@@ -41,7 +53,7 @@ class Server(object):
 
   def default_handler(self, environ):
     path = self.route(environ)
-    msg = 'You chose: ' + path
+    msg = 'You chose: ' + repr(path)
     self.log.debug(msg)
     return msg
 
@@ -52,4 +64,36 @@ class Server(object):
       return self.handle_request(environ, start_response)
     except:
       return err500(start_response, format_exc())
+
+
+def home_page():
+  doc = HTML()
+  doc.head
+  with doc.body as body:
+    body.hr
+    with body.form(action='/register', method='POST') as form:
+      form.h4('Register')
+      labeled_field(
+        form,
+        'URL:',
+        'text',
+        'url',
+        '',
+        size='44',
+        placeholder='Enter an URL here...',
+        )
+      form.br
+      labeled_textarea(
+        form,
+        'Description:',
+        'description',
+        '',
+        cols='58',
+        rows='15',
+        placeholder='Describe what this URL links to...',
+        )
+      form.br
+      fake_out_caching(form)
+      form.input(type_='submit', value='post')
+  return str(doc)
 
