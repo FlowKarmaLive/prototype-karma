@@ -43,7 +43,7 @@ def url2tag(url_):
   else:
     log.debug('Already in db %s %s', tag, url)
 
-  return tag
+  return bool(result), tag
 
 
 def tag2url(tag):

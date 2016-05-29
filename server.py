@@ -51,8 +51,9 @@ class Server(object):
       return self.root(environ)  # Poor man's redirect to home...
     form = self._enformenate(environ)
     url = form.getfirst('url')
-    tag = url2tag(url)
-    self.log.info('register %s %r', tag, url)
+    unseen, tag = url2tag(url)
+    if unseen:
+      self.log.info('register %s %r', tag, url)
     return reg_happiness_page(url, tag)
 
   def bump(self, environ):
