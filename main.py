@@ -69,6 +69,6 @@ def run(app, host='', port=8000):
 
 def _print_serving(host, port):
   print (
-    'server at http://%s:%i/00000000/00000000'
+    'server at http://%s:%i/'
     % (host or 'localhost', port)
     )

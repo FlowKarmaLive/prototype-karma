@@ -49,7 +49,9 @@ class Server(object):
   def register(self, environ):
     if not posting(environ):
       return self.root(environ)  # Poor man's redirect to home...
+
     form = self._enformenate(environ)
+
     url = form.getfirst('url')
     unseen, tag = url2tag(url)
     if unseen:
@@ -58,21 +60,34 @@ class Server(object):
 
   def bump(self, environ):
     if not posting(environ):
-      return self.root(environ)  # Poor man's redirect to home...
-    form = self._enformenate(environ)
-    sender = form.getfirst('sender')
+      sender, it, receiver = self.decode_bump(environ['PATH_INFO'])
+    else:
+      form = self._enformenate(environ)
+      sender, it, receiver = map(form.getfirst, ('sender', 'it', 'receiver'))
+
     from_url = tag2url(sender)
-    it = form.getfirst('it')
     iframe_url = tag2url(it)
-    receiver = form.getfirst('receiver')
     your_url = tag2url(receiver)
+
     if bump(sender, it, receiver):
       self.log.info('bump %s %s %s', sender, it, receiver)
+
     return bump_page(
       sender, from_url,
       it, iframe_url,
       receiver, your_url,
       )
+
+  def decode_bump(self, path):
+    try:
+      bu, sender, it, receiver = path.strip('/').split('/')
+    except ValueError:
+      self.log.exception('Bad path for bump %r', path)
+      raise
+    if bu != 'bump':
+      self.log.debug('Bad bump for bump %r', path)
+      raise ValueError('Bad bump for bump %r' % (path,))
+    return sender, it, receiver
 
   def handle_request(self, environ, start_response):
     path = self.route(environ)

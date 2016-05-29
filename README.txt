@@ -40,3 +40,11 @@ Engage
 ================================
 
 
+/bump/<sender>/<subject>/<receiver>/
+
+
+
+http://localhost:8000/bump/2v1n9adqg9gdmijwc6bcl2gjt/2v1n9adqg9gdmijwc6bcl2gjt/2v1n9adqg9gdmijwc6bcl2gjt
+
+                                                                      
+
