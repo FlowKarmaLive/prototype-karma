@@ -6,12 +6,11 @@ U2T = Client(['127.0.0.1:11213'], debug=True)
 T2U = Client(['127.0.0.1:11214'], debug=True)
 
 
-def url2tag(url, log):
+def url2tag(url):
   url = str(url)
   tag = U2T.get(url)
   if not tag:
     tag = tag_for(url)
-    log.info('register %s %r', tag, url)
     U2T.set(url, tag)
     T2U.set(tag, url)
   return tag

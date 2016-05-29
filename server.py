@@ -30,7 +30,7 @@ from html import (
   labeled_textarea,
   posting,
   )
-from stores import url2tag
+from stores import url2tag, tag2url
 
 
 class Server(object):
@@ -40,6 +40,7 @@ class Server(object):
     self._router = {
       '/': self.root,
       'register': self.register,
+      'bump': self.bump,
       }
     self.debug = False
 
@@ -51,8 +52,26 @@ class Server(object):
       return self.root(environ)  # Poor man's redirect to home...
     form = self._enformenate(environ)
     url = form.getfirst('url')
-    tag = url2tag(url, self.log)
+    tag = url2tag(url)
+    self.log.info('register %s %r', tag, url)
     return reg_happiness_page(url, tag)
+
+  def bump(self, environ):
+    if not posting(environ):
+      return self.root(environ)  # Poor man's redirect to home...
+    form = self._enformenate(environ)
+    sender = form.getfirst('sender')
+    from_url = tag2url(sender)
+    it = form.getfirst('it')
+    iframe_url = tag2url(it)
+    receiver = form.getfirst('receiver')
+    your_url = tag2url(receiver)
+    self.log.info('bump %s %s %s', sender, it, receiver)
+    return bump_page(
+      sender, from_url,
+      it, iframe_url,
+      receiver, your_url,
+      )
 
   def handle_request(self, environ, start_response):
     path = self.route(environ)
@@ -64,6 +83,8 @@ class Server(object):
     path = environ['PATH_INFO']
     if path.startswith('/register'):
       return 'register'
+    if path.startswith('/bump'):
+      return 'bump'
     return path
 
   def default_handler(self, environ):
@@ -100,6 +121,19 @@ def reg_happiness_page(url, tag):
   return str(doc)
 
 
+def bump_page(sender, from_url, it, iframe_url, receiver, your_url):
+  doc = HTML()
+  doc.head
+  with doc.body as body:
+    body += 'Sent from: ' + from_url
+    body.br
+    body += 'Sent to: ' + your_url
+    body.br
+    body += 'It is: '
+    body.a(iframe_url, href=iframe_url)
+  return str(doc)
+
+
 def home_page():
   doc = HTML()
   doc.head
@@ -117,17 +151,38 @@ def home_page():
         placeholder='Enter an URL here...',
         )
       form.br
-      labeled_textarea(
-        form,
-        'Description:',
-        'description',
-        '',
-        cols='58',
-        rows='15',
-        placeholder='Describe what this URL links to...',
-        )
-      form.br
       fake_out_caching(form)
       form.input(type_='submit', value='post')
+
+    body.hr
+    with body.form(action='/bump', method='POST') as form:
+      form.h4('Bump')
+      labeled_field(form, 'from:', 'text', 'sender', '',
+        size='44', placeholder='Enter an URL here...',
+        )
+      form.br
+      labeled_field(form, 'to:', 'text', 'receiver', '',
+        size='44', placeholder='Enter an URL here...',
+        )
+      form.br
+      labeled_field(form, 'what:', 'text', 'it', '',
+        size='44', placeholder='Enter an URL here...',
+        )
+      form.br
+##      labeled_textarea(
+##        form,
+##        'Description:',
+##        'description',
+##        '',
+##        cols='58',
+##        rows='15',
+##        placeholder='Describe what this URL links to...',
+##        )
+##      form.br
+      fake_out_caching(form)
+      form.input(type_='submit', value='post')
+
+    body.hr
+
   return str(doc)
 
