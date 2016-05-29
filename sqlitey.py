@@ -30,7 +30,7 @@ def create_tables(conn):
   c.close()
 
 
-def write_tag(c, when, tag, url, **kw):
+def write_tag(c, when, tag, url):
   return insert(c, 'insert into tags values (?, ?, ?)', when, tag, url)
 
 
@@ -41,7 +41,7 @@ def get_tag(c, tag):
   return str(result[0]) if result else None
 
 
-def bump(c, when, from_, what, to, **kw):
+def bump(c, when, from_, what, to):
   key = '%s:%s' % (what, to)
   return insert(
     c,

@@ -130,7 +130,7 @@ def labeled_textarea(form, label, name, value, **kw):
 
 def static_page(f):
   c = None
-  def wrapped(*a, **b):
+  def wrapped(c=c, *a, **b):
     if c is None:
       c = f(*a, **b)
       assert c is not None
