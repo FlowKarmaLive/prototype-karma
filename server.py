@@ -60,11 +60,11 @@ class Server(object):
     if not posting(environ):
       return file(join(self.static_dir, 'register.html'), 'rb')
     form = self._enformenate(environ)
-    url = form.getfirst('url')
+    url = form.getfirst('urly')
     unseen, tag = url2tag(url)
     if unseen:
       self.log.info('register %s %r', tag, url)
-    return reg_happiness_page(url, tag)
+    return tag
 
   def bump(self, environ):
     if not posting(environ):
@@ -141,17 +141,6 @@ class Server(object):
       environ=environ,
       keep_blank_values=True,
       )
-
-
-def reg_happiness_page(url, tag):
-  doc = HTML()
-  doc.head
-  with doc.body as body:
-    body += 'Tag'
-    body.h4(tag)
-    body += 'for URL'
-    body.h4(url)
-  return str(doc)
 
 
 def bump_page(sender, from_url, it, iframe_url, receiver, your_url):

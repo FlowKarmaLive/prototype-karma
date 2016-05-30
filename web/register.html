@@ -14,7 +14,7 @@
     <script type="text/javascript">
 $(function() {
     $("input:submit").button().click(make_register_callback(
-        "/api/register_ajax",
+        "/register",
         "#urly", 
         function (tag) { 
           $("div.taggy").text(tag);
@@ -34,7 +34,7 @@ $(function() {
 
 <div class="row"><div class="twelve columns" ><div id="slider" class="panel">
     <h2>Register an URL</h2>
-    <form class="nice" method="POST" action="{% url register %}">
+    <form class="nice" method="POST" action="/register">
         <center>
         <input id="urly" type="text" name="urly" maxlength="100" size="100" placeholder="http://" />
         </center>
