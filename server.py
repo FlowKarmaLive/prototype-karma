@@ -55,6 +55,8 @@ class Server(object):
 
     with open(join(self.static_dir, 'bump.html'), 'rb') as template:
       self.bump_template = template.read()
+    with open(join(self.static_dir, 'bump_anon.html'), 'rb') as template:
+      self.bump_anon_template = template.read()
     with open(join(self.static_dir, 'register.html'), 'rb') as template:
       self.register_template = template.read()
 
@@ -74,6 +76,8 @@ class Server(object):
   def bump(self, environ):
     if not posting(environ):
       sender, it, receiver = self.decode_bump(environ['PATH_INFO'])
+      if not receiver:
+        return self.bump_anon(sender, it)
     else:
       form = self._enformenate(environ)
       sender, it, receiver = map(form.getfirst, ('sender', 'it', 'receiver'))
@@ -91,15 +95,28 @@ class Server(object):
     return self.bump_template % data
 
   def decode_bump(self, path):
-    try:
-      bu, sender, it, receiver = path.strip('/').split('/')
-    except ValueError:
-      self.log.exception('Bad path for bump %r', path)
-      raise
-    if bu != 'bump':
+    parts = path.strip('/').split('/')
+    if parts.pop(0) != 'bump':
       self.log.debug('Bad bump for bump %r', path)
       raise ValueError('Bad bump for bump %r' % (path,))
+    if len(parts) == 2:
+      (sender, it), receiver = parts, None
+    elif len(parts) == 3:
+      sender, it, receiver = parts
+    else:
+      self.log.debug('Bad path for bump %r', path)
+      raise ValueError('Bad path for bump %r' % (path,))
     return sender, it, receiver
+
+  def bump_anon(self, sender, it):
+    data = dict(
+      from_url=tag2url(sender),
+      iframe_url=tag2url(it),
+      me=sender,
+      it=it,
+      server='localhost:8000',
+      )
+    return self.bump_anon_template % data
 
   def handle_request(self, environ, start_response):
     path = environ['PATH_INFO']
