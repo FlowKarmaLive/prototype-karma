@@ -17,6 +17,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
+import mimetypes
+from os.path import splitext, join, exists
 from cgi import FieldStorage
 from traceback import format_exc
 from html import (
@@ -28,18 +30,27 @@ from html import (
   labeled_textarea,
   posting,
   static_page,
+  start,
   )
 from stores import url2tag, tag2url, bump
 
 
+if not mimetypes.inited:
+  mimetypes.init()
+extensions_map = mimetypes.types_map.copy()
+extensions_map[''] = 'application/octet-stream'
+
+
 class Server(object):
 
-  def __init__(self, log):
+  def __init__(self, log, static_dir):
     self.log = log
+    self.static_dir = static_dir
     self._router = {
       '/': self.root,
       'register': self.register,
       'bump': self.bump,
+      'static': self.static,
       }
     self.debug = False
 
@@ -49,9 +60,7 @@ class Server(object):
   def register(self, environ):
     if not posting(environ):
       return self.root(environ)  # Poor man's redirect to home...
-
     form = self._enformenate(environ)
-
     url = form.getfirst('url')
     unseen, tag = url2tag(url)
     if unseen:
@@ -64,14 +73,11 @@ class Server(object):
     else:
       form = self._enformenate(environ)
       sender, it, receiver = map(form.getfirst, ('sender', 'it', 'receiver'))
-
     from_url = tag2url(sender)
     iframe_url = tag2url(it)
     your_url = tag2url(receiver)
-
     if bump(sender, it, receiver):
       self.log.info('bump %s %s %s', sender, it, receiver)
-
     return bump_page(
       sender, from_url,
       it, iframe_url,
@@ -89,7 +95,24 @@ class Server(object):
       raise ValueError('Bad bump for bump %r' % (path,))
     return sender, it, receiver
 
+  def static(self, environ):
+    path = environ['PATH_INFO'][8:]
+    
+    
+
   def handle_request(self, environ, start_response):
+    path = environ['PATH_INFO']
+
+    # Serve static assets.
+    if path.startswith('/static/'):
+      filename = join(self.static_dir, path[8:])
+      if not exists(filename):
+        start(start_response, '404 NOT FOUND', 'text/plain')
+        return '404 NOT FOUND'
+      start(start_response, '200 OK', guess_type(path))
+      return file(filename, 'rb')
+
+    # Handle API calls.
     path = self.route(environ)
     handler = self._router.get(path, self.default_handler)
     response = handler(environ)
@@ -176,3 +199,9 @@ def home_page():
     body.hr
 
   return str(doc)
+
+
+def guess_type(path):
+  ext = splitext(path)[1].lower()
+  return extensions_map.get(ext, 'application/octet-stream')
+

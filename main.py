@@ -20,14 +20,17 @@
 #
 from argparse import ArgumentParser
 from os import remove, rename
-from os.path import exists, realpath
+from os.path import abspath, exists, realpath
 from wsgiref.simple_server import make_server
 from server import Server
 
 
 def main(log, argv=None):
   args = get_args(argv)
-  server = Server(log)
+  static_files = abspath(args.static_files)
+  if not exists(static_files):
+    raise ValueError('%r does not exist.' % static_files)
+  server = Server(log, static_files)
   run(server, args.host, args.port)
 
 
@@ -35,6 +38,12 @@ def make_argparser():
   parser = ArgumentParser(
     prog='MemeStreamer',
     description='Run the MemeStreamer server.',
+    )
+  parser.add_argument(
+    '--static-files',
+    type=str,
+    help='The directory containing the static files.',
+    default='./web/static',
     )
   parser.add_argument(
     '--host',
