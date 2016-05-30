@@ -58,7 +58,7 @@ class Server(object):
 
   def register(self, environ):
     if not posting(environ):
-      return self.root(environ)  # Poor man's redirect to home...
+      return file(join(self.static_dir, 'register.html'), 'rb')
     form = self._enformenate(environ)
     url = form.getfirst('url')
     unseen, tag = url2tag(url)
