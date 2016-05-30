@@ -50,7 +50,6 @@ class Server(object):
       '/': self.root,
       'register': self.register,
       'bump': self.bump,
-      'static': self.static,
       }
     self.debug = False
 
@@ -95,17 +94,12 @@ class Server(object):
       raise ValueError('Bad bump for bump %r' % (path,))
     return sender, it, receiver
 
-  def static(self, environ):
-    path = environ['PATH_INFO'][8:]
-    
-    
-
   def handle_request(self, environ, start_response):
     path = environ['PATH_INFO']
 
     # Serve static assets.
     if path.startswith('/static/'):
-      filename = join(self.static_dir, path[8:])
+      filename = join(self.static_dir, path[1:])
       if not exists(filename):
         start(start_response, '404 NOT FOUND', 'text/plain')
         return '404 NOT FOUND'

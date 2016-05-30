@@ -42,8 +42,8 @@ def make_argparser():
   parser.add_argument(
     '--static-files',
     type=str,
-    help='The directory containing the static files.',
-    default='./web/static',
+    help='The directory containing web content files.',
+    default='./web',
     )
   parser.add_argument(
     '--host',
