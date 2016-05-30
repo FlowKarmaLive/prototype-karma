@@ -53,12 +53,17 @@ class Server(object):
       }
     self.debug = False
 
+    with open(join(self.static_dir, 'bump.html'), 'rb') as template:
+      self.bump_template = template.read()
+    with open(join(self.static_dir, 'register.html'), 'rb') as template:
+      self.register_template = template.read()
+
   def root(self, environ):
     return home_page()
 
   def register(self, environ):
     if not posting(environ):
-      return file(join(self.static_dir, 'register.html'), 'rb')
+      return self.register_template
     form = self._enformenate(environ)
     url = form.getfirst('urly')
     unseen, tag = url2tag(url)
@@ -72,16 +77,18 @@ class Server(object):
     else:
       form = self._enformenate(environ)
       sender, it, receiver = map(form.getfirst, ('sender', 'it', 'receiver'))
-    from_url = tag2url(sender)
-    iframe_url = tag2url(it)
-    your_url = tag2url(receiver)
+    data = dict(
+      from_url=tag2url(sender),
+      iframe_url=tag2url(it),
+      your_url=tag2url(receiver),
+      me=sender,
+      it=it,
+      you=receiver,
+      server='localhost:8000',
+      )
     if bump(sender, it, receiver):
       self.log.info('bump %s %s %s', sender, it, receiver)
-    return bump_page(
-      sender, from_url,
-      it, iframe_url,
-      receiver, your_url,
-      )
+    return self.bump_template % data
 
   def decode_bump(self, path):
     try:
@@ -141,19 +148,6 @@ class Server(object):
       environ=environ,
       keep_blank_values=True,
       )
-
-
-def bump_page(sender, from_url, it, iframe_url, receiver, your_url):
-  doc = HTML()
-  doc.head
-  with doc.body as body:
-    body += 'Sent from: ' + from_url
-    body.br
-    body += 'Sent to: ' + your_url
-    body.br
-    body += 'It is: '
-    body.a(iframe_url, href=iframe_url)
-  return str(doc)
 
 
 @static_page

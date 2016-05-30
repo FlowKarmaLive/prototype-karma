@@ -15,11 +15,11 @@
     <link href="/static/foundation-2.2/stylesheets/reveal.css" rel="stylesheet">
     <link href="/static/css/style.css" rel="stylesheet">
     <script type="text/javascript">
-var engage_url = "/engage/{{ you }}/{{ it }}";
-var bump_url = "http://dendritenetwork.com/bump/{{ you }}/{{ it }}/";
-var iframe_url = "{{ iframe_url }}"
-var own_tag = "{{ you }}";
-var own_url = "{{ your_url }}";
+var engage_url = "/engage/%(you)s/%(it)s";
+var bump_url = "http://%(server)s/bump/%(you)s/%(it)s/";
+var iframe_url = "%(iframe_url)s"
+var own_tag = "%(you)s";
+var own_url = "%(your_url)s";
     </script>
     <script type="text/javascript" src="/static/js/controls.js"></script>
     <script type="text/javascript">
@@ -51,7 +51,7 @@ $(function() {
     <button id="Forward">Forward</button>
     <button id="Reject">Reject</button>
     &nbsp;&nbsp;&nbsp;
-    <a href="{{ from_url }}" title="{{ from_url }}">visit sender</a>
+    <a href="%(from_url)s" title="%(from_url)s">visit sender</a>
     &nbsp;&nbsp;&nbsp;
     <div style="float:right">
     <button id="hurm">Explain</button>
@@ -61,7 +61,7 @@ $(function() {
 </div></div></div>
 
 </div>
-<iframe src="{{ iframe_url }}" ></iframe>
+<iframe src="%(iframe_url)s" ></iframe>
 
 <div id="forward_dialog" class="reveal-modal">
   <h1>Forward...</h1>
@@ -70,8 +70,8 @@ $(function() {
   <h3><a href="#">Send this link to anyone <span style="font-size:smaller">(right-click and select "copy link location")</span></a></h3>
   <div>
   <div class="taggy_like">
-    <a href="http://dendritenetwork.com/bump/{{ you }}/{{ it }}/">
-    http://dendritenetwork.com/bump/{{ you }}/{{ it }}/
+    <a href="http://%(server)s/bump/%(you)s/%(it)s/">
+    http://%(server)s/bump/%(you)s/%(it)s/
     </a>
   </div>
   </div>
@@ -141,11 +141,11 @@ $(function() {
 <div id="explain_dialog" class="reveal-modal">
   <h1 style="font-size:48px">Dendrite Network</h1>
   <div>
-    <p>You're looking at a page being displayed via the <a href="http://dendritenetwork.com/">Dendrite Network</a>,
+    <p>You're looking at a page being displayed via the <a href="http://%(server)s/">Dendrite Network</a>,
     an experimental information propagation system.</p>
 
     <p>The person who sent you the URL that brought you here should have explained a little about how it works.
-    There is more information available at the <a href="http://dendritenetwork.com/">main Dendrite Network site</a> and at the
+    There is more information available at the <a href="http://%(server)s/">main Dendrite Network site</a> and at the
     <a href="http://firequery.blogspot.com/">blog "Burning Questions"</a>.</p>
 
     <p>You can also ask questions at the
