@@ -1,11 +1,13 @@
 import logging
+from os.path import exists, expanduser
 from urlparse import urlparse
-from sqlitey import get_tag, write_tag, get_conn, bumpdb, SQLITE_DB, T
+from sqlitey import get_tag, write_tag, get_conn, bumpdb, T
 from tagly import tag_for
 
 
 log = logging.getLogger('mon.db')
-conn = get_conn(SQLITE_DB)
+SQLITE_DB = expanduser('~/memestreamer.sqlite')
+conn = get_conn(SQLITE_DB, not exists(SQLITE_DB))
 
 
 def bump(sender, it, receiver):
@@ -57,11 +59,10 @@ def tag2url(tag):
 def normalize_url(url):
   try:
     url = str(url)
-    url = url.lower()
     result = urlparse(url)
   except:
     log.exception('While parsing URL %r', url)
     return
-  if (result.scheme in ('http', 'https')
+  if (result.scheme.lower() in ('http', 'https')
       and not (result.params or result.query or result.fragment)):
     return result.geturl()

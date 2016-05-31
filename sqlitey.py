@@ -1,15 +1,11 @@
 from time import time
-from os.path import exists, expanduser
 import sqlite3
 
 
-SQLITE_DB = expanduser('~/memestreamer.sqlite')
-
-
-def get_conn(db=':memory:'):
+def get_conn(db=':memory:', create=False):
   conn = sqlite3.connect(db)
   conn.row_factory = VisibleRow
-  if db.startswith('/') and not exists(db) or db == ':memory:':
+  if create:
     create_tables(conn)
   return conn
 
