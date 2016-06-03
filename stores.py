@@ -22,6 +22,18 @@ def bump(sender, it, receiver):
   log.debug('duplicate bump %s %s %s', sender, it, receiver)
 
 
+def engage(receiver, it):
+  c, t = conn.cursor(), T()
+  try:
+    result = engagedb(c, t, receiver, it)
+  finally:
+    c.close()
+  if result:
+    conn.commit()
+    return True
+  log.debug('duplicate engage %s %s', receiver, it)
+
+
 def url2tag(url_):
   url = normalize_url(url_)
   if not url:

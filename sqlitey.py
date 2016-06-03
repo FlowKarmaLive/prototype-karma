@@ -1,5 +1,6 @@
 from time import time
 import sqlite3
+from tagly import tag_for
 
 
 def get_conn(db=':memory:', create=False):
@@ -13,6 +14,7 @@ def get_conn(db=':memory:', create=False):
 CREATE_TABLES = '''\
 create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, to_ TEXT)
 create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
+create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
 '''.splitlines(False)
 
 
@@ -36,12 +38,21 @@ def get_tag(c, tag):
 
 
 def bumpdb(c, when, from_, what, to):
-  key = '%s:%s' % (what, to)
+  key = tag_for('%s:%s' % (what, to))
   return insert(
     c,
     'insert into bumps values (?, ?, ?, ?, ?)',
     when, key, from_, what, to,
     )
+
+
+def engagedb(c, when, who, what):
+  key = tag_for('%s:%s' % (who, what))
+  return key if insert(
+    c,
+    'insert into engages values (?, ?, ?, ?)',
+    when, key, who, what,
+    ) is not None else None
 
 
 def extract_graph(c, tag):

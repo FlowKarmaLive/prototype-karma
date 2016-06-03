@@ -32,7 +32,7 @@ from html import (
   static_page,
   start,
   )
-from stores import url2tag, tag2url, bump
+from stores import url2tag, tag2url, bump, engage
 
 
 if not mimetypes.inited:
@@ -50,6 +50,7 @@ class Server(object):
       '/': self.root,
       'register': self.register,
       'bump': self.bump,
+      'engage': self.engage,
       }
     self.debug = False
 
@@ -118,6 +119,28 @@ class Server(object):
       )
     return self.bump_anon_template % data
 
+
+  def engage(self, environ):
+    path = environ['PATH_INFO']
+    parts = path.strip('/').split('/')
+    if parts.pop(0) != 'engage':
+      self.log.debug('Bad engage for engage %r', path)
+      raise ValueError('Bad engage for engage %r' % (path,))
+
+    try:
+      receiver, it = parts
+    except ValueError:
+      self.log.debug('Bad path for engage %r', path)
+      raise ValueError('Bad path for engage %r' % (path,))
+
+    tag2url(receiver) ; tag2url(it)  # crude validation
+
+    key = engage(receiver, it)
+    if key:
+      self.log.info('engage key:%s %s %s', key, receiver, it)
+    return 'engaged'
+
+
   def handle_request(self, environ, start_response):
     path = environ['PATH_INFO']
 
@@ -142,6 +165,8 @@ class Server(object):
       return 'register'
     if path.startswith('/bump'):
       return 'bump'
+    if path.startswith('/engage'):
+      return 'engage'
     return path
 
   def default_handler(self, environ):
