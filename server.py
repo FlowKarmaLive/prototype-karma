@@ -23,6 +23,7 @@ from cgi import FieldStorage
 from traceback import format_exc
 from html import (
   ok200,
+  err404,
   err500,
   HTML,
   fake_out_caching,
@@ -140,14 +141,15 @@ class Server(object):
     if path.startswith('/static/'):
       filename = join(self.static_dir, path[1:])
       if not exists(filename):
-        start(start_response, '404 NOT FOUND', 'text/plain')
-        return '404 NOT FOUND'
+        return err404(start_response)
       start(start_response, '200 OK', guess_type(path))
       return file(filename, 'rb')
 
     # Handle API calls.
     path = self.route(environ)
-    handler = self._router.get(path, self.default_handler)
+    handler = self._router.get(path)
+    if not handler:
+      return err404(start_response)
     response = handler(environ)
     return ok200(start_response, response)
 
@@ -160,12 +162,6 @@ class Server(object):
     if path.startswith('/engage'):
       return 'engage'
     return path
-
-  def default_handler(self, environ):
-    path = self.route(environ)
-    msg = 'You chose: ' + repr(path)
-    self.log.debug(msg)
-    return msg
 
   def __call__(self, environ, start_response):
     if self.debug:

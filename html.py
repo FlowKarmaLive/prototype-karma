@@ -36,6 +36,11 @@ def start(start_response, message, mime_type):
   start_response(message, [('Content-type', mime_type)])
 
 
+def err404(start_response):
+  start(start_response, '404 NOT FOUND', 'text/plain')
+  return '404 NOT FOUND'
+
+
 def err500(start_response, message):
   start(start_response, '500 Internal Server Error', 'text/plain')
   return [str(message)]
