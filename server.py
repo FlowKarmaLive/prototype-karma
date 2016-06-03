@@ -53,15 +53,10 @@ class Server(object):
       'engage': self.engage,
       }
     self.debug = False
-
-    with open(join(self.static_dir, 'index.html'), 'rb') as template:
-      self.home_template = template.read()
-    with open(join(self.static_dir, 'bump.html'), 'rb') as template:
-      self.bump_template = template.read()
-    with open(join(self.static_dir, 'bump_anon.html'), 'rb') as template:
-      self.bump_anon_template = template.read()
-    with open(join(self.static_dir, 'register.html'), 'rb') as template:
-      self.register_template = template.read()
+    self.home_template = self._read_template('index.html')
+    self.bump_template = self._read_template('bump.html')
+    self.bump_anon_template = self._read_template('bump_anon.html')
+    self.register_template = self._read_template('register.html')
 
   def root(self, environ):
     return self.home_template
@@ -121,27 +116,22 @@ class Server(object):
       )
     return self.bump_anon_template % data
 
-
   def engage(self, environ):
     path = environ['PATH_INFO']
     parts = path.strip('/').split('/')
     if parts.pop(0) != 'engage':
       self.log.debug('Bad engage for engage %r', path)
       raise ValueError('Bad engage for engage %r' % (path,))
-
     try:
       receiver, it = parts
     except ValueError:
       self.log.debug('Bad path for engage %r', path)
       raise ValueError('Bad path for engage %r' % (path,))
-
     tag2url(receiver) ; tag2url(it)  # crude validation
-
     key = engage(receiver, it)
     if key:
       self.log.info('engage key:%s %s %s', key, receiver, it)
     return 'engaged'
-
 
   def handle_request(self, environ, start_response):
     path = environ['PATH_INFO']
@@ -192,6 +182,11 @@ class Server(object):
       environ=environ,
       keep_blank_values=True,
       )
+
+  def _read_template(self, filename):
+    with open(join(self.static_dir, filename), 'rb') as template:
+      data = template.read()
+    return data
 
 
 ##@static_page
