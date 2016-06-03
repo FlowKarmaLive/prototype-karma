@@ -72,50 +72,29 @@ function set_contacts(contacts) {
   });
 }
 
-function set_contact(label, tag) {
+function set_contact(tag, url) {
   var c = get_contacts();
-  c[label] = tag;
+  c[tag] = url;
   set_contacts(c);
 }
 
-function del_contact(label) {
+function del_contact(tag) {
   var c = get_contacts();
-  delete c[label];
+  delete c[tag];
   set_contacts(c);
 }
 
-function add_new_contact() {
-  var new_contact_label = $("#id_new_contact_label");
-  var label = new_contact_label.val();
-  if (label == "") {
-    return false; // prevent normal form submit.
-  }
-  var new_contact_tag = $("#id_new_contact_tag");
-  var tag = new_contact_tag.val();
-  if (tag == "") {
-    del_contact(label);
-  } else {
-    set_contact(label, tag);
-  }
-  new_contact_label.val("");
-  new_contact_tag.val("");
-  display_contacts();
-  return false; // prevent normal form submit.
-}
-
-function display_contact(target, label, tag) {
-  var d = $('<div class="contact_display"><a href="#">@<span></span></a></div>');
-  d.find("span").text(label);
-  d.find("a").click(function() {
-    var burl = bump_url + tag;
-    var duu = $("div#updatable_url");
-    duu.find("span").text('@' + label + ' please check out');
-    var taggy = duu.find("a");
-    taggy.text(burl);
-    taggy.attr("href", burl);
-    console.log(burl);
-    return false; // prevent navigation
-  });
+function display_contact(target, tag, url) {
+  var d = $('<div class="contact_display"><a href="#"></a></div>');
+  d.find("a")
+    .text(tag)
+    .attr("href", url)
+    .attr("title", url)
+    .click(function() {
+        var burl = bump_url + tag;
+        $("div#updatable_url").find("a").text(burl).attr("href", burl);
+        return false; // prevent navigation
+      });
   d.appendTo(target);
 }
 
@@ -123,8 +102,8 @@ function display_contacts() {
   var contacts = get_contacts();
   var target = $("#contacts");
   target.empty();
-  _.each(contacts, function(tag, label) {
-    display_contact(target, label, tag);
+  _.each(contacts, function(url, tag) {
+    display_contact(target, tag, url);
   })
 }
 
