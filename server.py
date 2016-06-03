@@ -54,6 +54,8 @@ class Server(object):
       }
     self.debug = False
 
+    with open(join(self.static_dir, 'index.html'), 'rb') as template:
+      self.home_template = template.read()
     with open(join(self.static_dir, 'bump.html'), 'rb') as template:
       self.bump_template = template.read()
     with open(join(self.static_dir, 'bump_anon.html'), 'rb') as template:
@@ -62,7 +64,7 @@ class Server(object):
       self.register_template = template.read()
 
   def root(self, environ):
-    return home_page()
+    return self.home_template
 
   def register(self, environ):
     if not posting(environ):
@@ -192,32 +194,32 @@ class Server(object):
       )
 
 
-@static_page
-def home_page():
-  doc = HTML()
-  doc.head
-  with doc.body as body:
-    body.hr
-    with body.form(action='/register', method='POST') as form:
-      form.h4('Register')
-      labeled_field(form, 'URL:', 'text', 'url', '', size='44', placeholder='Enter an URL here...')
-      form.br
-      fake_out_caching(form)
-      form.input(type_='submit', value='post')
-    body.hr
-    with body.form(action='/bump', method='POST') as form:
-      form.h4('Bump')
-      labeled_field(form, 'from:', 'text', 'sender', '', size='44', placeholder='Enter an URL here...')
-      form.br
-      labeled_field(form, 'to:', 'text', 'receiver', '', size='44', placeholder='Enter an URL here...')
-      form.br
-      labeled_field(form, 'what:', 'text', 'it', '', size='44', placeholder='Enter an URL here...')
-      form.br
-      fake_out_caching(form)
-      form.input(type_='submit', value='post')
-    body.hr
-
-  return str(doc)
+##@static_page
+##def home_page():
+##  doc = HTML()
+##  doc.head
+##  with doc.body as body:
+##    body.hr
+##    with body.form(action='/register', method='POST') as form:
+##      form.h4('Register')
+##      labeled_field(form, 'URL:', 'text', 'url', '', size='44', placeholder='Enter an URL here...')
+##      form.br
+##      fake_out_caching(form)
+##      form.input(type_='submit', value='post')
+##    body.hr
+##    with body.form(action='/bump', method='POST') as form:
+##      form.h4('Bump')
+##      labeled_field(form, 'from:', 'text', 'sender', '', size='44', placeholder='Enter an URL here...')
+##      form.br
+##      labeled_field(form, 'to:', 'text', 'receiver', '', size='44', placeholder='Enter an URL here...')
+##      form.br
+##      labeled_field(form, 'what:', 'text', 'it', '', size='44', placeholder='Enter an URL here...')
+##      form.br
+##      fake_out_caching(form)
+##      form.input(type_='submit', value='post')
+##    body.hr
+##
+##  return str(doc)
 
 
 def guess_type(path):
