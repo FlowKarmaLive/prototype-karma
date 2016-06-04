@@ -20,7 +20,7 @@
 import logging
 from os.path import exists, expanduser
 from urlparse import urlparse
-from sqlitey import get_tag, write_tag, get_conn, bumpdb, T
+from sqlitey import get_tag, write_tag, get_conn, bumpdb, engagedb, T
 from tagly import tag_for
 
 

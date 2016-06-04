@@ -19,8 +19,7 @@
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
 from argparse import ArgumentParser
-from os import remove, rename
-from os.path import abspath, exists, realpath
+from os.path import abspath, exists
 from wsgiref.simple_server import make_server
 from server import Server
 

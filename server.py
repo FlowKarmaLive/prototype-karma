@@ -25,12 +25,7 @@ from html import (
   ok200,
   err404,
   err500,
-  HTML,
-  fake_out_caching,
-  labeled_field,
-  labeled_textarea,
   posting,
-  static_page,
   start,
   )
 from stores import url2tag, tag2url, bump, engage

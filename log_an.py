@@ -116,7 +116,6 @@ class Logan:
 
 
 if __name__ == '__main__':
-  from pprint import pprint
   logan = Logan()
   for line in fileinput.input():
     logan.process(line)
