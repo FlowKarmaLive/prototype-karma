@@ -40,26 +40,45 @@ class Server(object):
   def __init__(self, log, static_dir):
     self.log = log
     self.static_dir = static_dir
-    self._router = {
-      '/': self.root,
-      'register': self.register,
-      'bump': self.bump,
-      'engage': self.engage,
-      }
+    self.api_methods = {'register', 'bump', 'engage'}
     self.debug = False
     self.home_template = self._read_template('index.html')
     self.bump_template = self._read_template('bump.html')
     self.bump_anon_template = self._read_template('bump_anon.html')
     self.register_template = self._read_template('register.html')
 
-  def root(self, environ):
-    return self.home_template
+  def __call__(self, environ, start_response):
+    if self.debug:  # Let the calling context handle exceptions.
+      return self.handle_request(environ, start_response)
+    try:
+      return self.handle_request(environ, start_response)
+    except:  # Uncaught exceptions become 500 errors.
+      self.log.exception('problem in handle_request')
+      return err500(start_response, format_exc())
+
+  def handle_request(self, environ, start_response):
+    path = environ['PATH_INFO'].lstrip('/')
+    if not path:  # Serve homepage.
+      return ok200(start_response, self.home_template)
+    selector = path.partition('/')[0]
+    # Serve static assets.
+    if selector == 'static':
+      filename = join(self.static_dir, path)
+      if not exists(filename):
+        return err404(start_response)
+      start(start_response, '200 OK', guess_type(path))
+      return file(filename, 'rb')
+    # Handle API calls.
+    if selector in self.api_methods:
+      handler = getattr(self, selector)
+      response = handler(environ)
+      return ok200(start_response, response)
+    return err404(start_response)
 
   def register(self, environ):
     if not posting(environ):
       return self.register_template
-    form = self._enformenate(environ)
-    url = form.getfirst('urly')
+    url = self._enformenate(environ).getfirst('urly')
     unseen, tag = url2tag(url)
     if unseen:
       self.log.info('register %s %r', tag, url)
@@ -113,11 +132,8 @@ class Server(object):
   def engage(self, environ):
     path = environ['PATH_INFO']
     parts = path.strip('/').split('/')
-    if parts.pop(0) != 'engage':
-      self.log.debug('Bad engage for engage %r', path)
-      raise ValueError('Bad engage for engage %r' % (path,))
     try:
-      receiver, it = parts
+      receiver, it = parts[:2]
     except ValueError:
       self.log.debug('Bad path for engage %r', path)
       raise ValueError('Bad path for engage %r' % (path,))
@@ -126,43 +142,6 @@ class Server(object):
     if key:
       self.log.info('engage key:%s %s %s', key, receiver, it)
     return 'engaged'
-
-  def handle_request(self, environ, start_response):
-    path = environ['PATH_INFO']
-
-    # Serve static assets.
-    if path.startswith('/static/'):
-      filename = join(self.static_dir, path[1:])
-      if not exists(filename):
-        return err404(start_response)
-      start(start_response, '200 OK', guess_type(path))
-      return file(filename, 'rb')
-
-    # Handle API calls.
-    path = self.route(environ)
-    handler = self._router.get(path)
-    if not handler:
-      return err404(start_response)
-    response = handler(environ)
-    return ok200(start_response, response)
-
-  def route(self, environ):
-    path = environ['PATH_INFO']
-    if path.startswith('/register'):
-      return 'register'
-    if path.startswith('/bump'):
-      return 'bump'
-    if path.startswith('/engage'):
-      return 'engage'
-    return path
-
-  def __call__(self, environ, start_response):
-    if self.debug:
-      return self.handle_request(environ, start_response)
-    try:
-      return self.handle_request(environ, start_response)
-    except:
-      return err500(start_response, format_exc())
 
   def _enformenate(self, environ):
     environ['QUERY_STRING'] = ''

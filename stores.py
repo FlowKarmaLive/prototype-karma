@@ -49,7 +49,7 @@ def engage(receiver, it):
     c.close()
   if result:
     conn.commit()
-    return True
+    return result
   log.debug('duplicate engage %s %s', receiver, it)
 
 
