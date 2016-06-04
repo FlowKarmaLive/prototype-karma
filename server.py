@@ -21,20 +21,18 @@ import mimetypes
 from os.path import splitext, join, exists
 from cgi import FieldStorage
 from traceback import format_exc
-from http import (
-  ok200,
-  err404,
-  err500,
-  posting,
-  start,
-  )
+from http import ok200, err404, err500, posting, start
 from stores import url2tag, tag2url, bump, engage
 
 
-if not mimetypes.inited:
-  mimetypes.init()
+if not mimetypes.inited: mimetypes.init()
 extensions_map = mimetypes.types_map.copy()
 extensions_map[''] = 'application/octet-stream'
+
+
+def guess_type(path):
+  ext = splitext(path)[1].lower()
+  return extensions_map.get(ext, 'application/octet-stream')
 
 
 class Server(object):
@@ -178,37 +176,3 @@ class Server(object):
     with open(join(self.static_dir, filename), 'rb') as template:
       data = template.read()
     return data
-
-
-##@static_page
-##def home_page():
-##  doc = HTML()
-##  doc.head
-##  with doc.body as body:
-##    body.hr
-##    with body.form(action='/register', method='POST') as form:
-##      form.h4('Register')
-##      labeled_field(form, 'URL:', 'text', 'url', '', size='44', placeholder='Enter an URL here...')
-##      form.br
-##      fake_out_caching(form)
-##      form.input(type_='submit', value='post')
-##    body.hr
-##    with body.form(action='/bump', method='POST') as form:
-##      form.h4('Bump')
-##      labeled_field(form, 'from:', 'text', 'sender', '', size='44', placeholder='Enter an URL here...')
-##      form.br
-##      labeled_field(form, 'to:', 'text', 'receiver', '', size='44', placeholder='Enter an URL here...')
-##      form.br
-##      labeled_field(form, 'what:', 'text', 'it', '', size='44', placeholder='Enter an URL here...')
-##      form.br
-##      fake_out_caching(form)
-##      form.input(type_='submit', value='post')
-##    body.hr
-##
-##  return str(doc)
-
-
-def guess_type(path):
-  ext = splitext(path)[1].lower()
-  return extensions_map.get(ext, 'application/octet-stream')
-
