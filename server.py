@@ -21,7 +21,7 @@ import mimetypes
 from os.path import splitext, join, exists
 from cgi import FieldStorage
 from traceback import format_exc
-from html import (
+from http import (
   ok200,
   err404,
   err500,
