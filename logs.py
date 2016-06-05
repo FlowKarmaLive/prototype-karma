@@ -23,7 +23,7 @@ import logging
 F = logging.Formatter('%(asctime)s %(name)s %(levelname)s %(message)s')
 
 
-def setup_log():
+def setup_log(extra_record=False):
   log = logging.getLogger('mon')
   log.setLevel(logging.DEBUG)
 
@@ -37,10 +37,11 @@ def setup_log():
   fh.setFormatter(F)
   log.addHandler(fh)
 
-  fh = logging.FileHandler('record.log')
-  fh.setLevel(logging.INFO)
-  fh.setFormatter(logging.Formatter('%(message)s'))
-  log.getChild('record').addHandler(fh)
+  if extra_record:
+    fh = logging.FileHandler('record.log')
+    fh.setLevel(logging.INFO)
+    fh.setFormatter(logging.Formatter('%(message)s'))
+    log.getChild('record').addHandler(fh)
 
   return log
 
