@@ -1,2 +1,4 @@
 *.pyc
 memestreamer.log
+memestreamer.sqlite
+record.log
