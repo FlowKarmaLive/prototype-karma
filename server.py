@@ -21,8 +21,33 @@ import mimetypes
 from os.path import splitext, join, exists
 from cgi import FieldStorage
 from traceback import format_exc
-from http import ok200, err404, err500, posting, start
 from stores import url2tag, tag2url, bump, engage
+
+
+# Some HTTP support stuff.
+
+
+def posting(environ):
+  return environ['REQUEST_METHOD'] == 'POST'
+
+
+def start(start_response, message, mime_type):
+  start_response(message, [('Content-type', mime_type)])
+
+
+def err404(start_response):
+  start(start_response, '404 NOT FOUND', 'text/plain')
+  return '404 NOT FOUND'
+
+
+def err500(start_response, message):
+  start(start_response, '500 Internal Server Error', 'text/plain')
+  return [str(message)]
+
+
+def ok200(start_response, response):
+  start(start_response, '200 OK', 'text/html')
+  return response
 
 
 if not mimetypes.inited: mimetypes.init()
@@ -33,6 +58,9 @@ extensions_map[''] = 'application/octet-stream'
 def guess_type(path):
   ext = splitext(path)[1].lower()
   return extensions_map.get(ext, 'application/octet-stream')
+
+
+# And now, the server.
 
 
 class Server(object):
@@ -84,6 +112,7 @@ class Server(object):
       handler = getattr(self, selector)
       response = handler(environ)
       return ok200(start_response, response)
+
     return err404(start_response)
 
   def register(self, environ):
