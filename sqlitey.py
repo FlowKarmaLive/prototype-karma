@@ -41,8 +41,8 @@ def create_tables(conn):
   c = conn.cursor()
   for statement in CREATE_TABLES:
     c.execute(statement)
-  conn.commit()
   c.close()
+  conn.commit()
 
 
 def write_tag(c, when, tag, url):
