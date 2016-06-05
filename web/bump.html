@@ -26,11 +26,11 @@ var own_url = "%(your_url)s";
 $(function() {
   setup_button("button#Engage", 'ui-icon-arrow-4-diag', engage_action);
   setup_button("button#Forward", 'ui-icon-check', forward_action);
-  setup_button("button#Reject", 'ui-icon-close', reject_action);
+  setup_button("button#Feedback", 'ui-icon-close', feedback_action);
   setup_button("button#hurm", 'ui-icon-help', (function(){$('#explain_dialog').reveal();}));
   setup_button("button#forward_no", 'ui-icon-close', close_forward_dialog);
-  setup_button("button#reject_ok", 'ui-icon-check', close_reject_dialog);
-  setup_button("button#reject_no", 'ui-icon-close', close_reject_dialog);
+  setup_button("button#feedback_ok", 'ui-icon-check', close_feedback_dialog);
+  setup_button("button#feedback_no", 'ui-icon-close', close_feedback_dialog);
   setup_button("button#explain_no", 'ui-icon-close', close_explain_dialog);
   note_own_tag(own_tag);
   set_contact("%(me)s", "%(from_url)s");
@@ -49,7 +49,7 @@ $(function() {
   <div id="dn_logo">
     <button id="Engage">Engage</button>
     <button id="Forward">Forward</button>
-    <button id="Reject">Reject</button>
+    <button id="Feedback">Feedback</button>
     &nbsp;&nbsp;&nbsp;
     <a href="%(from_url)s" title="%(from_url)s">visit sender</a>
     &nbsp;&nbsp;&nbsp;
@@ -97,23 +97,23 @@ $(function() {
   <a class="close-reveal-modal">&#215;</a>
 </div>
 
-<div id="reject_dialog" class="reveal-modal">
-  <h1>Reject...</h1>
+<div id="feedback_dialog" class="reveal-modal">
+  <h1>Feedback...</h1>
   <div>
-    This is where you have a place to enter the reason you're rejecting this site.
+    This is where you have a place to enter feedback for this site.
     You can send it to either the site owner, the person who sent you to this site, or both.
   </div>
   <div class="rejform">
     <form class="nice">
-      <textarea name="reject_reason" cols="40" rows="4" id="id_reject_reason" placeholder="Enter your reason here if you want to..."></textarea>
+      <textarea name="feedback_reason" cols="40" rows="4" id="id_feedback_reason" placeholder="Enter feedback..."></textarea>
       <input type="checkbox" id="id_a" name="a"><label for="id_a">The contact who sent this to you.</label>
       <br/>
       <input type="checkbox" id="id_b" name="b"><label for="id_b">The site owner</label>
     </form>
   </div>
   <div>
-    <button id="reject_ok">Send Rejection</button>
-    <button id="reject_no">Cancel</button>
+    <button id="feedback_ok">Send Feedback</button>
+    <button id="feedback_no">Cancel</button>
     <span style="font-size:smaller">(Currently the "Send" button does nothing.)</span>
   </div>
   <a class="close-reveal-modal">&#215;</a>
@@ -122,15 +122,11 @@ $(function() {
 <div id="explain_dialog" class="reveal-modal">
   <h1 style="font-size:48px">Dendrite Network</h1>
   <div>
-    <p>You're looking at a page being displayed via the <a href="http://%(server)s/">Dendrite Network</a>,
+    <p>You're looking at a page being displayed via <a href="http://%(server)s/">MemeStreamer</a>,
     an experimental information propagation system.</p>
 
     <p>The person who sent you the URL that brought you here should have explained a little about how it works.
-    There is more information available at the <a href="http://%(server)s/">main Dendrite Network site</a> and at the
-    <a href="http://firequery.blogspot.com/">blog "Burning Questions"</a>.</p>
-
-    <p>You can also ask questions at the
-    <a href="http://groups.google.com/group/dendrite-network">Dendrite Network Google Group</a></p>
+    There is more information available at the <a href="http://%(server)s/">main MemeStreamer site</a>.</p>
     
   </div>
   <div>

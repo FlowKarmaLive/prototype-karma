@@ -11,8 +11,8 @@ function forward_action () {
     $('#forward_dialog').reveal();
 }
 
-function reject_action () {
-    $('#reject_dialog').reveal();
+function feedback_action () {
+    $('#feedback_dialog').reveal();
 }
 
 function size_iframe () {
@@ -32,8 +32,8 @@ function close_forward_dialog() {
   $('#forward_dialog').trigger('reveal:close');
 }
 
-function close_reject_dialog() {
-  $('#reject_dialog').trigger('reveal:close');
+function close_feedback_dialog() {
+  $('#feedback_dialog').trigger('reveal:close');
 }
 
 function close_explain_dialog() {
