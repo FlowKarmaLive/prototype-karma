@@ -36,13 +36,21 @@ def guess_type(path):
 
 
 class Server(object):
+  '''
+  A simple WSGI server that handles both static resources and API calls.
+  '''
 
   def __init__(self, log, static_dir):
-    self.log = log.getChild('record')
+    self.log = log.getChild('record')  # For "events".
     self.err_log = log.getChild('error')
-    self.static_dir = static_dir
+
+    self.static_dir = static_dir  # Location of templates and static files.
+
     self.api_methods = {'register', 'bump', 'engage'}
-    self.debug = False
+
+    self.debug = False  # Set True if running in e.g. pdb or something.
+
+    # Pre-load templates.
     self.home_template = self._read_template('index.html')
     self.bump_template = self._read_template('bump.html')
     self.bump_anon_template = self._read_template('bump_anon.html')
@@ -62,6 +70,7 @@ class Server(object):
     if not path:  # Serve homepage.
       return ok200(start_response, self.home_template)
     selector = path.partition('/')[0]
+
     # Serve static assets.
     if selector == 'static':
       filename = join(self.static_dir, path)
@@ -69,6 +78,7 @@ class Server(object):
         return err404(start_response)
       start(start_response, '200 OK', guess_type(path))
       return file(filename, 'rb')
+
     # Handle API calls.
     if selector in self.api_methods:
       handler = getattr(self, selector)
@@ -77,6 +87,10 @@ class Server(object):
     return err404(start_response)
 
   def register(self, environ):
+    '''
+    Accept an URL and return its tag, enter a register record in the DB
+    if this is the first time we've seen this URL.
+    '''
     if not posting(environ):
       return self.register_template
     url = self._enformenate(environ).getfirst('urly')
@@ -86,13 +100,21 @@ class Server(object):
     return tag
 
   def bump(self, environ):
-    if not posting(environ):
-      sender, it, receiver = self.decode_bump(environ['PATH_INFO'])
-      if not receiver:
-        return self.bump_anon(sender, it)
-    else:
+    '''
+    Record the connection between two nodes in re: a "meme" URL.
+    '''
+    if posting(environ):
+      # There used to be a form on the homepage that let you just enter
+      # three URLs and POST to do a bump, for debugging.  This is legacy
+      # from that and could be removed (no POST bumps.)
       form = self._enformenate(environ)
       sender, it, receiver = map(form.getfirst, ('sender', 'it', 'receiver'))
+    else:
+      sender, it, receiver = self._decode_bump(environ['PATH_INFO'])
+
+    if not receiver:
+      return self.bump_anon(sender, it)
+
     data = dict(
       from_url=tag2url(sender),
       iframe_url=tag2url(it),
@@ -100,35 +122,57 @@ class Server(object):
       me=sender,
       it=it,
       you=receiver,
-      server='localhost:8000',
+      server='localhost:8000',  # FIXME!!
       )
     if bump(sender, it, receiver):
       self.log.info('bump %s %s %s', sender, it, receiver)
     return self.bump_template % data
 
-  def decode_bump(self, path):
+  def _decode_bump(self, path):
+    '''
+    Bump URLS look like:
+
+      /bump/<sender>/<it>/<receiver>
+
+    Or "anon" URLs:
+
+      /bump/<sender>/<it>
+
+    The trailing slash is optional.
+    '''
     parts = path.strip('/').split('/')
     if parts.pop(0) != 'bump':
       raise ValueError('Bad bump for bump %r' % (path,))
-    if len(parts) == 2:
-      (sender, it), receiver = parts, None
-    elif len(parts) == 3:
-      sender, it, receiver = parts
+    if len(parts) == 2: (sender, it), receiver = parts, None
+    elif len(parts) == 3: sender, it, receiver = parts
     else:
       raise ValueError('Bad path for bump %r' % (path,))
     return sender, it, receiver
 
   def bump_anon(self, sender, it):
+    '''
+    Send an "anonymous" bump page, allowing new people to join the network.
+
+    If the user already has an "own_tag" cookie the page will affix the
+    user's tag to the anon bump URL and load the resulting bump URL.
+    '''
     data = dict(
       from_url=tag2url(sender),
       iframe_url=tag2url(it),
       me=sender,
       it=it,
-      server='localhost:8000',
+      server='localhost:8000',  # FIXME!!
       )
     return self.bump_anon_template % data
 
   def engage(self, environ):
+    '''
+    Record the "engagement" of a user with some meme.
+
+    Eventually this will generate some sort of correlation code that we
+    return to the calling page which then passes it to the meme URL as a
+    parameter letting whoever's on the other know who to thank.
+    '''
     path = environ['PATH_INFO']
     parts = path.strip('/').split('/')
     try:
@@ -142,7 +186,8 @@ class Server(object):
     return 'engaged'
 
   def _enformenate(self, environ):
-    environ['QUERY_STRING'] = ''
+    '''Return FieldStorage object for the request.'''
+    environ['QUERY_STRING'] = ''  # I forget why.
     return FieldStorage(
       fp=environ['wsgi.input'],
       environ=environ,
