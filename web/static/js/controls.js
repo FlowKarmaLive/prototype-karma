@@ -2,18 +2,18 @@
 function engage_action () {
     $.get(engage_url, function(data) {
         if (data == 'engaged') {
+            // At some point we inject our collation code here.
             window.location.href = iframe_url;
         }
     });
 }
 
-function forward_action () {
-    $('#forward_dialog').reveal();
-}
+function forward_action () { $('#forward_dialog').reveal() }
+function feedback_action () { $('#feedback_dialog').reveal() }
 
-function feedback_action () {
-    $('#feedback_dialog').reveal();
-}
+function close_forward_dialog() {   $('#forward_dialog').trigger('reveal:close') }
+function close_feedback_dialog() { $('#feedback_dialog').trigger('reveal:close') }
+function close_explain_dialog() {   $('#explain_dialog').trigger('reveal:close') }
 
 function size_iframe () {
     var window_height = $(window).height();
@@ -26,18 +26,6 @@ function setup_button(selector, icon, action) {
     $(selector)
       .button({icons:{secondary:icon},})
       .click(action);
-}
-
-function close_forward_dialog() {
-  $('#forward_dialog').trigger('reveal:close');
-}
-
-function close_feedback_dialog() {
-  $('#feedback_dialog').trigger('reveal:close');
-}
-
-function close_explain_dialog() {
-  $('#explain_dialog').trigger('reveal:close');
 }
 
 function note_own_tag(tag) {
@@ -53,6 +41,26 @@ function get_own_tag() {
     return '';
   }
   return tag;
+}
+
+function nonanon(base_url) {
+  var own_tag = get_own_tag();
+  if (own_tag != '') {
+    var bump_url = base_url + own_tag
+    window.location.href = bump_url;
+    return true; // Dunno if this is needed.
+  }
+  return false;
+}
+
+function make_register_callback(reg_url, url_selector, tag_callback) {
+  return function() {
+    var urly = $(url_selector).val();
+    if (urly != "") {
+      $.post(reg_url, {'urly': urly}, tag_callback);
+    }
+    return false;
+  }
 }
 
 function get_contacts() {
@@ -85,13 +93,13 @@ function del_contact(tag) {
 }
 
 function display_contact(target, tag, url) {
+  var burl = bump_url + tag;
   var d = $('<div class="contact_display"><a href="#"></a></div>');
   d.find("a")
     .text(tag)
     .attr("href", url)
     .attr("title", url)
     .click(function() {
-        var burl = bump_url + tag;
         $("div#updatable_url").find("a").text(burl).attr("href", burl);
         return false; // prevent navigation
       });
@@ -105,25 +113,5 @@ function display_contacts() {
   _.each(contacts, function(url, tag) {
     display_contact(target, tag, url);
   })
-}
-
-function nonanon(base_url) {
-  var own_tag = get_own_tag();
-  if (own_tag != '') {
-    var bump_url = base_url + own_tag
-    window.location.href = bump_url;
-    return true; // Dunno if this is needed.
-  }
-  return false;
-}
-
-function make_register_callback(reg_url, url_selector, tag_callback) {
-  return function() {
-    var urly = $(url_selector).val();
-    if (urly != "") {
-      $.post(reg_url, {'urly': urly}, tag_callback);
-    }
-    return false;
-  }
 }
 
