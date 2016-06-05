@@ -22,13 +22,24 @@ from argparse import ArgumentParser
 from os.path import abspath, exists
 from wsgiref.simple_server import make_server
 from server import Server
+import stores
 
 
 def main(log, argv=None):
   args = get_args(argv)
+
   static_files = abspath(args.static_files)
   if not exists(static_files):
-    raise ValueError('%r does not exist.' % static_files)
+    message = 'static_files dir %r does not exist.' % static_files
+    log.error(message)
+    raise ValueError(message)
+
+  db_file = abspath(args.db_file)
+  create_tables = not exists(db_file)
+  if create_tables:
+    log.info('DB file %r not found, creating.' % db_file)
+  stores.connect(db_file, create_tables)
+  
   server = Server(log, static_files)
   run(server, args.host, args.port)
 
@@ -41,8 +52,14 @@ def make_argparser():
   parser.add_argument(
     '--static-files',
     type=str,
-    help='The directory containing web content files.',
+    help='The directory containing web content files. (Default: ./web)',
     default='./web',
+    )
+  parser.add_argument(
+    '--db-file',
+    type=str,
+    help='The SQLite database file . (Default: ./memestreamer.sqlite)',
+    default='./memestreamer.sqlite',
     )
   parser.add_argument(
     '--host',

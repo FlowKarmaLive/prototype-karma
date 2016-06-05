@@ -18,15 +18,20 @@
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging
-from os.path import exists, expanduser
 from urlparse import urlparse
 from sqlitey import get_tag, write_tag, get_conn, bumpdb, engagedb, T
 from tagly import tag_for
 
 
 log = logging.getLogger('mon.db')
-SQLITE_DB = expanduser('~/memestreamer.sqlite')
-conn = get_conn(SQLITE_DB, not exists(SQLITE_DB))
+conn = None
+
+
+def connect(db_file, create_tables):
+  global conn
+  if conn:
+    raise RuntimeError('DB already connected %r', conn)
+  conn = get_conn(db_file, create_tables)
 
 
 def bump(sender, it, receiver):
@@ -59,7 +64,7 @@ def url2tag(url_):
     log.debug('Not normalized URL %r', url_)
     raise ValueError('Not normalized URL %r' % (url_,))
 
-  c, t, tag, result = conn.cursor(), T(), tag_for(url), None
+  c, t, tag = conn.cursor(), T(), tag_for(url)
   try:
     result = write_tag(c, t, tag, url)
   finally:
