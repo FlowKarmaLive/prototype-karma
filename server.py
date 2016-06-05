@@ -38,7 +38,8 @@ def guess_type(path):
 class Server(object):
 
   def __init__(self, log, static_dir):
-    self.log = log
+    self.log = log.getChild('record')
+    self.err_log = log.getChild('error')
     self.static_dir = static_dir
     self.api_methods = {'register', 'bump', 'engage'}
     self.debug = False
@@ -53,7 +54,7 @@ class Server(object):
     try:
       return self.handle_request(environ, start_response)
     except:  # Uncaught exceptions become 500 errors.
-      self.log.exception('problem in handle_request')
+      self.err_log.exception('problem in handle_request')
       return err500(start_response, format_exc())
 
   def handle_request(self, environ, start_response):
@@ -108,14 +109,12 @@ class Server(object):
   def decode_bump(self, path):
     parts = path.strip('/').split('/')
     if parts.pop(0) != 'bump':
-      self.log.debug('Bad bump for bump %r', path)
       raise ValueError('Bad bump for bump %r' % (path,))
     if len(parts) == 2:
       (sender, it), receiver = parts, None
     elif len(parts) == 3:
       sender, it, receiver = parts
     else:
-      self.log.debug('Bad path for bump %r', path)
       raise ValueError('Bad path for bump %r' % (path,))
     return sender, it, receiver
 
@@ -133,9 +132,8 @@ class Server(object):
     path = environ['PATH_INFO']
     parts = path.strip('/').split('/')
     try:
-      receiver, it = parts[:2]
+      receiver, it = parts[1:]
     except ValueError:
-      self.log.debug('Bad path for engage %r', path)
       raise ValueError('Bad path for engage %r' % (path,))
     tag2url(receiver) ; tag2url(it)  # crude validation
     key = engage(receiver, it)

@@ -37,5 +37,10 @@ def setup_log():
   fh.setFormatter(F)
   log.addHandler(fh)
 
+  fh = logging.FileHandler('record.log')
+  fh.setLevel(logging.INFO)
+  fh.setFormatter(logging.Formatter('%(message)s'))
+  log.getChild('record').addHandler(fh)
+
   return log
 
