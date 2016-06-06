@@ -100,15 +100,19 @@ $(function() {
 <div id="feedback_dialog" class="reveal-modal">
   <h1>Feedback...</h1>
   <div>
-    This is where you have a place to enter feedback for this site.
-    You can send it to either the site owner, the person who sent you to this site, or both.
+    <p>Feedback for this site.</p>
+
+    <p>You can record a message about this site and have it be public or
+    restrict it to either the site owner, the person who sent you to
+    this site, or both.</p>
+
   </div>
   <div class="rejform">
     <form class="nice">
       <textarea name="feedback_reason" cols="40" rows="4" id="id_feedback_reason" placeholder="Enter feedback..."></textarea>
-      <input type="checkbox" id="id_a" name="a"><label for="id_a">The contact who sent this to you.</label>
+      <input type="checkbox" id="id_b" name="b"><label for="id_b">The contact who sent this to you</label>
       <br/>
-      <input type="checkbox" id="id_b" name="b"><label for="id_b">The site owner</label>
+      <input type="checkbox" id="id_c" name="c"><label for="id_c">The site owner</label>
     </form>
   </div>
   <div>
