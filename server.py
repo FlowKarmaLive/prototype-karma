@@ -172,8 +172,9 @@ class Server(object):
     parts = path.strip('/').split('/')
     if parts.pop(0) != 'bump':
       raise ValueError('Bad bump for bump %r' % (path,))
-    if len(parts) == 2: (sender, it), receiver = parts, None
-    elif len(parts) == 3: sender, it, receiver = parts
+    n = len(parts)
+    if n == 2: (sender, it), receiver = parts, None
+    elif n == 3: sender, it, receiver = parts
     else:
       raise ValueError('Bad path for bump %r' % (path,))
     return sender, it, receiver
