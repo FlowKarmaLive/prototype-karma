@@ -13,4 +13,4 @@ print()
 print('bumps')
 c.execute('select * FROM bumps')
 for row in c.fetchall():
-	print(row)
+	print(*row)
