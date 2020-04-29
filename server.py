@@ -18,11 +18,9 @@
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging
-from os.path import splitext, join, exists, abspath
-from cgi import FieldStorage
-from traceback import format_exc
+from os.path import abspath
 from stores import url2tag, tag2url, bump, engage
-from bottle import get, post, request, run, static_file
+from bottle import get, post, request, static_file
 
 log = logging.getLogger('mon')
 
