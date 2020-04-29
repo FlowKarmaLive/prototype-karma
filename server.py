@@ -26,9 +26,9 @@ from bottle import get, post, request, run, static_file
 
 log = logging.getLogger('mon')
 
-BUMP_ANON_TEMPLATE = open('web/bump_anon.html', 'rb').read()
-BUMP_TEMPLATE = open('web/bump.html', 'rb').read()
-REG_TEMPLATE = open('web/register.html', 'rb').read()
+BUMP_ANON_TEMPLATE = open('web/bump_anon.html').read()
+BUMP_TEMPLATE = open('web/bump.html').read()
+REG_TEMPLATE = open('web/register.html').read()
 STATIC_FILES = abspath('web/static')
 
 
