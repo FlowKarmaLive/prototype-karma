@@ -37,7 +37,7 @@ def tag_for(s):
 
 
 if __name__ == '__main__':
-	m = md5("Hey! Funny").hexdigest()
+	m = md5(b"Hey! Funny").hexdigest()
 	n = int(m, 16)
 	print(n, m)
 	M = to36(n)

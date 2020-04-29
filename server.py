@@ -90,7 +90,6 @@ def bump_handler(sender, it, receiver):
 	return BUMP_TEMPLATE % data
 
 
-
 @get('/engage'
      '/<receiver:re:[a-z0-9]+>'
 	 '/<it:re:[a-z0-9]+>')
