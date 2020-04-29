@@ -20,40 +20,24 @@
 #
 from argparse import ArgumentParser
 from os.path import abspath, exists
-from wsgiref.simple_server import make_server
-from server import Server
+from server import run
 import stores
 
 
 def main(log, argv=None):
 	args = get_args(argv)
-
-	static_files = abspath(args.static_files)
-	if not exists(static_files):
-		message = 'static_files dir %r does not exist.' % static_files
-		log.error(message)
-		raise ValueError(message)
-
 	db_file = abspath(args.db_file)
 	create_tables = not exists(db_file)
 	if create_tables:
 		log.info('DB file %r not found, creating.' % db_file)
 	stores.connect(db_file, create_tables)
-	
-	server = Server(log, static_files)
-	run(server, args.host, args.port)
+	run(host=args.host, port=args.port)
 
 
 def make_argparser():
 	parser = ArgumentParser(
 		prog='MemeStreamer',
 		description='Run the MemeStreamer server.',
-		)
-	parser.add_argument(
-		'--static-files',
-		type=str,
-		help='The directory containing web content files. (Default: ./web)',
-		default='./web',
 		)
 	parser.add_argument(
 		'--db-file',
@@ -65,7 +49,7 @@ def make_argparser():
 		'--host',
 		type=str,
 		help='The host (IP) to bind. Default: localhost.',
-		default='',
+		default='localhost',
 		)
 	parser.add_argument(
 		'--port',
@@ -83,17 +67,8 @@ def get_args(argv=None):
 	return make_argparser().parse_args(argv)
 
 
-def run(app, host='', port=8000):
-	httpd = make_server(host, port, app)
-	_print_serving(host, port)
-	try:
-		httpd.serve_forever()
-	except KeyboardInterrupt:
-		pass
-
-
-def _print_serving(host, port):
-	print(
-		'server at http://%s:%i/'
-		% (host or 'localhost', port)
-		)
+# def _print_serving(host, port):
+# 	print(
+# 		'server at http://%s:%i/'
+# 		% (host or 'localhost', port)
+# 		)
