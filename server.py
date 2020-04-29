@@ -63,7 +63,7 @@ def bump_anon_handler(sender, it):
 		iframe_url=tag2url(it),
 		me=sender,
 		it=it,
-		server=_get_server(),
+		server=request['HTTP_HOST'],
 		)
 	return BUMP_ANON_TEMPLATE % data
 
@@ -81,7 +81,7 @@ def bump_handler(sender, it, receiver):
 		me=sender,
 		it=it,
 		you=receiver,
-		server=_get_server(),
+		server=request['HTTP_HOST'],
 		)
 	if bump(sender, it, receiver):
 		log.info('bump %s %s %s', sender, it, receiver)
@@ -104,10 +104,3 @@ def engage_handler(receiver, it):
 	if key:
 		log.info('engage key:%s %s %s', key, receiver, it)
 	return 'engaged'
-
-
-def _get_server():
-	server = request.get('HTTP_HOST')
-	if server:
-		return server
-	return '%s:%s' % (request['SERVER_NAME'], request['SERVER_PORT'])
