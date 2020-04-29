@@ -18,7 +18,7 @@
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging
-from urlparse import urlparse
+from urllib.parse import urlparse
 from sqlitey import get_tag, write_tag, get_conn, bumpdb, engagedb, T
 from tagly import tag_for
 

@@ -93,7 +93,7 @@ def run(app, host='', port=8000):
 
 
 def _print_serving(host, port):
-	print (
+	print(
 		'server at http://%s:%i/'
 		% (host or 'localhost', port)
 		)

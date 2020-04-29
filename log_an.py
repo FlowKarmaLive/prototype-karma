@@ -61,58 +61,58 @@ class Logan:
 
 	def print_reg(self):
 		for tag, url in sorted(self.REGISTER.items()):
-			print tag, '=>', url
+			print(tag, '=>', url)
 
 	def print_bumps(self):
-		for tag, bumps in self.BUMPS.items():
-			print self.h(tag)
+		for tag, bumps in list(self.BUMPS.items()):
+			print(self.h(tag))
 			for from_, to in sorted(bumps):
-				print '		', self.h(from_), '--->', self.h(to)
-			print
+				print('		', self.h(from_), '--->', self.h(to))
+			print()
 
 	def print_eng(self):
-		for tag, eng in self.ENGAGES.items():
-			print self.h(tag)
+		for tag, eng in list(self.ENGAGES.items()):
+			print(self.h(tag))
 			for who in eng:
-				print ' -->', self.h(who)
-			print
+				print(' -->', self.h(who))
+			print()
 
 	def print_abumps(self):
-		for tag, bumps in self.ANON_BUMPS.items():
-			print self.h(tag)
+		for tag, bumps in list(self.ANON_BUMPS.items()):
+			print(self.h(tag))
 			for who in sorted(bumps):
-				print '		', self.h(who), '--->', bumps[who]
-			print
+				print('		', self.h(who), '--->', bumps[who])
+			print()
 
 	def print_aeng(self):
-		for tag, eng in self.ANON_ENGAGES.items():
-			print self.h(tag)
+		for tag, eng in list(self.ANON_ENGAGES.items()):
+			print(self.h(tag))
 			for who in sorted(eng):
-				print ' -->', self.h(who), '--->', eng[who]
-			print
+				print(' -->', self.h(who), '--->', eng[who])
+			print()
 
 	def print_report(self):
-		print
-		print 'Registered URLs'
-		print
+		print()
+		print('Registered URLs')
+		print()
 		logan.print_reg()
-		print; print
-		print 'Bumps (by subject URL)'
-		print
+		print(); print()
+		print('Bumps (by subject URL)')
+		print()
 		logan.print_bumps()
-		print; print
-		print 'Engages (by subject URL)'
-		print
+		print(); print()
+		print('Engages (by subject URL)')
+		print()
 		logan.print_eng()
-		print; print
-		print 'Anonymous Bumps (by subject URL)'
-		print
+		print(); print()
+		print('Anonymous Bumps (by subject URL)')
+		print()
 		logan.print_abumps()
-		print; print
-		print 'Anonymous Engages (by subject URL)'
-		print
+		print(); print()
+		print('Anonymous Engages (by subject URL)')
+		print()
 		logan.print_aeng()
-		print
+		print()
 
 
 if __name__ == '__main__':
