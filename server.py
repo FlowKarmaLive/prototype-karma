@@ -26,16 +26,21 @@ from bottle import get, post, request, run, static_file
 
 log = logging.getLogger('mon')
 
+BUMP_ANON_TEMPLATE = open('web/bump_anon.html', 'rb').read()
+BUMP_TEMPLATE = open('web/bump.html', 'rb').read()
 REG_TEMPLATE = open('web/register.html', 'rb').read()
 STATIC_FILES = abspath('web/static')
+
 
 @get('/static/<filename:path>')
 def get_static(filename):
     return static_file(filename, root=STATIC_FILES)
 
+
 @get('/register')
 def get_register():
 	return REG_TEMPLATE
+
 
 @post('/register')
 def register():
@@ -48,6 +53,41 @@ def register():
 	if unseen:
 		log.info('register %s %r', tag, url)
 	return tag
+
+
+@get('/bump'
+     '/<sender:re:[a-z0-9]+>'
+	 '/<it:re:[a-z0-9]+>')
+def bump_anon_handler(sender, it):
+	'''Record the connection between two nodes in re: a "meme" URL.'''
+	data = dict(
+		from_url=tag2url(sender),
+		iframe_url=tag2url(it),
+		me=sender,
+		it=it,
+		server='localhost:8000',  # FIXME!!
+		)
+	return BUMP_ANON_TEMPLATE % data
+
+
+@get('/bump'
+     '/<sender:re:[a-z0-9]+>'
+	 '/<it:re:[a-z0-9]+>'
+	 '/<receiver:re:[a-z0-9]+>')
+def bump_handler(sender, it, receiver):
+	'''Record the connection between two nodes in re: a "meme" URL.'''
+	data = dict(
+		from_url=tag2url(sender),
+		iframe_url=tag2url(it),
+		your_url=tag2url(receiver),
+		me=sender,
+		it=it,
+		you=receiver,
+		server='localhost:8000',  # FIXME!!
+		)
+	if bump(sender, it, receiver):
+		log.info('bump %s %s %s', sender, it, receiver)
+	return BUMP_TEMPLATE % data
 
 
 # class Server(object):
@@ -80,27 +120,6 @@ def register():
 # 			self.err_log.exception('problem in handle_request')
 # 			return err500(start_response, format_exc())
 
-# 	def handle_request(self, environ, start_response):
-# 		path = environ['PATH_INFO'].lstrip('/')
-# 		if not path:  # Serve homepage.
-# 			return ok200(start_response, self.home_template)
-# 		selector = path.partition('/')[0]
-
-# 		# Serve static assets.
-# 		if selector == 'static':
-# 			filename = join(self.static_dir, path)
-# 			if not exists(filename):
-# 				return err404(start_response)
-# 			start(start_response, '200 OK', guess_type(path))
-# 			return file(filename, 'rb')
-
-# 		# Handle API calls.
-# 		if selector in self.api_methods:
-# 			handler = getattr(self, selector)
-# 			response = handler(environ)
-# 			return ok200(start_response, response)
-
-# 		return err404(start_response)
 
 # 	def bump(self, environ):
 # 		'''

@@ -21,6 +21,7 @@ import logging
 from urllib.parse import urlparse
 from sqlitey import get_tag, write_tag, get_conn, bumpdb, engagedb, T
 from tagly import tag_for
+from bottle import abort
 
 
 log = logging.getLogger('mon.db')
@@ -89,7 +90,7 @@ def tag2url(tag):
 		log.debug('Found %s %s', tag, url)
 		return url
 	log.debug('Missed %s', tag)
-	raise KeyError(tag)
+	abort(400, 'Unknown tag: %s' % tag)
 
 
 def normalize_url(url):
