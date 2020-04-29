@@ -21,4 +21,4 @@
 from main import main
 from logs import setup_log
 
-main(setup_log())
+main(setup_log(extra_record=True))

@@ -20,7 +20,7 @@
 #
 from argparse import ArgumentParser
 from os.path import abspath, exists
-from server import run
+from bottle import run
 import stores
 
 
