@@ -17,12 +17,14 @@
 #    You should have received a copy of the GNU General Public License
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
-import mimetypes
+import logging
 from os.path import splitext, join, exists, abspath
 from cgi import FieldStorage
 from traceback import format_exc
 from stores import url2tag, tag2url, bump, engage
-from bottle import get, post, run, static_file
+from bottle import get, post, request, run, static_file
+
+log = logging.getLogger('mon')
 
 REG_TEMPLATE = open('web/register.html', 'rb').read()
 STATIC_FILES = abspath('web/static')
@@ -41,10 +43,10 @@ def register():
 	Accept an URL and return its tag, enter a register record in the DB
 	if this is the first time we've seen this URL.
 	'''
-	url = self._enformenate(environ).getfirst('urly')
+	url = request.forms['urly']
 	unseen, tag = url2tag(url)
 	if unseen:
-		self.log.info('register %s %r', tag, url)
+		log.info('register %s %r', tag, url)
 	return tag
 
 

@@ -94,7 +94,6 @@ def tag2url(tag):
 
 def normalize_url(url):
 	try:
-		url = str(url)
 		result = urlparse(url)
 	except:
 		log.exception('While parsing URL %r', url)

@@ -33,7 +33,7 @@ def to36(i):
 
 
 def tag_for(s):
-	return to36(int(md5(s).hexdigest(), 16))
+	return to36(int(md5(s.encode('utf_8')).hexdigest(), 16))
 
 
 if __name__ == '__main__':
