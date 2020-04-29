@@ -18,18 +18,22 @@
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
 import mimetypes
-from os.path import splitext, join, exists
+from os.path import splitext, join, exists, abspath
 from cgi import FieldStorage
 from traceback import format_exc
 from stores import url2tag, tag2url, bump, engage
-from bottle import get, post, run
+from bottle import get, post, run, static_file
 
 REG_TEMPLATE = open('web/register.html', 'rb').read()
+STATIC_FILES = abspath('web/static')
+
+@get('/static/<filename:path>')
+def get_static(filename):
+    return static_file(filename, root=STATIC_FILES)
 
 @get('/register')
 def get_register():
 	return REG_TEMPLATE
-
 
 @post('/register')
 def register():
