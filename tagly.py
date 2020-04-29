@@ -18,10 +18,10 @@
 #    along with MemeStreamer.  If not, see <http://www.gnu.org/licenses/>.
 #
 from hashlib import md5
-from string import digits, lowercase
+from string import digits
 
 
-STR = (digits + lowercase).__getitem__
+STR = (digits + 'abcdefghijklmnopqrstuvwxyz').__getitem__
 
 
 def to36(i):
