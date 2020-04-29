@@ -50,3 +50,13 @@ http://localhost:8000/bump/c81aaxp0mf8hn95o3bawr6ftt/c81aaxp0mf8hn95o3bawr6ftt/c
 
 c81aaxp0mf8hn95o3bawr6ftt
 
+
+http://localhost:8000/bump/7b7uylpbadz5zsm9r3uf7oy9y/74bteivzc9y7tbqlq81z99pu1
+
+http://localhost:8000/bump/
+
+
+c81aaxp0mf8hn95o3bawr6ftt/c81aaxp0mf8hn95o3bawr6ftt
+
+
+

@@ -65,10 +65,3 @@ def get_args(argv=None):
 		import sys
 		argv = sys.argv[1:]
 	return make_argparser().parse_args(argv)
-
-
-# def _print_serving(host, port):
-# 	print(
-# 		'server at http://%s:%i/'
-# 		% (host or 'localhost', port)
-# 		)
