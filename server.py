@@ -20,7 +20,7 @@
 import logging
 from os.path import abspath
 from stores import url2tag, tag2url, bump, engage
-from bottle import get, post, request, static_file
+from bottle import get, post, request, run, static_file
 
 log = logging.getLogger('mon')
 
