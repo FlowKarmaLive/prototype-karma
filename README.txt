@@ -68,8 +68,6 @@ dourrlegdsk0q1ddcen9l2wuj
 http://localhost:8000/bump/dourrlegdsk0q1ddcen9l2wuj/239qr624jpvwusnyzj7wzj2oi
 
 
-5hc6mj8chr78r6tghd5m3dgxz - https://twitter.com/m/SimonForman
-
 
 http://localhost:8000/bump/5hc6mj8chr78r6tghd5m3dgxz/239qr624jpvwusnyzj7wzj2oi/
 http://localhost:8000/bump/5hc6mj8chr78r6tghd5m3dgxz/239qr624jpvwusnyzj7wzj2oi/
