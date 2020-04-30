@@ -1,5 +1,41 @@
-Registration
-================================
+# Prototype/Demo for [FlowKarma.Live](https://FlowKarma.Live)
+
+
+Lorem...
+
+## Install
+
+Clone the repo.  Make sure you have the deps installed (TODO: setup.py,
+or pyproject.toml, or whatever): `sqlite3`   ...I think that's it.
+
+Make sure you have Python 3, change into the repo dir and:
+
+```
+    $ python run.py 
+    Bottle v0.13-dev server starting up (using WSGIRefServer())...
+    Listening on http://localhost:8000/
+    Hit Ctrl-C to quit.
+```
+
+There you go.  The root path is 404 at the moment.  Start at
+[http://localhost:8000/register](http://localhost:8000/register)
+
+## Registration
+
+At that URL 
+[http://localhost:8000/register](http://localhost:8000/register)
+you'll see "Register an URL" and a single form field for entering an URL.
+If you put an URL in there and click the button, a new panel will appear
+with a "tag" for that URL (it's MD5 encoded in base 36) which can then be
+used to make "bump" URLs.
+
+--------------------
+
+Before I go on I should go find the other stuff I've written so I'm not
+repeating myself.
+
+--------------------
+
 
 Just a mapping from identifier URLs to opaque tags.
 
