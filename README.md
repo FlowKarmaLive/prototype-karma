@@ -20,6 +20,26 @@ Make sure you have Python 3, change into the repo dir and:
 There you go.  The root path is 404 at the moment.  Start at
 [http://localhost:8000/register](http://localhost:8000/register)
 
+
+## Walkthrough
+
+In normal operation:
+
+1. You hear about FK.L from a friend and they send you an "anon bump
+   URL".
+2. You follow that URL,
+    - the system prompts you to select a site/URL to represent yourself
+    - sets an `own_tag` cookie with the hash.
+3. Then it redirects to a non-anon "bump URL" that
+    - records the interaction
+    - serves a page with the subject site in an iframe.
+4. The header of the page offers you to
+    - Forward the page to your contacts with new bump URLs.
+    - Reject, with optional feedback.
+    - Engage. (Redirect to the subject site.)
+
+
+
 ## Registration
 
 At that URL 
@@ -28,6 +48,40 @@ you'll see "Register an URL" and a single form field for entering an URL.
 If you put an URL in there and click the button, a new panel will appear
 with a "tag" for that URL (it's MD5 encoded in base 36) which can then be
 used to make "bump" URLs.
+
+Registering an URL doesn't set the `own_url` cookie.  You would typically
+have done that when you first received an "anon bump".
+
+## Anonymous Bumps
+
+This is an URL sent to you by a friend that has only two hashes in it:
+the sender's and the subject's.
+[Register](http://localhost:8000/register) a few URLS, e.g.:
+
+```
+85r32bnav3tj6jmvfwj1wfyxu http://localhost:8000/register
+1yjzqv59md3ndkouycwl7yrj0 https://en.wikipedia.org/wiki/SQLite
+eus303iri9v7oxm2u2dl8dqfi https://sqlite.org/cli.html
+c81aaxp0mf8hn95o3bawr6ftt https://bottlepy.org/docs/dev/routing.html
+74bteivzc9y7tbqlq81z99pu1 https://www.dillo.org/
+dbot4o3328q0fdz4ov6dgeyfa https://www.sqlalchemy.org/
+```
+
+Then construct an url like this:
+
+```
+http://localhost:8000/bump/<sender>/<subject>
+```
+
+So if we imagine that Dillo wants to tell you about Sqlalchemy the *anon
+bump URL* would look like this:
+
+```
+http://localhost:8000/bump/74bteivzc9y7tbqlq81z99pu1/dbot4o3328q0fdz4ov6dgeyfa
+```
+
+
+## Bump URLs
 
 --------------------
 
