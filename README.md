@@ -117,7 +117,7 @@ The new network linkage between sender and receiver is logged.
 The header above the iframe provides a context that allows for forwarding
 rewritten bumps to that user's contacts.
 
-If an unknown user (browser without an 'own_tag` cookie) opens a bump URL
+If an unknown user (browser without an `own_tag` cookie) opens a bump URL
 we treat is as an anon bump.
 
 
