@@ -36,21 +36,22 @@ def connect(db_file, create_tables):
 
 
 def bump(sender, it, receiver):
-	c, t = conn.cursor(), T()
+	c = conn.cursor()
 	try:
-		result = bumpdb(c, t, sender, it, receiver)
+		result = bumpdb(c, T(), sender, it, receiver)
 	finally:
 		c.close()
 	if result:
 		conn.commit()
 		return True
 	log.debug('duplicate bump %s %s %s', sender, it, receiver)
+	return False
 
 
 def engage(receiver, it):
-	c, t = conn.cursor(), T()
+	c = conn.cursor()
 	try:
-		result = engagedb(c, t, receiver, it)
+		result = engagedb(c, T(), receiver, it)
 	finally:
 		c.close()
 	if result:
@@ -73,7 +74,7 @@ def url2tag(url_):
 
 	if result:
 		conn.commit()
-		log.debug('Wrote %s %r', tag, url)
+		log.debug('Tagged %s %r', tag, url)
 	else:
 		log.debug('Already tagged %s %r', tag, url)
 

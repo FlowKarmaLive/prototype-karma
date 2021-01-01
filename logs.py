@@ -27,10 +27,10 @@ def setup_log(extra_record=False):
 	log = logging.getLogger('mon')
 	log.setLevel(logging.DEBUG)
 
-	sh = logging.StreamHandler()
-	sh.setLevel(logging.DEBUG)
-	sh.setFormatter(F)
-	log.addHandler(sh)
+	# sh = logging.StreamHandler()
+	# sh.setLevel(logging.INFO)
+	# sh.setFormatter(F)
+	# log.addHandler(sh)
 
 	fh = logging.FileHandler('memestreamer.log')
 	fh.setLevel(logging.DEBUG)
@@ -40,8 +40,8 @@ def setup_log(extra_record=False):
 	if extra_record:
 		fh = logging.FileHandler('record.log')
 		fh.setLevel(logging.INFO)
-		fh.setFormatter(logging.Formatter('%(message)s'))
-		log.getChild('record').addHandler(fh)
+		fh.setFormatter(logging.Formatter('%(created)f %(message)s'))
+		log.addHandler(fh)
 
 	return log
 
