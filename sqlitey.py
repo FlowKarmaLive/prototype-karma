@@ -50,8 +50,7 @@ def write_tag(c, when, tag, url):
 
 
 def get_tag(c, tag):
-	tag = (tag,)
-	c.execute('select url from tags where tag=?', tag)
+	c.execute('select url from tags where tag=?', (tag,))
 	result = c.fetchone()
 	return str(result[0]) if result else None
 
