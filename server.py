@@ -32,6 +32,11 @@ def home_page():
     return static_file('index.html', root=STATIC_FILES)
 
 
+@get('/favicon.ico')
+def favicon_ico():
+    return static_file('favicon.ico', root=STATIC_FILES)
+
+
 @get('/static/<filename:path>')
 def get_static(filename):
     return static_file(filename, root=STATIC_FILES)
