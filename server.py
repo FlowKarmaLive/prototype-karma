@@ -28,7 +28,7 @@ STATIC_FILES = abspath('web/static')
 
 
 @get('/')
-def get_static():
+def home_page():
     return static_file('index.html', root=STATIC_FILES)
 
 
