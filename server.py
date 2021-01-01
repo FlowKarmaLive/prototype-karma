@@ -42,13 +42,13 @@ def get_static(filename):
     return static_file(filename, root=STATIC_FILES)
 
 
-@post('/register')
+@post('/reg')
 def register():
 	'''
 	Accept an URL and return its tag, enter a register record in the DB
 	if this is the first time we've seen this URL.
 	'''
-	url = request.forms['urly']  # Value 'request.forms' is unsubscriptable ?
+	url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
 	unseen, tag = url2tag(url)
 	if unseen:
 		log.info('register %s %r', tag, url)
