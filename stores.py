@@ -62,20 +62,20 @@ def engage(receiver, it):
 def url2tag(url_):
 	url = normalize_url(url_)
 	if not url:
-		log.debug('Not normalized URL %r', url_)
-		raise ValueError('Not normalized URL %r' % (url_,))
+		log.debug('Bad URL %r' % (url_,))
+		abort(400, 'Bad URL')
 
-	c, t, tag = conn.cursor(), T(), tag_for(url)
+	c, tag = conn.cursor(), tag_for(url)
 	try:
-		result = write_tag(c, t, tag, url)
+		result = write_tag(c, T(), tag, url)
 	finally:
 		c.close()
 
 	if result:
 		conn.commit()
-		log.debug('Wrote %s %s', tag, url)
+		log.debug('Wrote %s %r', tag, url)
 	else:
-		log.debug('Already tagged %s %s', tag, url)
+		log.debug('Already tagged %s %r', tag, url)
 
 	return bool(result), tag
 
@@ -87,7 +87,7 @@ def tag2url(tag):
 	finally:
 		c.close()
 	if url:
-		log.debug('Found %s %s', tag, url)
+		log.debug('Found %s %r', tag, url)
 		return url
 	log.debug('Missed %s', tag)
 	abort(400, 'Unknown tag: %s' % tag)
