@@ -24,20 +24,17 @@ from bottle import get, post, request, run, static_file
 
 log = logging.getLogger('mon')
 
-BUMP_ANON_TEMPLATE = open('web/bump_anon.html').read()
-BUMP_TEMPLATE = open('web/bump.html').read()
-REG_TEMPLATE = open('web/register.html').read()
 STATIC_FILES = abspath('web/static')
+
+
+@get('/')
+def get_static():
+    return static_file('index.html', root=STATIC_FILES)
 
 
 @get('/static/<filename:path>')
 def get_static(filename):
     return static_file(filename, root=STATIC_FILES)
-
-
-@get('/register')
-def get_register():
-	return REG_TEMPLATE
 
 
 @post('/register')
@@ -46,7 +43,7 @@ def register():
 	Accept an URL and return its tag, enter a register record in the DB
 	if this is the first time we've seen this URL.
 	'''
-	url = request.forms['urly']
+	url = request.forms['urly']  # Value 'request.forms' is unsubscriptable ?
 	unseen, tag = url2tag(url)
 	if unseen:
 		log.info('register %s %r', tag, url)
@@ -65,7 +62,7 @@ def bump_anon_handler(sender, it):
 		it=it,
 		server=request['HTTP_HOST'],
 		)
-	return BUMP_ANON_TEMPLATE % data
+	return str(data)
 
 
 @get('/bump'
@@ -85,7 +82,7 @@ def bump_handler(sender, it, receiver):
 		)
 	if bump(sender, it, receiver):
 		log.info('bump %s %s %s', sender, it, receiver)
-	return BUMP_TEMPLATE % data
+	return str(data)
 
 
 @get('/engage'
