@@ -17,28 +17,42 @@
 #    You should have received a copy of the GNU General Public License
 #    along with FlowKarma.Live.  If not, see <http://www.gnu.org/licenses/>.
 #
+'''
+Tags are lowercase ASCII letters and digits with potentially ambiguous
+characters and vowels removed.  This leaves these twenty-four characters:
+
+    2 3 4 7 9 c d f g h j k m n p q r s t v w x y z
+
+First we find the MD5 sum of the URL, take the integer that that
+represents as a hexidecimal number, and then encode that in base-24 with
+the above symbols, in reverse order, as numerals.
+'''
 from hashlib import md5
-from string import digits
 
 
-STR = (digits + 'abcdefghijklmnopqrstuvwxyz').__getitem__
+_chars = _chars = '23479cdfghjkmnpqrstvwxyz'
+_base = len(_chars)
+_char = _chars.__getitem__
 
 
-def to36(i):
-	acc = []
+def to_base(i):
+	return ''.join(_to_base(i))
+
+
+def _to_base(i):
 	while i:
-		i, r = divmod(i, 36)
-		acc.append(STR(r))
-	return ''.join(acc[::-1])
+		i, r = divmod(i, _base)
+		yield _char(r)
 
 
 def tag_for(s):
-	return to36(int(md5(s.encode('utf_8')).hexdigest(), 16))
+	return to_base(int(md5(s.encode('utf_8')).hexdigest(), 16))
 
 
 if __name__ == '__main__':
 	m = md5(b"Hey! Funny").hexdigest()
 	n = int(m, 16)
-	print(n, m)
-	M = to36(n)
-	print(int(M, 36), M)
+	M = to_base(n)
+	print('hash   ', m)
+	print('int    ', n)
+	print('base', _base, M)
