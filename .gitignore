@@ -2,3 +2,5 @@
 memestreamer.log
 memestreamer.sqlite
 record.log
+web/sessions
+.vscode/*
