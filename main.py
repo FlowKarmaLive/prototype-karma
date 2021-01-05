@@ -20,18 +20,22 @@
 #
 from argparse import ArgumentParser
 from os.path import abspath, exists
-from server import run
+from server import run, app
 import stores
+from secure_cookie.session import FilesystemSessionStore
+from secure_cookie.session import SessionMiddleware
 
 
-def main(log, argv=None):
+def main(log, argv=None, app=app):
 	args = get_args(argv)
+	session_store = FilesystemSessionStore(path=abspath('web/sessions'))
+	app = SessionMiddleware(app, session_store)
 	db_file = abspath(args.db_file)
 	create_tables = not exists(db_file)
 	if create_tables:
 		log.info('DB file %r not found, creating.' % db_file)
 	stores.connect(db_file, create_tables)
-	run(host=args.host, port=args.port)
+	run(app, host=args.host, port=args.port)
 
 
 def make_argparser():

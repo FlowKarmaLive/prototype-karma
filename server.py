@@ -20,89 +20,98 @@
 import logging
 from os.path import abspath
 from stores import url2tag, tag2url, bump, engage
-from bottle import get, post, request, run, static_file
+from bottle import Bottle, get, post, request, run, static_file
+
 
 log = logging.getLogger('mon')
 
 STATIC_FILES = abspath('web/static')
+SECRET_KEY = b"not a secret"
 
+app = Bottle()
 
-@get('/')
+@app.get('/')
 def home_page():
+    session = request.environ.get('secure_cookie.session')
+    if 'count' in session:
+        session['count'] += 1
+    else:
+        session['count'] = 1
+    print("sess", session)    
     return static_file('index.html', root=STATIC_FILES)
 
 
-@get('/favicon.ico')
+@app.get('/favicon.ico')
 def favicon_ico():
     return static_file('favicon.ico', root=STATIC_FILES)
 
 
-@get('/static/<filename:path>')
+@app.get('/static/<filename:path>')
 def get_static(filename):
     return static_file(filename, root=STATIC_FILES)
 
 
-@post('/reg')
+@app.post('/reg')
 def register():
-	'''
-	Accept an URL and return its tag, enter a register record in the DB
-	if this is the first time we've seen this URL.
-	'''
-	url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
-	unseen, tag = url2tag(url)
-	if unseen:
-		log.info('register %s %r', tag, url)
-	return tag
+    '''
+    Accept an URL and return its tag, enter a register record in the DB
+    if this is the first time we've seen this URL.
+    '''
+    url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
+    unseen, tag = url2tag(url)
+    if unseen:
+        log.info('register %s %r', tag, url)
+    return tag
 
 
-@get('/bump'
+@app.get('/bump'
      '/<sender:re:[a-z0-9]+>'
-	 '/<it:re:[a-z0-9]+>')
+     '/<it:re:[a-z0-9]+>')
 def bump_anon_handler(sender, it):
-	'''Record the connection between two nodes in re: a "meme" URL.'''
-	data = dict(
-		from_url=tag2url(sender),
-		iframe_url=tag2url(it),
-		me=sender,
-		it=it,
-		server=request['HTTP_HOST'],
-		)
-	return str(data)
+    '''Record the connection between two nodes in re: a "meme" URL.'''
+    data = dict(
+        from_url=tag2url(sender),
+        iframe_url=tag2url(it),
+        me=sender,
+        it=it,
+        server=request['HTTP_HOST'],
+        )
+    return str(data)
 
 
-@get('/bump'
+@app.get('/bump'
      '/<sender:re:[a-z0-9]+>'
-	 '/<it:re:[a-z0-9]+>'
-	 '/<receiver:re:[a-z0-9]+>')
+     '/<it:re:[a-z0-9]+>'
+     '/<receiver:re:[a-z0-9]+>')
 def bump_handler(sender, it, receiver):
-	'''Record the connection between two nodes in re: a "meme" URL.'''
-	data = dict(
-		from_url=tag2url(sender),
-		iframe_url=tag2url(it),
-		your_url=tag2url(receiver),
-		me=sender,
-		it=it,
-		you=receiver,
-		server=request['HTTP_HOST'],
-		)
-	if bump(sender, it, receiver):
-		log.info('bump %s %s %s', sender, it, receiver)
-	return str(data)
+    '''Record the connection between two nodes in re: a "meme" URL.'''
+    data = dict(
+        from_url=tag2url(sender),
+        iframe_url=tag2url(it),
+        your_url=tag2url(receiver),
+        me=sender,
+        it=it,
+        you=receiver,
+        server=request['HTTP_HOST'],
+        )
+    if bump(sender, it, receiver):
+        log.info('bump %s %s %s', sender, it, receiver)
+    return str(data)
 
 
-@get('/engage'
+@app.get('/engage'
      '/<receiver:re:[a-z0-9]+>'
-	 '/<it:re:[a-z0-9]+>')
+     '/<it:re:[a-z0-9]+>')
 def engage_handler(receiver, it):
-	'''
-	Record the "engagement" of a user with some meme.
+    '''
+    Record the "engagement" of a user with some meme.
 
-	Eventually this will generate some sort of correlation code that we
-	return to the calling page which then passes it to the meme URL as a
-	parameter letting whoever's on the other know who to thank.
-	'''
-	tag2url(receiver) ; tag2url(it)  # crude validation
-	key = engage(receiver, it)
-	if key:
-		log.info('engage key:%s %s %s', key, receiver, it)
-	return 'engaged'
+    Eventually this will generate some sort of correlation code that we
+    return to the calling page which then passes it to the meme URL as a
+    parameter letting whoever's on the other know who to thank.
+    '''
+    tag2url(receiver) ; tag2url(it)  # crude validation
+    key = engage(receiver, it)
+    if key:
+        log.info('engage key:%s %s %s', key, receiver, it)
+    return 'engaged'
