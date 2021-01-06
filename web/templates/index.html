@@ -9,6 +9,10 @@
 </head>
 <body>
   <noscript>Please enable Javascript to use this web app.</noscript>
-  <script>var app = Elm.Main.init();</script>
+  <script>
+    var app = Elm.Main.init({
+      flags: "%(profile)s"
+    });
+  </script>
 </body>
 </html>

@@ -18,7 +18,7 @@
 #    along with FlowKarma.Live.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging
-from os.path import abspath
+from os.path import abspath, join
 from stores import url2tag, tag2url, bump, engage, get_user_profile
 from bottle import Bottle, get, post, request, run, static_file
 
@@ -40,7 +40,11 @@ def home_page():
     print(data)
     # how put data in page?
     # how Elm in page read data?
-    return static_file('index.html', root=TEMPLATES)
+    INDEX_HTML = open(join(TEMPLATES, 'index.html'), 'r').read()
+    # Reading the file per-request to not have to restart the server
+    # to see changes to the template file.  Later this line above should
+    # go back to module scope.
+    return INDEX_HTML % data
 
 
 @app.get('/favicon.ico')
