@@ -2,6 +2,7 @@
 
 h1 {
     font-family: 'Cinzel Decorative', cursive;
+    text-align: center;
 }
 
 body {
@@ -17,4 +18,10 @@ html, button, input, select, textarea,
 .pure-g [class *= "pure-u"] {
     /* Set your content font stack here: */
     font-family: 'EB Garamond', serif;
+}
+
+.l-box {
+    padding-left: 1em;
+    padding-right: 1em;
+    text-align: justify;
 }
