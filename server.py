@@ -26,6 +26,7 @@ from bottle import Bottle, get, post, request, run, static_file
 log = logging.getLogger('mon')
 
 STATIC_FILES = abspath('web/static')
+TEMPLATES = abspath('web/templates')
 SECRET_KEY = b"not a secret"
 
 app = Bottle()
@@ -40,7 +41,7 @@ def home_page():
     else:
         session['count'] = 1
     print("sess", session)    
-    return static_file('index.html', root=STATIC_FILES)
+    return static_file('index.html', root=TEMPLATES)
 
 
 @app.get('/favicon.ico')
