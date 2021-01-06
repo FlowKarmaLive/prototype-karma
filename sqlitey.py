@@ -34,6 +34,7 @@ CREATE_TABLES = '''\
 create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, to_ TEXT)
 create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
 create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
+create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, lineage TEXT)
 '''.splitlines(False)
 
 
@@ -45,6 +46,12 @@ def create_tables(conn):
 	conn.commit()
 
 
+def get_user_profile_db(c, user_ID):
+	c.execute('select profile from users where key=?', (user_ID,))
+	result = c.fetchone()
+	return result[0] if result else None
+
+
 def write_tag(c, when, tag, url):
 	return insert(c, 'insert into tags values (?, ?, ?)', when, tag, url)
 
@@ -52,7 +59,7 @@ def write_tag(c, when, tag, url):
 def get_tag(c, tag):
 	c.execute('select url from tags where tag=?', (tag,))
 	result = c.fetchone()
-	return str(result[0]) if result else None
+	return result[0] if result else None
 
 
 def bumpdb(c, when, from_, what, to):

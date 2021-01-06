@@ -19,7 +19,7 @@
 #
 import logging
 from os.path import abspath
-from stores import url2tag, tag2url, bump, engage
+from stores import url2tag, tag2url, bump, engage, get_user_profile
 from bottle import Bottle, get, post, request, run, static_file
 
 
@@ -36,13 +36,10 @@ def home_page():
     user_ID = request.headers.get('X-Ssl-Client-Serial')
     if user_ID is None:
         return static_file('unknown_index.html', root=TEMPLATES)
-    print(user_ID)
-    session = request.environ.get('secure_cookie.session')
-    if 'count' in session:
-        session['count'] += 1
-    else:
-        session['count'] = 1
-    print("sess", session)    
+    data = get_user_profile(user_ID)
+    print(data)
+    # how put data in page?
+    # how Elm in page read data?
     return static_file('index.html', root=TEMPLATES)
 
 

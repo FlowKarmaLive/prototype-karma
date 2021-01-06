@@ -19,7 +19,7 @@
 #
 import logging
 from urllib.parse import urlparse
-from sqlitey import get_tag, write_tag, get_conn, bumpdb, engagedb, T
+from sqlitey import get_tag, write_tag, get_conn, bumpdb, engagedb, T, get_user_profile_db
 from tagly import tag_for
 from bottle import abort
 
@@ -103,3 +103,16 @@ def normalize_url(url):
 	if (result.scheme.lower() in ('http', 'https')
 			and not (result.params or result.query or result.fragment)):
 		return result.geturl()
+
+
+def get_user_profile(user_ID):
+	c = conn.cursor()
+	try:
+		profile_data = get_user_profile_db(c, user_ID)
+	finally:
+		c.close()
+	if profile_data is None:
+		abort(400, 'Unknown user: %r' % (user_ID,))
+	return {
+		'profile': profile_data
+	}
