@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond');
 
+h1 {
+    font-family: 'Cinzel Decorative', cursive;
+}
+
 body {
     font-family: 'EB Garamond', serif;
 }

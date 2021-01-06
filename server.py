@@ -34,6 +34,8 @@ app = Bottle()
 @app.get('/')
 def home_page():
     user_ID = request.headers.get('X-Ssl-Client-Serial')
+    if user_ID is None:
+        return static_file('unknown_index.html', root=TEMPLATES)
     print(user_ID)
     session = request.environ.get('secure_cookie.session')
     if 'count' in session:
