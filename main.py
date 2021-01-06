@@ -28,7 +28,7 @@ from secure_cookie.session import SessionMiddleware
 
 def main(log, argv=None, app=app):
 	args = get_args(argv)
-	session_store = FilesystemSessionStore(path=abspath('web/sessions'))
+	session_store = FilesystemSessionStore(path=abspath('web/sessions'))  # TODO make it a CLI arg.
 	app = SessionMiddleware(app, session_store)
 	db_file = abspath(args.db_file)
 	create_tables = not exists(db_file)

@@ -32,6 +32,8 @@ app = Bottle()
 
 @app.get('/')
 def home_page():
+    user_ID = request.headers.get('X-Ssl-Client-Serial')
+    print(user_ID)
     session = request.environ.get('secure_cookie.session')
     if 'count' in session:
         session['count'] += 1
