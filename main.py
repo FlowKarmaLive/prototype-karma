@@ -35,7 +35,7 @@ def main(log, argv=None, app=app):
 	if create_tables:
 		log.info('DB file %r not found, creating.' % db_file)
 	stores.connect(db_file, create_tables)
-	run(app, host=args.host, port=args.port)
+	run(app, host=args.host, port=args.port, reloader=True)  # TODO make reloader a CLI arg.
 
 
 def make_argparser():
