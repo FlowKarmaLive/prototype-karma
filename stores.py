@@ -127,5 +127,5 @@ def get_user_profile(user_ID):
 	if profile_data is None:
 		abort(400, 'Unknown user: %r' % (user_ID,))
 	return {
-		'profile': json.dumps(profile_data)
+		'profile': profile_data
 	}

@@ -37,6 +37,7 @@ def home_page():
     if not user_ID:
         return static_file('unknown_index.html', root=TEMPLATES)
     data = get_user_profile(user_ID)
+    data['profile'] = json.dumps(data['profile'])
 
     INDEX_HTML = open(join(TEMPLATES, 'index.html'), 'r').read()
     # Reading the file per-request to not have to restart the server
@@ -84,8 +85,10 @@ def bump_anon_handler(share):
     if not request.headers.get('X-Ssl-Client-Serial'):
         redirect('/')
     sender, subject = get_share(share[1:])
+    print(sender)
     return open(join(TEMPLATES, 'share.html'), 'r').read() % {
-        'from': json.dumps(sender),
+        'from_profile': get_user_profile(sender)['profile'],
+        'from_id': sender,
         'subject': json.dumps(subject),
         }
 
