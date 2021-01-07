@@ -34,7 +34,7 @@ app = Bottle()
 @app.get('/')
 def home_page():
     user_ID = request.headers.get('X-Ssl-Client-Serial')
-    if user_ID is None:
+    if not user_ID:
         return static_file('unknown_index.html', root=TEMPLATES)
     data = get_user_profile(user_ID)
 
@@ -51,6 +51,9 @@ def favicon_ico():
     return static_file('favicon.ico', root=STATIC_FILES)
 
 
+# Uncomment this route & handler to support dev (in other words, if caddy
+# is not there to server them for us.)
+
 # @app.get('/static/<filename:path>')
 # def get_static(filename):
 #     return static_file(filename, root=STATIC_FILES)
@@ -62,11 +65,18 @@ def register():
     Accept an URL and return its tag, enter a register record in the DB
     if this is the first time we've seen this URL.
     '''
+    user_ID = request.headers.get('X-Ssl-Client-Serial')
+    if not user_ID:
+        return static_file('unknown_index.html', root=TEMPLATES)
+
     url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
     unseen, tag = url2tag(url)
     if unseen:
         log.info('register %s %r', tag, url)
-    return tag
+    
+    server = request['HTTP_HOST']
+    rul = "https://%s/%s/%s" % (server, user_ID, tag)
+    return rul
 
 
 @app.get('/bump'

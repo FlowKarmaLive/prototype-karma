@@ -7,7 +7,7 @@ localhost:2015 {
 	file_server /static/*
 	tls {
 		client_auth {
-			mode require_and_verify
+			mode verify_if_given
 			trusted_ca_cert_file ./ca.crt
 		}
 	}
