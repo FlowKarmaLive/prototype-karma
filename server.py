@@ -91,11 +91,15 @@ def bump_anon_handler(share):
     server = request['HTTP_HOST']
     if bump(sender, subject, user_ID):
         log.info('bump %s %s %s', sender, subject, user_ID)
+    unseen, mytag = url2tag(user_ID, subject)
+    if unseen:
+        log.info('register %s %s %r', user_ID, tag, subject)
     return open(join(TEMPLATES, 'share.html'), 'r').read() % {
         'from_profile': profile,
         'from_id': sender,
         'subject': json.dumps(subject),
-        'bump_url': "https://%s/∋%s" % (server, tag)
+        'bump_url':  "https://%s/∋%s" % (server, tag),
+        'share_url': "https://%s/∴%s" % (server, mytag),
         }
 
 
