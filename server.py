@@ -82,18 +82,34 @@ def register():
 @app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def bump_anon_handler(share):
     '''Present the "Shared with you..." page.'''
-    if not request.headers.get('X-Ssl-Client-Serial'):
+    user_ID = request.headers.get('X-Ssl-Client-Serial')
+    if not user_ID:
         redirect('/')
     tag = share[1:]
     sender, subject = get_share(tag)
     profile = get_user_profile(sender)['profile']
     server = request['HTTP_HOST']
+    if bump(sender, subject, user_ID):
+        log.info('bump %s %s %s', sender, subject, user_ID)
     return open(join(TEMPLATES, 'share.html'), 'r').read() % {
         'from_profile': profile,
         'from_id': sender,
         'subject': json.dumps(subject),
         'bump_url': "https://%s/∋%s" % (server, tag)
         }
+
+
+@app.get('/<share:re:∋[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
+def eeee(share):
+    '''Record a engage event.'''
+    user_ID = request.headers.get('X-Ssl-Client-Serial')
+    if not user_ID:
+        redirect('/')
+    tag = share[1:]
+    _, subject = get_share(tag)
+    if engage(user_ID, subject):
+        log.info('engage %s %s', user_ID, subject)
+    redirect(subject)
 
 
 @app.get('/bump'
