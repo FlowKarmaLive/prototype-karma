@@ -81,15 +81,18 @@ def register():
 
 @app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def bump_anon_handler(share):
-    '''Record the connection between two nodes in re: a "meme" URL.'''
+    '''Present the "Shared with you..." page.'''
     if not request.headers.get('X-Ssl-Client-Serial'):
         redirect('/')
-    sender, subject = get_share(share[1:])
-    print(sender)
+    tag = share[1:]
+    sender, subject = get_share(tag)
+    profile = get_user_profile(sender)['profile']
+    server = request['HTTP_HOST']
     return open(join(TEMPLATES, 'share.html'), 'r').read() % {
-        'from_profile': get_user_profile(sender)['profile'],
+        'from_profile': profile,
         'from_id': sender,
         'subject': json.dumps(subject),
+        'bump_url': "https://%s/∋%s" % (server, tag)
         }
 
 
