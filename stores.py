@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with FlowKarma.Live.  If not, see <http://www.gnu.org/licenses/>.
 #
-import logging, html
+import logging, json
 from urllib.parse import urlparse
 from sqlitey import get_tag, write_tag, get_conn, bumpdb, engagedb, T, get_user_profile_db
 from tagly import tag_for
@@ -114,5 +114,5 @@ def get_user_profile(user_ID):
 	if profile_data is None:
 		abort(400, 'Unknown user: %r' % (user_ID,))
 	return {
-		'profile': html.escape(profile_data)
+		'profile': json.dumps(profile_data)
 	}

@@ -5336,9 +5336,9 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Main$Model = F2(
-	function (content, status) {
-		return {content: content, status: status};
+var $author$project$Main$Model = F3(
+	function (content, profile, status) {
+		return {content: content, profile: profile, status: status};
 	});
 var $author$project$Main$Success = function (a) {
 	return {$: 'Success', a: a};
@@ -5347,8 +5347,9 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (profile) {
 	return _Utils_Tuple2(
-		A2(
+		A3(
 			$author$project$Main$Model,
+			'',
 			profile,
 			$author$project$Main$Success('https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif')),
 		$elm$core$Platform$Cmd$none);
@@ -6238,9 +6239,8 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$form = _VirtualDom_node('form');
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
@@ -6298,6 +6298,34 @@ var $elm$html$Html$Events$onSubmit = function (msg) {
 			$elm$json$Json$Decode$succeed(msg)));
 };
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $author$project$Main$pure_full_width = function (children) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('pure-g')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('pure-u-1-1')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('l-box')
+							]),
+						children)
+					]))
+			]));
+};
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
@@ -6375,54 +6403,45 @@ var $author$project$Main$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('pure-g')
-					]),
+				$author$project$Main$pure_full_width(
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$div,
+						$elm$html$Html$h1,
+						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('pure-u-1-1')
+								$elm$html$Html$text('FlowKarma.Live')
+							])),
+						$elm$html$Html$text(model.profile)
+					])),
+				$author$project$Main$pure_full_width(
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$form,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('pure-form'),
+								$elm$html$Html$Events$onSubmit($author$project$Main$RegisterURL)
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$h2,
-								_List_Nil,
+								$elm$html$Html$input,
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Random Cats')
-									])),
-								A2(
-								$elm$html$Html$form,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pure-form'),
-										$elm$html$Html$Events$onSubmit($author$project$Main$RegisterURL)
+										$elm$html$Html$Attributes$placeholder('URL to register'),
+										$elm$html$Html$Attributes$class('pure-input-1'),
+										$elm$html$Html$Attributes$value(model.content),
+										$elm$html$Html$Events$onInput($author$project$Main$EditURL)
 									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$input,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$placeholder('URL to register'),
-												$elm$html$Html$Attributes$class('pure-input-1'),
-												$elm$html$Html$Attributes$value(model.content),
-												$elm$html$Html$Events$onInput($author$project$Main$EditURL)
-											]),
-										_List_Nil)
-									])),
-								$author$project$Main$viewGif(model)
-							]))
+								_List_Nil)
+							])),
+						$author$project$Main$viewGif(model)
 					]))
 			]),
-		title: 'Hi there!'
+		title: 'FlowKarma.Live'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$document(

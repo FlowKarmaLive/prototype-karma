@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative');
 
 h1 {
     font-family: 'Cinzel Decorative', cursive;
@@ -23,5 +24,6 @@ html, button, input, select, textarea,
 .l-box {
     padding-left: 1em;
     padding-right: 1em;
+    margin-bottom: 0.5em;
     text-align: justify;
 }
