@@ -6329,7 +6329,14 @@ var $author$project$Main$pure_full_width = function (children) {
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -6346,7 +6353,7 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$html$Html$pre = _VirtualDom_node('pre');
 var $author$project$Main$viewGif = function (model) {
 	var _v0 = model.status;
 	switch (_v0.$) {
@@ -6372,7 +6379,7 @@ var $author$project$Main$viewGif = function (model) {
 		case 'Loading':
 			return $elm$html$Html$text('Loading...');
 		default:
-			var hash = _v0.a;
+			var url = _v0.a;
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
@@ -6387,14 +6394,23 @@ var $author$project$Main$viewGif = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('More Please!')
+								$elm$html$Html$text('Get Share URL')
 							])),
 						A2(
-						$elm$html$Html$p,
+						$elm$html$Html$pre,
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text(hash)
+								A2(
+								$elm$html$Html$a,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$href(url)
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(url)
+									]))
 							]))
 					]));
 	}
