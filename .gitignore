@@ -4,3 +4,4 @@ memestreamer.sqlite
 record.log
 web/sessions
 .vscode/*
+web/ca.crt

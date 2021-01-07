@@ -37,13 +37,12 @@ def home_page():
     if user_ID is None:
         return static_file('unknown_index.html', root=TEMPLATES)
     data = get_user_profile(user_ID)
-    print(data)
-    # how put data in page?
-    # how Elm in page read data?
+
     INDEX_HTML = open(join(TEMPLATES, 'index.html'), 'r').read()
     # Reading the file per-request to not have to restart the server
     # to see changes to the template file.  Later this line above should
     # go back to module scope.
+
     return INDEX_HTML % data
 
 
@@ -52,9 +51,9 @@ def favicon_ico():
     return static_file('favicon.ico', root=STATIC_FILES)
 
 
-@app.get('/static/<filename:path>')
-def get_static(filename):
-    return static_file(filename, root=STATIC_FILES)
+# @app.get('/static/<filename:path>')
+# def get_static(filename):
+#     return static_file(filename, root=STATIC_FILES)
 
 
 @app.post('/reg')
