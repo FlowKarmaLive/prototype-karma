@@ -17,10 +17,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with FlowKarma.Live.  If not, see <http://www.gnu.org/licenses/>.
 #
-import logging
+import logging, json
 from os.path import abspath, join
 from stores import url2tag, tag2url, bump, engage, get_user_profile, get_share
-from bottle import Bottle, get, post, request, run, static_file
+from bottle import Bottle, get, post, request, run, static_file, redirect
 
 
 log = logging.getLogger('mon')
@@ -81,8 +81,13 @@ def register():
 @app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def bump_anon_handler(share):
     '''Record the connection between two nodes in re: a "meme" URL.'''
+    if not request.headers.get('X-Ssl-Client-Serial'):
+        redirect('/')
     sender, subject = get_share(share[1:])
-    return repr((sender, subject))
+    return open(join(TEMPLATES, 'share.html'), 'r').read() % {
+        'from': json.dumps(sender),
+        'subject': json.dumps(subject),
+        }
 
 
 @app.get('/bump'

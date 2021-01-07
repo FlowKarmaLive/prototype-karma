@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Shared with you...</title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"/>
+  <link rel="stylesheet" href="/static/site.css">
+</head>
+<body>
+  <noscript>Please enable Javascript to use this web app.</noscript>
+  <script>
+    var user_ID: %(from)s, URL(%(subject)s);
+  </script>
+  <div class="pure-g">
+    <div class="pure-u-1-1">
+        <h1>FlowKarma.Live</h1>
+    </div>
+    </div>
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+            <div class="l-box">
+                User <a href="https://foo/profile/%(from)s">FlowKarma.Live user</a>
+            </div>
+        </div>
+    </div>
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+            <div class="l-box">
+                <p>wants to share this URL with you</p>
+                <a href=%(subject)s>%(subject)s</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
