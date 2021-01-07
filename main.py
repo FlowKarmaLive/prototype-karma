@@ -20,6 +20,8 @@
 #
 from argparse import ArgumentParser
 from os.path import abspath, exists
+import bottle
+bottle.debug(True)
 from server import run, app
 import stores
 from secure_cookie.session import FilesystemSessionStore
