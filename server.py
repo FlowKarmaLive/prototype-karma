@@ -75,7 +75,7 @@ def register():
         log.info('register %s %r', tag, url)
     
     server = request['HTTP_HOST']
-    rul = "https://%s/%s/%s" % (server, user_ID, tag)
+    rul = "https://%s/∴/%s/%s" % (server, user_ID, tag)
     return rul
 
 
