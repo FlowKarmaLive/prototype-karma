@@ -19,7 +19,7 @@
 #
 import logging
 from os.path import abspath, join
-from stores import url2tag, tag2url, bump, engage, get_user_profile
+from stores import url2tag, tag2url, bump, engage, get_user_profile, get_share
 from bottle import Bottle, get, post, request, run, static_file
 
 
@@ -70,20 +70,19 @@ def register():
         return static_file('unknown_index.html', root=TEMPLATES)
 
     url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
-    unseen, tag = url2tag(url)
+    unseen, tag = url2tag(user_ID, url)
     if unseen:
-        log.info('register %s %r', tag, url)
-    
+        log.info('register %s %s %r', user_ID, tag, url)
+
     server = request['HTTP_HOST']
-    rul = "https://%s/∴/%s/%s" % (server, user_ID, tag)
-    return rul
+    return "https://%s/∴%s" % (server, tag)
 
 
 @app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def bump_anon_handler(share):
     '''Record the connection between two nodes in re: a "meme" URL.'''
-    # sender, subject = get_share(share)
-    return repr(share)
+    sender, subject = get_share(share[1:])
+    return repr((sender, subject))
 
 
 @app.get('/bump'

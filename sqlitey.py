@@ -32,7 +32,7 @@ def get_conn(db=':memory:', create=False):
 
 CREATE_TABLES = '''\
 create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, to_ TEXT)
-create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
+create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, user_ID TEXT, url TEXT)
 create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
 create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, lineage TEXT)
 '''.splitlines(False)
@@ -52,14 +52,20 @@ def get_user_profile_db(c, user_ID):
 	return result[0] if result else None
 
 
-def write_tag(c, when, tag, url):
-	return insert(c, 'insert into tags values (?, ?, ?)', when, tag, url)
+def write_tag(c, when, tag, user_ID, url):
+	return insert(
+		c,
+		'insert into tags values (?, ?, ?, ?)',
+		when,
+		tag,
+		user_ID,
+		url,
+		)
 
 
 def get_tag(c, tag):
-	c.execute('select url from tags where tag=?', (tag,))
-	result = c.fetchone()
-	return result[0] if result else None
+	c.execute('select user_ID, url from tags where tag=?', (tag,))
+	return c.fetchone()
 
 
 def bumpdb(c, when, from_, what, to):

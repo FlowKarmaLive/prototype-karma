@@ -60,15 +60,15 @@ def engage(receiver, it):
 	log.debug('duplicate engage %s %s', receiver, it)
 
 
-def url2tag(url_):
+def url2tag(user_ID, url_):
 	url = normalize_url(url_)
 	if not url:
 		log.debug('Bad URL %r' % (url_,))
 		abort(400, 'Bad URL')
 
-	c, tag = conn.cursor(), tag_for(url)
+	c, tag = conn.cursor(), tag_for('%s∴%s' % (user_ID, url))
 	try:
-		result = write_tag(c, T(), tag, url)
+		result = write_tag(c, T(), tag, user_ID, url)
 	finally:
 		c.close()
 
@@ -80,6 +80,19 @@ def url2tag(url_):
 
 	return bool(result), tag
 
+
+def get_share(tag):
+	c = conn.cursor()
+	try:
+		result = get_tag(c, tag)
+	finally:
+		c.close()
+	if result:
+		user_ID, url = result
+		log.debug('Found %s %s %r', tag, user_ID, url)
+		return user_ID, url
+	log.debug('Missed %s', tag)
+	abort(400, 'Unknown tag: %s' % tag)
 
 def tag2url(tag):
 	c = conn.cursor()
