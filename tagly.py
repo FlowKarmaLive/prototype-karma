@@ -30,7 +30,7 @@ the above symbols, in reverse order, as numerals.
 from hashlib import md5
 
 
-_chars = _chars = '23479cdfghjkmnpqrstvwxyz'
+_chars = '23479cdfghjkmnpqrstvwxyz'
 _base = len(_chars)
 _char = _chars.__getitem__
 

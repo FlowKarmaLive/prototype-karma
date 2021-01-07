@@ -79,19 +79,11 @@ def register():
     return rul
 
 
-@app.get('/bump'
-     '/<sender:re:[a-z0-9]+>'
-     '/<it:re:[a-z0-9]+>')
-def bump_anon_handler(sender, it):
+@app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
+def bump_anon_handler(share):
     '''Record the connection between two nodes in re: a "meme" URL.'''
-    data = dict(
-        from_url=tag2url(sender),
-        iframe_url=tag2url(it),
-        me=sender,
-        it=it,
-        server=request['HTTP_HOST'],
-        )
-    return str(data)
+    # sender, subject = get_share(share)
+    return repr(share)
 
 
 @app.get('/bump'
