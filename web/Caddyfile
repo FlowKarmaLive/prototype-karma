@@ -5,5 +5,13 @@
 }
 localhost:2015 {
 	file_server /static/*
-	reverse_proxy * localhost:8000
+	tls {
+		client_auth {
+			mode require_and_verify
+			trusted_ca_cert_file ./ca.crt
+		}
+	}
+	reverse_proxy * localhost:8000 {
+		header_up X-SSL-Client-Serial {http.request.tls.client.serial}
+	}
 }

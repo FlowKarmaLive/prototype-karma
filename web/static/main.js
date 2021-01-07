@@ -6431,7 +6431,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$input,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$placeholder('URL to register'),
+										$elm$html$Html$Attributes$placeholder('URL to share.'),
 										$elm$html$Html$Attributes$class('pure-input-1'),
 										$elm$html$Html$Attributes$value(model.content),
 										$elm$html$Html$Events$onInput($author$project$Main$EditURL)
