@@ -152,3 +152,12 @@ def engage_handler(receiver, it):
     if key:
         log.info('engage key:%s %s %s', key, receiver, it)
     return 'engaged'
+
+
+@app.get('/newkey')
+def newkey():
+    user_ID = request.headers.get('X-Ssl-Client-Serial')
+    if not user_ID:
+        redirect('/')
+    filename = 'fake.pfx'
+    return static_file(filename, root=STATIC_FILES, download=filename)
