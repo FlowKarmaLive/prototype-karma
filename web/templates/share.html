@@ -19,33 +19,33 @@
     <div class="pure-g">
         <div class="pure-u-1-1">
             <div class="l-box">
-                %(from_profile)s
+                <fieldset>
+                    <legend>From:</legend>
+                    %(from_profile)s
+                </fieldset>
             </div>
         </div>
     </div>
     <div class="pure-g">
         <div class="pure-u-1-1">
             <div class="l-box">
-                wants to share this URL with you %(subject)s
+                <fieldset>
+                    <legend>Sharing:</legend>
+                    <pre><a href=%(subject)s>%(subject)s</a></pre>
+                    <a class="pure-button" href="%(bump_url)s">Engage</a>
+                </fieldset>
             </div>
         </div>
     </div>
     <div class="pure-g">
         <div class="pure-u-1-1">
             <div class="l-box">
-                <a class="pure-button" href="%(bump_url)s">Engage</a>
-                (<a href=%(subject)s>preview</a>)
-            </div>
-        </div>
-    </div>
-    <div class="pure-g">
-        <div class="pure-u-1-1">
-            <div class="l-box">
-                Share this URL with your contacts (right-click and select
-                "Copy Link Location"):<br>
-                <pre>
-                    <a href="%(share_url)s">%(share_url)s</a>
-                </pre>
+                <fieldset>
+                    <legend>Share:</legend>
+                    <pre><a href="%(share_url)s">%(share_url)s</a></pre>
+                    Share this URL with your contacts (right-click and select
+                    "Copy Link Location".)
+                </fieldset>
             </div>
         </div>
     </div>
