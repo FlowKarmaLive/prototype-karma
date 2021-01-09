@@ -5,3 +5,4 @@ record.log
 web/sessions
 .vscode/*
 web/ca.crt
+elm-stuff/
