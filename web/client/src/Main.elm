@@ -177,8 +177,8 @@ viewShareStatus status =
         kids =
             case status of
                 Failure ->
-                    [ text "I could not load a random cat for some reason. "
-                    , bb RegisterURL "Try Again!"
+                    [ bb RegisterURL "Try Again!"
+                    , pre [] [ text "I could not load a random cat for some reason." ]
                     ]
 
                 Loading ->
