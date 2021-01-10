@@ -6704,16 +6704,7 @@ var $author$project$Main$view = function (model) {
 									[
 										$elm$html$Html$text(model.profile)
 									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pure-button')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Update')
-									]))
+								A2($author$project$Main$bb, $author$project$Main$PostProfile, 'Update')
 							]))
 					])),
 				A2(

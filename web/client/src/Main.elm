@@ -128,8 +128,7 @@ view model =
             [ Html.form [ class "pure-form", onSubmit PostProfile ]
                 [ textarea [ class "pure-input-1", onInput EditProfile ]
                     [ text model.profile ]
-                , button [ class "pure-button" ]
-                    [ text "Update" ]
+                , bb PostProfile "Update"
                 ]
             ]
         , labeled_div "Share an URL"
