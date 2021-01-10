@@ -124,15 +124,15 @@ view model =
     , body =
         [ pure_full_width
             [ h1 [] [ text "FlowKarma.Live" ] ]
-        , pure_full_width
+        , labeled_div "About You"
             [ Html.form [ class "pure-form", onSubmit PostProfile ]
                 [ textarea [ class "pure-input-1", onInput EditProfile ]
                     [ text model.profile ]
                 , button [ class "pure-button" ]
-                    [ text "Update Profile" ]
+                    [ text "Update" ]
                 ]
             ]
-        , pure_full_width
+        , labeled_div "Share an URL"
             [ Html.form [ class "pure-form", onSubmit RegisterURL ]
                 [ input
                     [ placeholder "URL to share."
@@ -144,7 +144,7 @@ view model =
                 ]
             , viewGif model
             ]
-        , pure_full_width
+        , labeled_div "Invite New Members"
             [ button [ onClick DownloadNewKey, class "pure-button" ]
                 [ text "Download key cert file to let a friend join." ]
             ]
@@ -160,13 +160,25 @@ pure_full_width children =
         ]
 
 
+labeled_div : String -> List (Html msg) -> Html msg
+labeled_div label children =
+    pure_full_width [ fieldset [] (legend [] [ text label ] :: children) ]
+
+
 viewGif : Model -> Html Msg
 viewGif model =
+    let
+        button_attrs =
+            [ onClick RegisterURL, class "pure-button" ]
+
+        bb label =
+            button button_attrs [ text label ]
+    in
     case model.status of
         Failure ->
             div []
                 [ text "I could not load a random cat for some reason. "
-                , button [ onClick RegisterURL, class "pure-button" ] [ text "Try Again!" ]
+                , bb "Try Again!"
                 ]
 
         Loading ->
@@ -174,7 +186,7 @@ viewGif model =
 
         Success url ->
             div []
-                [ button [ onClick RegisterURL, class "pure-button" ] [ text "Get Share URL" ]
+                [ bb "Get Share URL"
                 , pre [] [ a [ href url ] [ text url ] ]
                 ]
 
