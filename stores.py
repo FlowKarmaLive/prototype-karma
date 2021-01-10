@@ -56,6 +56,16 @@ create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites I
 '''.splitlines(False)
 
 
+SQL_0 = 'insert into bumps values (?, ?, ?, ?, ?)'
+SQL_1 = 'insert into engages values (?, ?, ?, ?)'
+SQL_2 = 'insert into tags values (?, ?, ?, ?)'
+SQL_7 = 'insert into users values (?, ?, ?, ?)'
+SQL_3 = 'select profile from users where key=?'
+SQL_4 = 'update users set profile=? where key=?'
+SQL_5 = 'select user_ID, url from tags where tag=?'
+SQL_6 = 'select when_, from_, to_ FROM bumps WHERE what=?'
+
+
 def connect(db_file=':memory:', create_tables=True):
 	global conn
 	if conn:
@@ -67,7 +77,7 @@ def connect(db_file=':memory:', create_tables=True):
 		for statement in CREATE_TABLES:
 			c.execute(statement)
 		c.execute(  # Create User Zero.
-			'insert into users values (?, ?, ?, ?)',
+			SQL_7,
 			(T(), '0', 'Hello, and welcome to the middle of the app.', 0)
 		)
 		c.close()
@@ -84,16 +94,13 @@ def bump(sender, it, receiver):
 	key = tag_for('%s:%s' % (it, receiver))
 	c = conn.cursor()
 	try:
-		result = insert(
-			c,
-			'insert into bumps values (?, ?, ?, ?, ?)',
-			T(), key, sender, it, receiver,
-			)
+		result = insert(c, SQL_0, T(), key, sender, it, receiver)
 	finally:
 		c.close()
 	if result:
 		conn.commit()
 		return True
+	conn.rollback()
 	log.debug('duplicate bump %s %s %s', sender, it, receiver)
 	return False
 
@@ -102,17 +109,14 @@ def engage(receiver, it):
 	key = tag_for('%s:%s' % (receiver, it))
 	c = conn.cursor()
 	try:
-		result = insert(
-			c,
-			'insert into engages values (?, ?, ?, ?)',
-			T(), key, receiver, it,
-			)
+		result = insert(c, SQL_1, T(), key, receiver, it)
 		result = None if result is None else key
 	finally:
 		c.close()
 	if result:
 		conn.commit()
 		return result
+	conn.rollback()
 	log.debug('duplicate engage %s %s', receiver, it)
 
 
@@ -124,14 +128,7 @@ def url2tag(user_ID, url_):
 
 	c, tag = conn.cursor(), tag_for('%s∴%s' % (user_ID, url))
 	try:
-		result = insert(
-			c,
-			'insert into tags values (?, ?, ?, ?)',
-			T(),
-			tag,
-			user_ID,
-			url,
-			)
+		result = insert(c, SQL_2, T(), tag, user_ID, url)
 	finally:
 		c.close()
 
@@ -169,7 +166,7 @@ def tag2url(tag):
 		log.debug('Found %s %r', tag, url)
 		return url
 	log.debug('Missed %s', tag)
-	abort(400, 'Unknown tag: %s' % tag)
+	abort(400, 'Unknown tag: %s' % tag)  # TODO remove this...
 
 
 def normalize_url(url):
@@ -178,39 +175,38 @@ def normalize_url(url):
 	except:
 		log.exception('While parsing URL %r', url)
 		return
-	if (result.scheme.lower() in ('http', 'https')
-			and not (result.params or result.query or result.fragment)):
+	if result.scheme.lower() in ('http', 'https'):
 		return result.geturl()
 
 
 def get_user_profile(user_ID):
 	c = conn.cursor()
 	try:
-		profile_data = get_user_profile_db(c, user_ID)
+		c.execute(SQL_3, (user_ID,))
+		result = c.fetchone()
 	finally:
 		c.close()
-	if profile_data is None:
-		abort(400, 'Unknown user: %r' % (user_ID,))
-	return {
-		'profile': profile_data
-	}
-
-def get_user_profile_db(c, user_ID):
-	c.execute('select profile from users where key=?', (user_ID,))
-	result = c.fetchone()
-	return result[0] if result else None
+	if result:
+		return {  # TODO this needn't be a dict.
+			'profile': result[0]
+		}
+	abort(400, 'Unknown user: %r' % (user_ID,))  # TODO also remove this...
 
 
 def put_user_profile(user_ID, profile):
 	c = conn.cursor()
 	try:
 		c.execute(
-			'update users set profile=? where key=?',
+			SQL_4,
 			(profile, user_ID)
 			)
+	except:
+		conn.rollback()
+	else:
+		conn.commit()
 	finally:
 		c.close()
-		conn.commit()
+	# Is this okay?  Close cursor AFTER conn {commit,rollback}?
 
 
 def insert(c, query, *values):
@@ -226,12 +222,12 @@ def T():
 
 
 def get_tag(c, tag):
-	c.execute('select user_ID, url from tags where tag=?', (tag,))
+	c.execute(SQL_5, (tag,))
 	return c.fetchone()
 
 
 def extract_graph(c, tag):
-	c.execute('select when_, from_, to_ FROM bumps WHERE what=?', (tag,))
+	c.execute(SQL_6, (tag,))
 	nodes, links = set(), []
 	for when, from_, to in c.fetchall():
 		nodes.update((from_, to))
