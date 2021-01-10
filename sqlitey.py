@@ -52,6 +52,13 @@ def get_user_profile_db(c, user_ID):
 	return result[0] if result else None
 
 
+def put_user_profile_db(c, user_ID, profile):
+	c.execute(
+		'update users set profile=? where key=?',
+		(profile, user_ID)
+		)
+
+
 def write_tag(c, when, tag, user_ID, url):
 	return insert(
 		c,

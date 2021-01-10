@@ -19,8 +19,16 @@
 #
 import logging, json
 from os.path import abspath, join
-from stores import url2tag, tag2url, bump, engage, get_user_profile, get_share
-from bottle import Bottle, get, post, request, run, static_file, redirect
+from stores import (
+    bump,
+    engage,
+    get_share,
+    get_user_profile,
+    put_user_profile,
+    tag2url,
+    url2tag,
+    )
+from bottle import Bottle, get, post, request, run, static_file, redirect, abort
 
 
 log = logging.getLogger('mon')
@@ -161,3 +169,17 @@ def newkey():
         redirect('/')
     filename = 'fake.pfx'
     return static_file(filename, root=STATIC_FILES, download=filename)
+
+
+@app.post('/profile')
+def profile():
+    '''Update user's profile.'''
+    user_ID = request.headers.get('X-Ssl-Client-Serial')
+    if not user_ID:
+        abort(401, 'Unauthorized')
+    prof = request.body.read().decode('UTF_8')
+    if len(prof) > 2048:
+        abort(400, 'Profile too long.')
+    put_user_profile(user_ID, prof)
+    return ""
+

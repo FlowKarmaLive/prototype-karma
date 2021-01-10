@@ -16,6 +16,7 @@ import Http
 import Url.Builder exposing (..)
 
 
+
 -- MAIN
 
 
@@ -62,6 +63,9 @@ type Msg
     | RecvHash (Result Http.Error String)
     | EditURL String
     | DownloadNewKey
+    | PostProfile
+    | ProfileUpdated (Result Http.Error String)
+    | EditProfile String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -84,6 +88,23 @@ update msg model =
         DownloadNewKey ->
             ( model, getNewKey )
 
+        PostProfile ->
+            ( model, updateProfile model.profile )
+
+        ProfileUpdated result ->
+            case result of
+                Ok _ ->
+                    -- We don't need to do anything, profile model is set.
+                    ( model, Cmd.none )
+
+                Err _ ->
+                    -- TODO Should define additional error state?
+                    ( { model | status = Failure }, Cmd.none )
+
+        EditProfile profile ->
+            ( { model | profile = profile }, Cmd.none )
+
+
 
 -- SUBSCRIPTIONS
 
@@ -102,8 +123,14 @@ view model =
     { title = "FlowKarma.Live"
     , body =
         [ pure_full_width
-            [ h1 [] [ text "FlowKarma.Live" ]
-            , text model.profile
+            [ h1 [] [ text "FlowKarma.Live" ] ]
+        , pure_full_width
+            [ Html.form [ class "pure-form", onSubmit PostProfile ]
+                [ textarea [ class "pure-input-1", onInput EditProfile ]
+                    [ text model.profile ]
+                , button [ class "pure-button" ]
+                    [ text "Update Profile" ]
+                ]
             ]
         , pure_full_width
             [ Html.form [ class "pure-form", onSubmit RegisterURL ]
@@ -164,6 +191,16 @@ getHash url =
         , expect = Http.expectString RecvHash
         }
 
+
 getNewKey : Cmd Msg
 getNewKey =
-    Download.url "newkey" 
+    Download.url "newkey"
+
+
+updateProfile : String -> Cmd Msg
+updateProfile profile =
+    Http.post
+        { body = Http.stringBody "text/plain" profile
+        , url = absolute [ "profile" ] []
+        , expect = Http.expectString ProfileUpdated
+        }

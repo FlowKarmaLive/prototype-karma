@@ -19,7 +19,16 @@
 #
 import logging, json
 from urllib.parse import urlparse
-from sqlitey import get_tag, write_tag, get_conn, bumpdb, engagedb, T, get_user_profile_db
+from sqlitey import (
+	bumpdb,
+	engagedb,
+	get_conn,
+	get_tag,
+	get_user_profile_db,
+	put_user_profile_db,
+	T,
+	write_tag,
+	)
 from tagly import tag_for
 from bottle import abort
 
@@ -129,3 +138,12 @@ def get_user_profile(user_ID):
 	return {
 		'profile': profile_data
 	}
+
+
+def put_user_profile(user_ID, profile):
+	c = conn.cursor()
+	try:
+		put_user_profile_db(c, user_ID, profile)
+	finally:
+		c.close()
+		conn.commit()

@@ -6379,6 +6379,22 @@ var $elm$file$File$Download$url = function (href) {
 		_File_downloadUrl(href));
 };
 var $author$project$Main$getNewKey = $elm$file$File$Download$url('newkey');
+var $author$project$Main$ProfileUpdated = function (a) {
+	return {$: 'ProfileUpdated', a: a};
+};
+var $elm$http$Http$stringBody = _Http_pair;
+var $author$project$Main$updateProfile = function (profile) {
+	return $elm$http$Http$post(
+		{
+			body: A2($elm$http$Http$stringBody, 'text/plain', profile),
+			expect: $elm$http$Http$expectString($author$project$Main$ProfileUpdated),
+			url: A2(
+				$elm$url$Url$Builder$absolute,
+				_List_fromArray(
+					['profile']),
+				_List_Nil)
+		});
+};
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6413,14 +6429,40 @@ var $author$project$Main$update = F2(
 						model,
 						{content: content}),
 					$elm$core$Platform$Cmd$none);
-			default:
+			case 'DownloadNewKey':
 				return _Utils_Tuple2(model, $author$project$Main$getNewKey);
+			case 'PostProfile':
+				return _Utils_Tuple2(
+					model,
+					$author$project$Main$updateProfile(model.profile));
+			case 'ProfileUpdated':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{status: $author$project$Main$Failure}),
+						$elm$core$Platform$Cmd$none);
+				}
+			default:
+				var profile = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{profile: profile}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$DownloadNewKey = {$: 'DownloadNewKey'};
+var $author$project$Main$EditProfile = function (a) {
+	return {$: 'EditProfile', a: a};
+};
 var $author$project$Main$EditURL = function (a) {
 	return {$: 'EditURL', a: a};
 };
+var $author$project$Main$PostProfile = {$: 'PostProfile'};
 var $author$project$Main$RegisterURL = {$: 'RegisterURL'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$string = _Json_wrap;
@@ -6537,6 +6579,7 @@ var $author$project$Main$pure_full_width = function (children) {
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$Attributes$href = function (url) {
@@ -6620,8 +6663,42 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text('FlowKarma.Live')
-							])),
-						$elm$html$Html$text(model.profile)
+							]))
+					])),
+				$author$project$Main$pure_full_width(
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$form,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('pure-form'),
+								$elm$html$Html$Events$onSubmit($author$project$Main$PostProfile)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$textarea,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('pure-input-1'),
+										$elm$html$Html$Events$onInput($author$project$Main$EditProfile)
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(model.profile)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('pure-button')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Update Profile')
+									]))
+							]))
 					])),
 				$author$project$Main$pure_full_width(
 				_List_fromArray(
