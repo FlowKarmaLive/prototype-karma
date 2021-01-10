@@ -1,3 +1,6 @@
 {
-    "python.pythonPath": "c:\\Users\\sforman\\Desktop\\src\\FKL\\fkl.pk\\Scripts\\python.exe"
+    "python.pythonPath": "c:\\Users\\sforman\\Desktop\\src\\FKL\\fkl.pk\\Scripts\\python.exe",
+    "python.linting.pylintEnabled": true,
+    "python.linting.mypyEnabled": false,
+    "python.linting.enabled": true
 }

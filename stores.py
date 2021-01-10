@@ -19,22 +19,22 @@
 #
 import logging, json
 from urllib.parse import urlparse
-from sqlitey import (
-	bumpdb,
-	engagedb,
-	get_conn,
-	get_tag,
-	get_user_profile_db,
-	put_user_profile_db,
-	T,
-	write_tag,
-	)
-from tagly import tag_for
+import sqlite3
 from bottle import abort
+from tagly import tag_for
+from time import time
 
 
 log = logging.getLogger('mon.db')
 conn = None
+
+
+CREATE_TABLES = '''\
+create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, to_ TEXT)
+create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, user_ID TEXT, url TEXT)
+create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
+create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
+'''.splitlines(False)
 
 
 def connect(db_file, create_tables):
@@ -44,10 +44,41 @@ def connect(db_file, create_tables):
 	conn = get_conn(db_file, create_tables)
 
 
+def get_conn(db=':memory:', create=False):
+	conn = sqlite3.connect(db)
+	conn.row_factory = VisibleRow
+	if create:
+		create_tables(conn)
+	return conn
+
+
+class VisibleRow(sqlite3.Row):
+	def __str__(self):
+		return str(tuple(self))
+	__repr__ = __str__
+
+
+def create_tables(conn):
+	c = conn.cursor()
+	for statement in CREATE_TABLES:
+		c.execute(statement)
+	c.execute(
+		'insert into users values (?, ?, ?, ?)',
+		(T(), '0', 'Hello, and welcome to the middle of the app.', 0)
+	)
+	c.close()
+	conn.commit()
+
+
 def bump(sender, it, receiver):
+	key = tag_for('%s:%s' % (it, receiver))
 	c = conn.cursor()
 	try:
-		result = bumpdb(c, T(), sender, it, receiver)
+		result = insert(
+			c,
+			'insert into bumps values (?, ?, ?, ?, ?)',
+			T(), key, sender, it, receiver,
+			)
 	finally:
 		c.close()
 	if result:
@@ -58,9 +89,15 @@ def bump(sender, it, receiver):
 
 
 def engage(receiver, it):
+	key = tag_for('%s:%s' % (receiver, it))
 	c = conn.cursor()
 	try:
-		result = engagedb(c, T(), receiver, it)
+		result = insert(
+			c,
+			'insert into engages values (?, ?, ?, ?)',
+			T(), key, receiver, it,
+			)
+		result = None if result is None else key
 	finally:
 		c.close()
 	if result:
@@ -77,7 +114,14 @@ def url2tag(user_ID, url_):
 
 	c, tag = conn.cursor(), tag_for('%s∴%s' % (user_ID, url))
 	try:
-		result = write_tag(c, T(), tag, user_ID, url)
+		result = insert(
+			c,
+			'insert into tags values (?, ?, ?, ?)',
+			T(),
+			tag,
+			user_ID,
+			url,
+			)
 	finally:
 		c.close()
 
@@ -85,6 +129,7 @@ def url2tag(user_ID, url_):
 		conn.commit()
 		log.debug('Tagged %s %r', tag, url)
 	else:
+		conn.rollback()
 		log.debug('Already tagged %s %r', tag, url)
 
 	return bool(result), tag
@@ -139,11 +184,46 @@ def get_user_profile(user_ID):
 		'profile': profile_data
 	}
 
+def get_user_profile_db(c, user_ID):
+	c.execute('select profile from users where key=?', (user_ID,))
+	result = c.fetchone()
+	return result[0] if result else None
+
 
 def put_user_profile(user_ID, profile):
 	c = conn.cursor()
 	try:
-		put_user_profile_db(c, user_ID, profile)
+		c.execute(
+			'update users set profile=? where key=?',
+			(profile, user_ID)
+			)
 	finally:
 		c.close()
 		conn.commit()
+
+
+def insert(c, query, *values):
+	try:
+		c.execute(query, values)
+	except sqlite3.IntegrityError:
+		return
+	return c.lastrowid
+
+
+def T():
+	return int(round(time(), 3) * 1000)
+
+
+
+def get_tag(c, tag):
+	c.execute('select user_ID, url from tags where tag=?', (tag,))
+	return c.fetchone()
+
+
+def extract_graph(c, tag):
+	c.execute('select when_, from_, to_ FROM bumps WHERE what=?', (tag,))
+	nodes, links = set(), []
+	for when, from_, to in c.fetchall():
+		nodes.update((from_, to))
+		links.append((when, from_, to))
+	return list(nodes), links
