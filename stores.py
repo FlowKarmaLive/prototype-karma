@@ -17,6 +17,25 @@
 #    You should have received a copy of the GNU General Public License
 #    along with FlowKarma.Live.  If not, see <http://www.gnu.org/licenses/>.
 #
+'''
+This module handles the interface between Python code and the SQLite DB
+file.
+
+It's kind of a mess right now because it was in two modules (high-level
+for generic code and low-level for DB-specific code) and I combined it
+into one (because I like to go back and forth between atomized multi-file
+arrangement and monolithic uni-module arrangement.  Dunno exactly why.)
+
+There's a single module-level connection object that is initialized by
+the main module at start-time.  (The DB is a file so if the connection
+ever has a problem "reaching" it we have bigger problems than only having
+one singleton conn.)
+
+SQL code literals are scattered around;  I'm pretty sure I'm missing or
+misusing the rollback() method;  the whole thing could use a good
+cleaning.
+
+'''
 import logging, json
 from urllib.parse import urlparse
 import sqlite3
@@ -37,37 +56,28 @@ create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites I
 '''.splitlines(False)
 
 
-def connect(db_file, create_tables):
+def connect(db_file=':memory:', create_tables=True):
 	global conn
 	if conn:
 		raise RuntimeError('DB already connected %r', conn)
-	conn = get_conn(db_file, create_tables)
-
-
-def get_conn(db=':memory:', create=False):
-	conn = sqlite3.connect(db)
+	conn = sqlite3.connect(db_file)
 	conn.row_factory = VisibleRow
-	if create:
-		create_tables(conn)
-	return conn
+	if create_tables:
+		c = conn.cursor()
+		for statement in CREATE_TABLES:
+			c.execute(statement)
+		c.execute(  # Create User Zero.
+			'insert into users values (?, ?, ?, ?)',
+			(T(), '0', 'Hello, and welcome to the middle of the app.', 0)
+		)
+		c.close()
+		conn.commit()
 
 
 class VisibleRow(sqlite3.Row):
 	def __str__(self):
 		return str(tuple(self))
 	__repr__ = __str__
-
-
-def create_tables(conn):
-	c = conn.cursor()
-	for statement in CREATE_TABLES:
-		c.execute(statement)
-	c.execute(
-		'insert into users values (?, ?, ?, ?)',
-		(T(), '0', 'Hello, and welcome to the middle of the app.', 0)
-	)
-	c.close()
-	conn.commit()
 
 
 def bump(sender, it, receiver):
@@ -148,6 +158,7 @@ def get_share(tag):
 	log.debug('Missed %s', tag)
 	abort(400, 'Unknown tag: %s' % tag)
 
+
 def tag2url(tag):
 	c = conn.cursor()
 	try:
@@ -212,7 +223,6 @@ def insert(c, query, *values):
 
 def T():
 	return int(round(time(), 3) * 1000)
-
 
 
 def get_tag(c, tag):
