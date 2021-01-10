@@ -37,7 +37,8 @@ main =
 type alias Model =
     { content : String
     , profile : String
-    , status : LoadingStatus
+    , share_status : LoadingStatus
+    , profile_status : LoadingStatus
     }
 
 
@@ -49,7 +50,11 @@ type LoadingStatus
 
 init : String -> ( Model, Cmd Msg )
 init profile =
-    ( Model "" profile (Success "https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif")
+    ( Model
+        ""
+        profile
+        (Success "https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif")
+        (Success "")
     , Cmd.none
     )
 
@@ -72,15 +77,15 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         RegisterURL ->
-            ( { model | status = Loading }, getHash model.content )
+            ( { model | share_status = Loading }, getHash model.content )
 
         RecvHash result ->
             case result of
                 Ok hash ->
-                    ( { model | status = Success hash }, Cmd.none )
+                    ( { model | share_status = Success hash }, Cmd.none )
 
                 Err _ ->
-                    ( { model | status = Failure }, Cmd.none )
+                    ( { model | share_status = Failure }, Cmd.none )
 
         EditURL content ->
             ( { model | content = content }, Cmd.none )
@@ -89,17 +94,17 @@ update msg model =
             ( model, getNewKey )
 
         PostProfile ->
-            ( model, updateProfile model.profile )
+            ( { model | profile_status = Loading }, updateProfile model.profile )
 
         ProfileUpdated result ->
             case result of
                 Ok _ ->
                     -- We don't need to do anything, profile model is set.
-                    ( model, Cmd.none )
+                    ( { model | profile_status = Success "" }, Cmd.none )
 
                 Err _ ->
                     -- TODO Should define additional error state?
-                    ( { model | status = Failure }, Cmd.none )
+                    ( { model | profile_status = Failure }, Cmd.none )
 
         EditProfile profile ->
             ( { model | profile = profile }, Cmd.none )
@@ -128,7 +133,12 @@ view model =
             [ Html.form [ class "pure-form", onSubmit PostProfile ]
                 [ textarea [ class "pure-input-1", onInput EditProfile ]
                     [ text model.profile ]
-                , bb PostProfile "Update"
+                , button
+                    [ class "pure-button"
+                    , disabled (model.profile_status == Loading)
+                    ]
+                    [ text "Update" ]
+                , viewProfileStatus model.profile_status
                 ]
             ]
         , labeled_div "Share an URL"
@@ -141,7 +151,7 @@ view model =
                     ]
                     []
                 ]
-            , viewShareStatus model.status
+            , viewShareStatus model.share_status
             ]
         , labeled_div "Invite New Members"
             [ bb DownloadNewKey "Download key cert file to let a friend join." ]
@@ -172,10 +182,10 @@ bb event label =
 
 
 viewShareStatus : LoadingStatus -> Html Msg
-viewShareStatus status =
+viewShareStatus share_status =
     let
         ( b, t ) =
-            case status of
+            case share_status of
                 Failure ->
                     ( bb RegisterURL "Try Again!"
                     , text "I could not load a random cat for some reason."
@@ -193,6 +203,19 @@ viewShareStatus status =
                     )
     in
     div [] [ b, pre [] [ t ] ]
+
+
+viewProfileStatus : LoadingStatus -> Html Msg
+viewProfileStatus profile_status =
+    case profile_status of
+        Failure ->
+            text ""
+
+        Loading ->
+            text "Updating..."
+
+        Success url ->
+            text ""
 
 
 

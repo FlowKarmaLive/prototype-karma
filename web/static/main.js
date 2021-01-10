@@ -5514,9 +5514,9 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Main$Model = F3(
-	function (content, profile, status) {
-		return {content: content, profile: profile, status: status};
+var $author$project$Main$Model = F4(
+	function (content, profile, share_status, profile_status) {
+		return {content: content, profile: profile, profile_status: profile_status, share_status: share_status};
 	});
 var $author$project$Main$Success = function (a) {
 	return {$: 'Success', a: a};
@@ -5525,11 +5525,12 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (profile) {
 	return _Utils_Tuple2(
-		A3(
+		A4(
 			$author$project$Main$Model,
 			'',
 			profile,
-			$author$project$Main$Success('https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif')),
+			$author$project$Main$Success('https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif'),
+			$author$project$Main$Success('')),
 		$elm$core$Platform$Cmd$none);
 };
 var $elm$json$Json$Decode$string = _Json_decodeString;
@@ -6402,7 +6403,7 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{status: $author$project$Main$Loading}),
+						{share_status: $author$project$Main$Loading}),
 					$author$project$Main$getHash(model.content));
 			case 'RecvHash':
 				var result = msg.a;
@@ -6412,14 +6413,14 @@ var $author$project$Main$update = F2(
 						_Utils_update(
 							model,
 							{
-								status: $author$project$Main$Success(hash)
+								share_status: $author$project$Main$Success(hash)
 							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{status: $author$project$Main$Failure}),
+							{share_status: $author$project$Main$Failure}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 'EditURL':
@@ -6433,17 +6434,25 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(model, $author$project$Main$getNewKey);
 			case 'PostProfile':
 				return _Utils_Tuple2(
-					model,
+					_Utils_update(
+						model,
+						{profile_status: $author$project$Main$Loading}),
 					$author$project$Main$updateProfile(model.profile));
 			case 'ProfileUpdated':
 				var result = msg.a;
 				if (result.$ === 'Ok') {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								profile_status: $author$project$Main$Success('')
+							}),
+						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{status: $author$project$Main$Failure}),
+							{profile_status: $author$project$Main$Failure}),
 						$elm$core$Platform$Cmd$none);
 				}
 			default:
@@ -6507,6 +6516,15 @@ var $author$project$Main$bb = F2(
 					$elm$html$Html$text(label)
 				]));
 	});
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$input = _VirtualDom_node('input');
@@ -6615,16 +6633,18 @@ var $elm$html$Html$Events$onSubmit = function (msg) {
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$Main$viewProfileStatus = function (profile_status) {
+	switch (profile_status.$) {
+		case 'Failure':
+			return $elm$html$Html$text('');
+		case 'Loading':
+			return $elm$html$Html$text('Updating...');
+		default:
+			var url = profile_status.a;
+			return $elm$html$Html$text('');
+	}
+};
 var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -6632,9 +6652,9 @@ var $elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var $elm$html$Html$pre = _VirtualDom_node('pre');
-var $author$project$Main$viewShareStatus = function (status) {
+var $author$project$Main$viewShareStatus = function (share_status) {
 	var _v0 = function () {
-		switch (status.$) {
+		switch (share_status.$) {
 			case 'Failure':
 				return _Utils_Tuple2(
 					A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Try Again!'),
@@ -6654,7 +6674,7 @@ var $author$project$Main$viewShareStatus = function (status) {
 							])),
 					$elm$html$Html$text('Loading...'));
 			default:
-				var url = status.a;
+				var url = share_status.a;
 				return _Utils_Tuple2(
 					A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Get Share URL'),
 					A2(
@@ -6724,7 +6744,19 @@ var $author$project$Main$view = function (model) {
 									[
 										$elm$html$Html$text(model.profile)
 									])),
-								A2($author$project$Main$bb, $author$project$Main$PostProfile, 'Update')
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('pure-button'),
+										$elm$html$Html$Attributes$disabled(
+										_Utils_eq(model.profile_status, $author$project$Main$Loading))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Update')
+									])),
+								$author$project$Main$viewProfileStatus(model.profile_status)
 							]))
 					])),
 				A2(
@@ -6752,7 +6784,7 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_Nil)
 							])),
-						$author$project$Main$viewShareStatus(model.status)
+						$author$project$Main$viewShareStatus(model.share_status)
 					])),
 				A2(
 				$author$project$Main$labeled_div,
