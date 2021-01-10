@@ -6616,6 +6616,15 @@ var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProp
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -6623,26 +6632,40 @@ var $elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var $elm$html$Html$pre = _VirtualDom_node('pre');
-var $author$project$Main$viewGif = function (model) {
-	var _v0 = model.status;
-	switch (_v0.$) {
-		case 'Failure':
-			return A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
+var $author$project$Main$viewShareStatus = function (status) {
+	var kids = function () {
+		switch (status.$) {
+			case 'Failure':
+				return _List_fromArray(
 					[
 						$elm$html$Html$text('I could not load a random cat for some reason. '),
 						A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Try Again!')
-					]));
-		case 'Loading':
-			return $elm$html$Html$text('Loading...');
-		default:
-			var url = _v0.a;
-			return A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
+					]);
+			case 'Loading':
+				return _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('pure-button'),
+								$elm$html$Html$Attributes$disabled(true)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Get Share URL')
+							])),
+						A2(
+						$elm$html$Html$pre,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Loading...')
+							]))
+					]);
+			default:
+				var url = status.a;
+				return _List_fromArray(
 					[
 						A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Get Share URL'),
 						A2(
@@ -6661,8 +6684,10 @@ var $author$project$Main$viewGif = function (model) {
 										$elm$html$Html$text(url)
 									]))
 							]))
-					]));
-	}
+					]);
+		}
+	}();
+	return A2($elm$html$Html$div, _List_Nil, kids);
 };
 var $author$project$Main$view = function (model) {
 	return {
@@ -6732,7 +6757,7 @@ var $author$project$Main$view = function (model) {
 									]),
 								_List_Nil)
 							])),
-						$author$project$Main$viewGif(model)
+						$author$project$Main$viewShareStatus(model.status)
 					])),
 				A2(
 				$author$project$Main$labeled_div,

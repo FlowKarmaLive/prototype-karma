@@ -141,7 +141,7 @@ view model =
                     ]
                     []
                 ]
-            , viewGif model
+            , viewShareStatus model.status
             ]
         , labeled_div "Invite New Members"
             [ bb DownloadNewKey "Download key cert file to let a friend join." ]
@@ -171,23 +171,27 @@ bb event label =
     button [ onClick event, class "pure-button" ] [ text label ]
 
 
-viewGif : Model -> Html Msg
-viewGif model =
-    case model.status of
-        Failure ->
-            div []
-                [ text "I could not load a random cat for some reason. "
-                , bb RegisterURL "Try Again!"
-                ]
+viewShareStatus : LoadingStatus -> Html Msg
+viewShareStatus status =
+    let
+        kids =
+            case status of
+                Failure ->
+                    [ text "I could not load a random cat for some reason. "
+                    , bb RegisterURL "Try Again!"
+                    ]
 
-        Loading ->
-            text "Loading..."
+                Loading ->
+                    [ button [ class "pure-button", disabled True ] [ text "Get Share URL" ]
+                    , pre [] [ text "Loading..." ]
+                    ]
 
-        Success url ->
-            div []
-                [ bb RegisterURL "Get Share URL"
-                , pre [] [ a [ href url ] [ text url ] ]
-                ]
+                Success url ->
+                    [ bb RegisterURL "Get Share URL"
+                    , pre [] [ a [ href url ] [ text url ] ]
+                    ]
+    in
+    div [] kids
 
 
 
