@@ -34,7 +34,7 @@ CREATE_TABLES = '''\
 create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, to_ TEXT)
 create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, user_ID TEXT, url TEXT)
 create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
-create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, lineage TEXT)
+create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
 '''.splitlines(False)
 
 
@@ -42,6 +42,10 @@ def create_tables(conn):
 	c = conn.cursor()
 	for statement in CREATE_TABLES:
 		c.execute(statement)
+	c.execute(
+		'insert into users values (?, ?, ?, ?)',
+		(T(), '0', 'Hello, and welcome to the middle of the app.', 0)
+	)
 	c.close()
 	conn.commit()
 

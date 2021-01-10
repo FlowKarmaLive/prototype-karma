@@ -166,7 +166,10 @@ def engage_handler(receiver, it):
 def newkey():
     user_ID = request.headers.get('X-Ssl-Client-Serial')
     if not user_ID:
-        redirect('/')
+        abort(401, 'Unauthorized')
+
+    #
+
     filename = 'fake.pfx'
     return static_file(filename, root=STATIC_FILES, download=filename)
 

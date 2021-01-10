@@ -164,3 +164,33 @@ http://localhost:8000/bump/dourrlegdsk0q1ddcen9l2wuj/239qr624jpvwusnyzj7wzj2oi
 http://localhost:8000/bump/5hc6mj8chr78r6tghd5m3dgxz/239qr624jpvwusnyzj7wzj2oi/
 http://localhost:8000/bump/5hc6mj8chr78r6tghd5m3dgxz/239qr624jpvwusnyzj7wzj2oi/
 
+
+
+
+
+------------------------------------------
+
+
+A lot of the above is changed slightly or a lot.
+
+
+## User IDs
+
+For user IDs I think I'm going to use an open-ended text-based key that
+encodes the lineage of a user.
+
+The first user is user "0".  The first user you invite is N + "-1" where
+N is your ID, the second is N + "-2" and so on.
+
+So "4-7-1-3" is the user ID of the third person invited by the first
+person invited by the seventh person invited by the fourth member.
+
+Got it?
+
+Then the serial # or tag is just derived from that, because why not?
+
+So I think for each user we want to keep the ID and also the number of
+invites sent so far.
+
+
+
