@@ -6633,18 +6633,15 @@ var $elm$html$Html$Attributes$href = function (url) {
 };
 var $elm$html$Html$pre = _VirtualDom_node('pre');
 var $author$project$Main$viewShareStatus = function (status) {
-	var kids = function () {
+	var _v0 = function () {
 		switch (status.$) {
 			case 'Failure':
-				return _List_fromArray(
-					[
-						$elm$html$Html$text('I could not load a random cat for some reason. '),
-						A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Try Again!')
-					]);
+				return _Utils_Tuple2(
+					A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Try Again!'),
+					$elm$html$Html$text('I could not load a random cat for some reason.'));
 			case 'Loading':
-				return _List_fromArray(
-					[
-						A2(
+				return _Utils_Tuple2(
+					A2(
 						$elm$html$Html$button,
 						_List_fromArray(
 							[
@@ -6655,39 +6652,37 @@ var $author$project$Main$viewShareStatus = function (status) {
 							[
 								$elm$html$Html$text('Get Share URL')
 							])),
-						A2(
-						$elm$html$Html$pre,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Loading...')
-							]))
-					]);
+					$elm$html$Html$text('Loading...'));
 			default:
 				var url = status.a;
-				return _List_fromArray(
-					[
-						A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Get Share URL'),
-						A2(
-						$elm$html$Html$pre,
-						_List_Nil,
+				return _Utils_Tuple2(
+					A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Get Share URL'),
+					A2(
+						$elm$html$Html$a,
 						_List_fromArray(
 							[
-								A2(
-								$elm$html$Html$a,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$href(url)
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(url)
-									]))
-							]))
-					]);
+								$elm$html$Html$Attributes$href(url)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(url)
+							])));
 		}
 	}();
-	return A2($elm$html$Html$div, _List_Nil, kids);
+	var b = _v0.a;
+	var t = _v0.b;
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				b,
+				A2(
+				$elm$html$Html$pre,
+				_List_Nil,
+				_List_fromArray(
+					[t]))
+			]));
 };
 var $author$project$Main$view = function (model) {
 	return {

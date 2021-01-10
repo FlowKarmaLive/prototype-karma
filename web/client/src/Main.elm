@@ -174,24 +174,25 @@ bb event label =
 viewShareStatus : LoadingStatus -> Html Msg
 viewShareStatus status =
     let
-        kids =
+        ( b, t ) =
             case status of
                 Failure ->
-                    [ bb RegisterURL "Try Again!"
-                    , pre [] [ text "I could not load a random cat for some reason." ]
-                    ]
+                    ( bb RegisterURL "Try Again!"
+                    , text "I could not load a random cat for some reason."
+                    )
 
                 Loading ->
-                    [ button [ class "pure-button", disabled True ] [ text "Get Share URL" ]
-                    , pre [] [ text "Loading..." ]
-                    ]
+                    ( button [ class "pure-button", disabled True ]
+                        [ text "Get Share URL" ]
+                    , text "Loading..."
+                    )
 
                 Success url ->
-                    [ bb RegisterURL "Get Share URL"
-                    , pre [] [ a [ href url ] [ text url ] ]
-                    ]
+                    ( bb RegisterURL "Get Share URL"
+                    , a [ href url ] [ text url ]
+                    )
     in
-    div [] kids
+    div [] [ b, pre [] [ t ] ]
 
 
 
