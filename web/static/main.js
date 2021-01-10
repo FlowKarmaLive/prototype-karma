@@ -6471,7 +6471,6 @@ var $author$project$Main$EditProfile = function (a) {
 var $author$project$Main$EditURL = function (a) {
 	return {$: 'EditURL', a: a};
 };
-var $author$project$Main$PostProfile = {$: 'PostProfile'};
 var $author$project$Main$RegisterURL = {$: 'RegisterURL'};
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$string = _Json_wrap;
@@ -6726,11 +6725,7 @@ var $author$project$Main$view = function (model) {
 					[
 						A2(
 						$elm$html$Html$form,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('pure-form'),
-								$elm$html$Html$Events$onSubmit($author$project$Main$PostProfile)
-							]),
+						_List_Nil,
 						_List_fromArray(
 							[
 								A2(

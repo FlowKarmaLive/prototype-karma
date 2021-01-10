@@ -1,0 +1,65 @@
+So it sucks that there are three languages involved (actually more): Elm,
+Python, SQL.  Under the hood there's Javascript, of course, and also
+whatever the above things are themselves written in: C for Sqlite and
+Python, dunno about Elm, nor the browsers.  Caddy is written in Go.
+
+And so it goes.  It's a wonder any of this stuff works at all.
+
+The languages themselves are wonky: Elm is pretty solid but Python is a
+hyperactive cat, and SQL, despite being venerable, has its own host of
+issues and gotchas.  Sqlite is a pretty solid and simple (for a DB)
+program but it's got a large manual, eh?
+
+Python is just starting to get sane.  Still I managed to pass the
+profile() function to the DB when I meant to pass the prof variable that
+names a string value (not a function).  The error message was obscure but
+the real WTF is that the language let me do it in the first place.
+That's Python for you:  it's a scripting language, not for serious work.
+
+There's another whole problem with the model and API not being
+first-class artifacts of the system.  Again, Elm is pretty good here,
+making the model a 1st-class entity, but the APIs are still specified in
+ad hoc code rather than a single "source of truth".  I looked at
+Swagger/OpenAPI but that's another whole pile of stuff to learn and work
+on, that's not stable.  (They changed the CLI for accessing help from v1
+to v2, because, yeah, /that's/ the problem.)  Too much churn.  There are
+other API-as-1st-class tools/systems out there.  It's weird that this is
+still a thing in 2020.  (So many things should be done by now that
+aren't: chat apps, etc.)
+
+
+
+If you look at what the server code is actually doing it's not that
+complex.  The length of the code seems linear with the work it's doing
+with no clear refactoring (there are a few bits, sure, but no big wins)
+so that indicates that we are close to the problem domain.  (In other
+words, the constructs available in e.g. Python are very close to the
+constructs needed for a theoretically optimal description of the domain.)
+
+It's not worth writing another DSL for declarative web app definition?
+ 
+
+
+Html as function with two list args is a little weird.  It's not a
+datastructure, it's a function call.
+
+For one thing the idea that a DIV is a list of HTML is not reflected in
+the Elm, e.g. to add a legend to a fieldset in Elm you prepend it to the
+second list arg of the div function, as contrasted with, perhaps,
+appending an HTML "object" to a DIV "object" (that has list-like api
+methods that automatically dispatch on the type of the args: attrs affect
+attrs, html affects the div children elements), eh?
+
+In practice it seems to work well enough.  In principle, it seems to me
+to be another example of the real issue being addressed obliquely through
+what the language affords, rather being tackled head-on (as Elm does in
+general for the domain of web app frontend development.) (The first
+example being the ad hoc nature of the HTTP API.)
+
+Recall that Elm started as a way to address "Functional Reactive
+Programming" first, with web development as one possible area of
+application.  So perhaps it's not surprising that the language is not
+more tightly wedded to the domain (even as the runtime is.)
+
+I'm not trying to critcize Elm, it's lightyears ahead of the competition,
+I'm just recording some thoughts and impressions.

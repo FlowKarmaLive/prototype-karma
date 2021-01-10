@@ -181,6 +181,11 @@ bb event label =
     button [ onClick event, class "pure-button" ] [ text label ]
 
 
+
+-- If a button is in a form, clicking it triggers onSubmit, and if the
+-- button also has onClick, the submission happens twice!
+
+
 viewShareStatus : LoadingStatus -> Html Msg
 viewShareStatus share_status =
     let

@@ -1,0 +1,69 @@
+sforman@ubuntu-s-1vcpu-1gb-sfo3-01:~/cake$
+
+    openssl req -new -key ${NAME}.key -out ${NAME}.csr
+
+
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:US
+State or Province Name (full name) [Some-State]:CA
+Locality Name (eg, city) []:San Francisco
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:FlowKarma.Live
+Organizational Unit Name (eg, section) []:blue-giraffe
+Common Name (e.g. server FQDN or YOUR name) []:orange-bonobo
+Email Address []:
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:
+An optional company name []:
+
+ O                      = Organization Name
+ OU                     = Organizational Unit Name
+ CN                     = Common Name
+ emailAddress           = test@email.address
+
+FROM=blue-giraffe
+NAME=orange-bonobo
+openssl req -new \
+    -subj "/C=US/ST=CA/L=San Francisco/O=FlowKarma.Live/OU=${FROM}/CN=${NAME}" \
+    -key ${NAME}.key \
+    -out ${NAME}.csr
+
+
+ -subj "/CN=example.com"
+
+
+
+-batch
+
+-verbose
+
+
+
+
+=========================================================================
+
+https://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl
+
+openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
+  -keyout example.key -out example.crt -extensions san -config \
+  <(echo "[req]"; 
+    echo distinguished_name=req; 
+    echo "[san]"; 
+    echo subjectAltName=DNS:example.com,DNS:www.example.net,IP:10.0.0.1
+    ) \
+  -subj "/CN=example.com"
+
+
+  openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
+  -keyout example.key -out example.crt -subj "/CN=example.com" \
+  -addext
+  "subjectAltName=DNS:example.com,DNS:www.example.net,IP:10.0.0.1"
+  
+=========================================================================
