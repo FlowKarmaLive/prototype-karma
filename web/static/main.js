@@ -6474,6 +6474,39 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Main$bb = F2(
+	function (event, label) {
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Events$onClick(event),
+					$elm$html$Html$Attributes$class('pure-button')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(label)
+				]));
+	});
 var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$input = _VirtualDom_node('input');
@@ -6507,45 +6540,24 @@ var $author$project$Main$pure_full_width = function (children) {
 					]))
 			]));
 };
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Main$labeled_div = F2(
 	function (label, children) {
+		var kids = A2(
+			$elm$core$List$cons,
+			A2(
+				$elm$html$Html$legend,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(label)
+					])),
+			children);
 		return $author$project$Main$pure_full_width(
 			_List_fromArray(
 				[
-					A2(
-					$elm$html$Html$fieldset,
-					_List_Nil,
-					A2(
-						$elm$core$List$cons,
-						A2(
-							$elm$html$Html$legend,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(label)
-								])),
-						children))
+					A2($elm$html$Html$fieldset, _List_Nil, kids)
 				]));
 	});
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -6612,20 +6624,6 @@ var $elm$html$Html$Attributes$href = function (url) {
 };
 var $elm$html$Html$pre = _VirtualDom_node('pre');
 var $author$project$Main$viewGif = function (model) {
-	var button_attrs = _List_fromArray(
-		[
-			$elm$html$Html$Events$onClick($author$project$Main$RegisterURL),
-			$elm$html$Html$Attributes$class('pure-button')
-		]);
-	var bb = function (label) {
-		return A2(
-			$elm$html$Html$button,
-			button_attrs,
-			_List_fromArray(
-				[
-					$elm$html$Html$text(label)
-				]));
-	};
 	var _v0 = model.status;
 	switch (_v0.$) {
 		case 'Failure':
@@ -6635,7 +6633,7 @@ var $author$project$Main$viewGif = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text('I could not load a random cat for some reason. '),
-						bb('Try Again!')
+						A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Try Again!')
 					]));
 		case 'Loading':
 			return $elm$html$Html$text('Loading...');
@@ -6646,7 +6644,7 @@ var $author$project$Main$viewGif = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						bb('Get Share URL'),
+						A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Get Share URL'),
 						A2(
 						$elm$html$Html$pre,
 						_List_Nil,
@@ -6750,17 +6748,7 @@ var $author$project$Main$view = function (model) {
 				'Invite New Members',
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Events$onClick($author$project$Main$DownloadNewKey),
-								$elm$html$Html$Attributes$class('pure-button')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Download key cert file to let a friend join.')
-							]))
+						A2($author$project$Main$bb, $author$project$Main$DownloadNewKey, 'Download key cert file to let a friend join.')
 					]))
 			]),
 		title: 'FlowKarma.Live'

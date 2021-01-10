@@ -145,9 +145,7 @@ view model =
             , viewGif model
             ]
         , labeled_div "Invite New Members"
-            [ button [ onClick DownloadNewKey, class "pure-button" ]
-                [ text "Download key cert file to let a friend join." ]
-            ]
+            [ bb DownloadNewKey "Download key cert file to let a friend join." ]
         ]
     }
 
@@ -162,23 +160,25 @@ pure_full_width children =
 
 labeled_div : String -> List (Html msg) -> Html msg
 labeled_div label children =
-    pure_full_width [ fieldset [] (legend [] [ text label ] :: children) ]
+    let
+        kids =
+            legend [] [ text label ] :: children
+    in
+    pure_full_width [ fieldset [] kids ]
+
+
+bb : Msg -> String -> Html Msg
+bb event label =
+    button [ onClick event, class "pure-button" ] [ text label ]
 
 
 viewGif : Model -> Html Msg
 viewGif model =
-    let
-        button_attrs =
-            [ onClick RegisterURL, class "pure-button" ]
-
-        bb label =
-            button button_attrs [ text label ]
-    in
     case model.status of
         Failure ->
             div []
                 [ text "I could not load a random cat for some reason. "
-                , bb "Try Again!"
+                , bb RegisterURL "Try Again!"
                 ]
 
         Loading ->
@@ -186,7 +186,7 @@ viewGif model =
 
         Success url ->
             div []
-                [ bb "Get Share URL"
+                [ bb RegisterURL "Get Share URL"
                 , pre [] [ a [ href url ] [ text url ] ]
                 ]
 
