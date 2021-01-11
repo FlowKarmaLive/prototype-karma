@@ -22,6 +22,7 @@ from os.path import abspath, join
 from stores import (
     bump,
     engage,
+    get_and_increment_invite_count,
     get_share,
     get_user_profile,
     put_user_profile,
@@ -168,8 +169,13 @@ def newkey():
     user_ID = request.headers.get('X-Ssl-Client-Serial')
     if not user_ID:
         abort(401, 'Unauthorized')
-    genkey('me', 'yyou', '0')
-    filename = 'yyou.pfx'
+    # sn = request.headers.get('X-Ssl-Client-Subject')
+    # CN=rats,OU=cats,O=FlowKarma.Live,L=San Francisco,ST=CA,C=US
+    invite_no = get_and_increment_invite_count(user_ID)
+    new_user_ID = str(int(user_ID) * 100000 + invite_no)
+    print(user_ID, new_user_ID)
+    genkey(user_ID, new_user_ID, new_user_ID)
+    filename = new_user_ID + '.pfx'
     return static_file(filename, root=abspath('clavinger'), download=filename)
 
 # C:\Users\sforman\Desktop\src\FKL\prototype-karma\clavinger\you.pfx

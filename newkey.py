@@ -21,4 +21,4 @@ def genkey(parent, child, serial):
     )
 
 if __name__ == '__main__':
-    p = genkey('cats', 'rats', '0')
+    p = genkey('0', '0-1', '0-1')

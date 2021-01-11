@@ -66,6 +66,26 @@ SQL_5 = 'select user_ID, url from tags where tag=?'
 SQL_6 = 'select when_, from_, to_ FROM bumps WHERE what=?'
 
 
+def get_and_increment_invite_count(user_ID):
+	c = conn.cursor()
+	try:
+		c.execute('select invites from users where key=?', (user_ID,))
+		result = c.fetchone()
+	finally:
+		c.close()
+	if result is None:
+		raise ValueError('???')
+	n = result[0] + 1
+	c = conn.cursor()
+	try:
+		c.execute('update users set invites=? where key=?', (n, user_ID))
+	finally:
+		c.close()
+	conn.commit()
+	return n
+	
+
+
 def connect(db_file=':memory:', create_tables=True):
 	global conn
 	if conn:
