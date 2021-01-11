@@ -23,3 +23,6 @@ openssl pkcs12 -export -out ${NAME}.pfx -inkey ${NAME}.key -in ${NAME}.pem -cert
 
 # openssl pkcs12 -export -out sam.pfx -inkey sam.key -in sam.pem -certfile ca.pem -passout env:${PASS}
 
+
+# Slashes in the subj on Windows w/ MinGW/MSYS ....
+# https://stackoverflow.com/questions/31506158/running-openssl-from-a-bash-script-on-windows-subject-does-not-start-with/31990313#31990313
