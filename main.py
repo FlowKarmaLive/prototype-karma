@@ -23,7 +23,7 @@ from os.path import abspath, exists
 import bottle
 bottle.debug(True)
 from server import run, app
-import stores
+from stores import connect
 from secure_cookie.session import FilesystemSessionStore
 from secure_cookie.session import SessionMiddleware
 
@@ -36,7 +36,7 @@ def main(log, argv=None, app=app):
 	create_tables = not exists(db_file)
 	if create_tables:
 		log.info('DB file %r not found, creating.' % db_file)
-	stores.connect(db_file, create_tables)
+	connect(db_file, create_tables)
 	run(app, host=args.host, port=args.port, reloader=True)  # TODO make reloader a CLI arg.
 
 
