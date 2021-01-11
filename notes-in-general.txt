@@ -63,3 +63,60 @@ more tightly wedded to the domain (even as the runtime is.)
 
 I'm not trying to critcize Elm, it's lightyears ahead of the competition,
 I'm just recording some thoughts and impressions.
+
+
+---------------------------------------------------------------------------
+
+
+The DB could compute the timestamp but it's a hash (metaphorically, not literally):
+
+
+select CAST(strftime('%s', 'now') as INTEGER) + CAST(substr(strftime('%f', 'now'), 3) as NUMERIC);
+
+SELECT      (CAST(strftime('%s', 'now') as INTEGER) + CAST(substr(strftime('%f','now'), 3) as NUMERIC)) * 1000;
+SELECT CAST((CAST(strftime('%s', 'now') as INTEGER) + CAST(substr(strftime('%f','now'), 3) as NUMERIC)) * 1000 as INTEGER);
+
+
+Oy vey!  What a schmolé:
+
+Get the seconds as a string and cast to int
+Get the ss.mmm as a string, remove 'ss.', convert to float
+Add seconds and milliseconds together
+Multiply by 1000 to shift the decimal right three places
+Cast the whole number of milliseconds to int.
+
+
+CAST(
+    (
+        CAST(
+            strftime('%s', 'now') as INTEGER
+        )
+        + 
+        CAST(
+            substr(strftime('%f','now'), 3) as NUMERIC)
+    )
+    * 
+    1000
+    as INTEGER
+    )
+
+It's tempting to just have the time field be filled by e.g.:
+
+    strftime('%s %f', 'now')
+
+and just let it be kinda broken...  Leaving it as a string,
+
+or converting to float with the space omitted:
+
+    CAST(strftime('%s%f', 'now') as NUMERIC)
+
+
+Or just keep doing it in the Python:
+
+    def T():
+        return int(round(time(), 3) * 1000)
+
+Simpler, but is it more efficient?  I think it would have to be, without
+all the type casting, on the other hand, if Sqlite is closer to the metal
+than Python...?   But that doesn't seem likely.  These are just C lib
+calls afterall.
