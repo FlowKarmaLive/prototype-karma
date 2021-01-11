@@ -7,7 +7,7 @@ if platform == 'win32':
 else:
     command = 'sh newkey.sh'
 
-def newkey(parent, child, serial):
+def genkey(parent, child, serial):
     return run(
         command,
         shell=True,
@@ -17,7 +17,8 @@ def newkey(parent, child, serial):
             SERIAL=serial,
         ),
         capture_output=True,
+        cwd=r'./clavinger',
     )
 
 if __name__ == '__main__':
-    p = newkey('cats', 'rats', '123345546567')
+    p = genkey('cats', 'rats', '0')

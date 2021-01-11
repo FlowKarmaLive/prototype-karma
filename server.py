@@ -29,6 +29,7 @@ from stores import (
     url2tag,
     )
 from bottle import Bottle, get, post, request, run, static_file, redirect, abort
+from newkey import genkey
 
 
 log = logging.getLogger('mon')
@@ -167,12 +168,12 @@ def newkey():
     user_ID = request.headers.get('X-Ssl-Client-Serial')
     if not user_ID:
         abort(401, 'Unauthorized')
+    genkey('me', 'yyou', '0')
+    filename = 'yyou.pfx'
+    return static_file(filename, root=abspath('clavinger'), download=filename)
 
-    #
-
-    filename = 'fake.pfx'
-    return static_file(filename, root=STATIC_FILES, download=filename)
-
+# C:\Users\sforman\Desktop\src\FKL\prototype-karma\clavinger\you.pfx
+# C:\Users\sforman\Desktop\src\FKL\clavinger\you.pfx
 
 @app.post('/profile')
 def profile():
