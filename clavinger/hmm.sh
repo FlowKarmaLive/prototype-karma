@@ -16,8 +16,10 @@ openssl pkcs12 -export -out ${NAME}.pfx -inkey ${NAME}.key -in ${NAME}.pem -cert
 
 
 # suppress password prompt with:  (sets empty password?)
- -passout pass:
+#  -passout pass:
 
 #  other options:  ... env:var
 #  https://www.openssl.org/docs/manmaster/man1/openssl-passphrase-options.html
+
+# openssl pkcs12 -export -out sam.pfx -inkey sam.key -in sam.pem -certfile ca.pem -passout env:${PASS}
 
