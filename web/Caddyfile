@@ -1,6 +1,6 @@
 {
 	# local_certs
-	acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 	order file_server before reverse_proxy
 }
 flowkarma.live {
