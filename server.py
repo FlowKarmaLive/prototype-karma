@@ -63,7 +63,7 @@ def favicon_ico():
 
 
 # Uncomment this route & handler to support dev (in other words, if caddy
-# is not there to server them for us.)
+# is not there to serve them for us.)
 
 # @app.get('/static/<filename:path>')
 # def get_static(filename):
@@ -86,6 +86,7 @@ def register():
         log.info('register %s %s %r', user_ID, tag, url)
 
     server = request['HTTP_HOST']
+    # TODO: check this value for hijinks.
     return "https://%s/∴%s" % (server, tag)
 
 
