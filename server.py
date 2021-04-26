@@ -112,7 +112,7 @@ def register():
     return "https://%s/∴%s" % (server, share)
 
 
-@app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
+@app.get('/<tag:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def share_handler(tag):
     '''Present the "Shared with you..." page.'''
     user_ID = get_user_ID()
