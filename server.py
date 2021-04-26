@@ -47,8 +47,8 @@ def home_page():
     if not client_cert_serial_number:
         return static_file('unknown_index.html', root=TEMPLATES)
     sn = request.headers.get('X-Ssl-Client-Subject')
-    print(repr(sn))
     sn = _parse_sn(sn)
+    print(repr(sn))
     user_ID = sn['OU']  # for now, should be CN
     # user_ID = sn['CN']
     data = get_user_profile(user_ID)
@@ -65,8 +65,10 @@ def home_page():
 def _parse_sn(sn):
     '''
     "/C=US/ST=CA/L=San Francisco/O=FlowKarma.Live/OU=${FROM}/CN=${NAME}"
+    gets to the server as (e.g.)
+    "CN=0-1,OU=0,O=FlowKarma.Live,L=San Francisco,ST=CA,C=US"
     '''
-    return dict(t.split('=') for t in sn.split('/') if '=' in t)
+    return dict(t.split('=') for t in sn.split(',') if '=' in t)
 
 @app.get('/favicon.ico')
 def favicon_ico():
