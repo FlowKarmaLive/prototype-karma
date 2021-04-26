@@ -28,6 +28,8 @@ from stores import (
     put_user_profile,
     tag2url,
     url2tag,
+    share2tag,
+    tag2share,
     )
 from bottle import Bottle, get, post, request, run, static_file, redirect, abort
 from newkey import genkey
