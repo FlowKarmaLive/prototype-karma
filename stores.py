@@ -160,8 +160,14 @@ def tag2share(tag):
 		result = get_tag(c, tag)
 	finally:
 		c.close()
-	from_, part, what = result.partition('∴')
+
+	if not result:
+		log.debug('Missed %s', tag)
+		abort(400, 'Unknown tag: %s' % tag)
+
+	from_, part, what = result[0].partition('∴')
 	assert part == '∴', repr(result)
+
 	return from_, what
 
 
