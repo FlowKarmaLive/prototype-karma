@@ -98,45 +98,44 @@ def register():
         abort(401, 'Unauthorized')
 
     url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
-    unseen, tag = url2tag(user_ID, url)
+    unseen, tag = url2tag(url)
     if unseen:
         log.info('register %s %s %r', user_ID, tag, url)
 
+    share = share2tag(user_ID, tag)
+
     server = request['HTTP_HOST']
     # TODO: check this value for hijinks.
-    return "https://%s/∴%s" % (server, tag)
+
+    return "https://%s/∴%s" % (server, share)
 
 
 @app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
-def share_handler(share):
+def share_handler(tag):
     '''Present the "Shared with you..." page.'''
     user_ID = get_user_ID()
     if not user_ID:
         # TODO redirect to a page with some helpful info or something.
         redirect('/')
 
-    tag = share[1:]
+    sender_ID, url_tag = tag2share(tag[1:])
+    url = tag2url(url_tag)
 
-    sender_ID, subject = get_share(tag)
-
-    profile = get_user_profile(sender_ID)['profile']
+    sender_profile = get_user_profile(sender_ID)['profile']
 
     server = request['HTTP_HOST']
 
-    if bump(sender_ID, subject, user_ID):
-        log.info('bump %s %s %s', sender_ID, user_ID, subject)
+    if bump(sender_ID, url, user_ID):
+        log.info('bump %s %s %s', sender_ID, user_ID, url)
 
-    unseen, mytag = url2tag(user_ID, subject)
-
-    if unseen:
-        log.info('register %s %s %r', user_ID, tag, subject)
+    share = share2tag(user_ID, url_tag)
 
     return open(join(TEMPLATES, 'share.html'), 'r').read() % {
         'from_profile': profile,
         'from_id': sender_ID,
         'subject': json.dumps(subject),
-        'bump_url':  "https://%s/∋%s" % (server, tag),
-        'share_url': "https://%s/∴%s" % (server, mytag),
+        'bump_url':  "https://%s/∋%s" % (server, url_tag),
+        'share_url': "https://%s/∴%s" % (server, share),
         }
 
 

@@ -50,7 +50,7 @@ conn = None
 
 CREATE_TABLES = '''\
 create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, to_ TEXT)
-create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, user_ID TEXT, url TEXT)
+create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
 create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
 create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
 '''.splitlines(False)
@@ -58,11 +58,11 @@ create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites I
 
 SQL_0 = 'insert into bumps values (?, ?, ?, ?, ?)'
 SQL_1 = 'insert into engages values (?, ?, ?, ?)'
-SQL_2 = 'insert into tags values (?, ?, ?, ?)'
+SQL_2 = 'insert into tags values (?, ?, ?)'
 SQL_7 = 'insert into users values (?, ?, ?, ?)'
 SQL_3 = 'select profile from users where key=?'
 SQL_4 = 'update users set profile=? where key=?'
-SQL_5 = 'select user_ID, url from tags where tag=?'
+SQL_5 = 'select url from tags where tag=?'
 SQL_6 = 'select when_, from_, to_ FROM bumps WHERE what=?'
 
 
@@ -140,15 +140,44 @@ def engage(receiver, it):
 	log.debug('duplicate engage %s %s', receiver, it)
 
 
-def url2tag(user_ID, url_):
+def share2tag(from_, what):
+	c, tag = conn.cursor(), tag_for('%s∴%s' % (from_, what))
+	try:
+		result = insert(c, SQL_2, T(), tag, url)
+	finally:
+		c.close()
+	if result:
+		conn.commit()
+	else:
+		conn.rollback()
+
+	return tag
+
+
+def tag2share(tag):
+	c = conn.cursor()
+	try:
+		result = get_tag(c, tag)
+	finally:
+		c.close()
+	from_, part, what = result.partition('∴')
+	assert part == '∴', repr(result)
+        return from_, what
+
+
+def url2tag(url_):
+        '''
+        Return (bool, tag) for an URL where the bool indicates
+        whether we have this URL in the DB already.
+        '''
 	url = normalize_url(url_)
 	if not url:
 		log.debug('Bad URL %r' % (url_,))
 		abort(400, 'Bad URL')
 
-	c, tag = conn.cursor(), tag_for('%s∴%s' % (user_ID, url))
+	c, tag = conn.cursor(), tag_for(url)
 	try:
-		result = insert(c, SQL_2, T(), tag, user_ID, url)
+		result = insert(c, SQL_2, T(), tag, url)
 	finally:
 		c.close()
 
