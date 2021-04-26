@@ -4,7 +4,9 @@
 	order file_server before reverse_proxy
 }
 flowkarma.live {
-	file_server /usr/home/freebsd/prototype-karma/static/*
+	file_server /static/* {
+                root /usr/home/freebsd/prototype-karma/web/
+        }
 	tls {
 		client_auth {
 			mode verify_if_given
