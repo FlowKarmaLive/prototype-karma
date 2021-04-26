@@ -162,14 +162,14 @@ def tag2share(tag):
 		c.close()
 	from_, part, what = result.partition('∴')
 	assert part == '∴', repr(result)
-        return from_, what
+	return from_, what
 
 
 def url2tag(url_):
-        '''
-        Return (bool, tag) for an URL where the bool indicates
-        whether we have this URL in the DB already.
-        '''
+	'''
+	Return (bool, tag) for an URL where the bool indicates
+	whether we have this URL in the DB already.
+	'''
 	url = normalize_url(url_)
 	if not url:
 		log.debug('Bad URL %r' % (url_,))
