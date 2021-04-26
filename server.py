@@ -141,36 +141,20 @@ def share_handler(share):
 
 
 @app.get('/<share:re:∋[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
-def eeee(share):
+def engage_handler(share):
     '''Record a engage event.'''
-    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
-    if not client_cert_serial_number:
+    user_ID = get_user_ID()
+    if not user_ID:
         redirect('/')
+
     tag = share[1:]
+
     _, subject = get_share(tag)
+
     if engage(user_ID, subject):
         log.info('engage %s %s', user_ID, subject)
-    redirect(subject)
 
-
-
-
-@app.get('/engage'
-     '/<receiver:re:[a-z0-9]+>'
-     '/<it:re:[a-z0-9]+>')
-def engage_handler(receiver, it):
-    '''
-    Record the "engagement" of a user with some meme.
-
-    Eventually this will generate some sort of correlation code that we
-    return to the calling page which then passes it to the meme URL as a
-    parameter letting whoever's on the other know who to thank.
-    '''
-    tag2url(receiver) ; tag2url(it)  # crude validation
-    key = engage(receiver, it)
-    if key:
-        log.info('engage key:%s %s %s', key, receiver, it)
-    return 'engaged'
+    redirect(subject) # TODO: append the user_ID as a query arg?
 
 
 @app.get('/newkey')
