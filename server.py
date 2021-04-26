@@ -47,6 +47,7 @@ def home_page():
     if not client_cert_serial_number:
         return static_file('unknown_index.html', root=TEMPLATES)
     sn = request.headers.get('X-Ssl-Client-Subject')
+    print(repr(sn))
     sn = _parse_sn(sn)
     user_ID = sn['OU']  # for now, should be CN
     # user_ID = sn['CN']
