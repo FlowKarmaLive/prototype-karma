@@ -43,14 +43,9 @@ app = Bottle()
 
 @app.get('/')
 def home_page():
-    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
-    if not client_cert_serial_number:
+    user_ID = get_user_ID()
+    if not user_ID:
         return static_file('unknown_index.html', root=TEMPLATES)
-    sn = request.headers.get('X-Ssl-Client-Subject')
-    sn = _parse_sn(sn)
-    print(repr(sn))
-    user_ID = sn['OU']  # for now, should be CN
-    # user_ID = sn['CN']
     data = get_user_profile(user_ID)
     data['profile'] = json.dumps(data['profile'])
 
@@ -62,13 +57,22 @@ def home_page():
     return INDEX_HTML % data
 
 
+def get_user_ID():
+    sn = request.headers.get('X-Ssl-Client-Subject')
+    if not sn:
+        return static_file('unknown_index.html', root=TEMPLATES)
+    return _parse_sn(sn)['OU']  # for now, should be CN
+
+
 def _parse_sn(sn):
     '''
     "/C=US/ST=CA/L=San Francisco/O=FlowKarma.Live/OU=${FROM}/CN=${NAME}"
     gets to the server as (e.g.)
     "CN=0-1,OU=0,O=FlowKarma.Live,L=San Francisco,ST=CA,C=US"
     '''
+    # TODO: get just the parts we want, a whole dict is a bit much.
     return dict(t.split('=') for t in sn.split(',') if '=' in t)
+
 
 @app.get('/favicon.ico')
 def favicon_ico():
@@ -89,9 +93,9 @@ def register():
     Accept an URL and return its tag, enter a register record in the DB
     if this is the first time we've seen this URL.
     '''
-    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
-    if not client_cert_serial_number:
-        return static_file('unknown_index.html', root=TEMPLATES)
+    user_ID = get_user_ID()
+    if not user_ID:
+        abort(401, 'Unauthorized')
 
     url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
     unseen, tag = url2tag(user_ID, url)
@@ -192,22 +196,22 @@ def newkey():
     filename = new_user_ID + '.pfx'
     return static_file(filename, root=abspath('clavinger'), download=filename)
 
-# C:\Users\sforman\Desktop\src\FKL\prototype-karma\clavinger\you.pfx
-# C:\Users\sforman\Desktop\src\FKL\clavinger\you.pfx
 
 @app.post('/profile')
 def profile():
     '''Update user's profile.'''
-    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
-    if not client_cert_serial_number:
+    user_ID = get_user_ID()
+    if not user_ID:
         abort(401, 'Unauthorized')
-    sn = request.headers.get('X-Ssl-Client-Subject')
-    sn = _parse_sn(sn)
-    user_ID = sn['OU']  # for now, should be CN
-    # user_ID = sn['CN']
+
+    # TODO: log the update somewhere?  In the db?
+    # client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
+
     prof = request.body.read().decode('UTF_8')
+    # TODO: detect and handle encoding errors.
+
     if len(prof) > 2048:
         abort(400, 'Profile too long.')
+
     put_user_profile(user_ID, prof)
     return ""
-

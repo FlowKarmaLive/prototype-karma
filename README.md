@@ -6,6 +6,8 @@ TODO:
     [ ] create user 0 client cert
     [ ] get a simple Elm client up and running
         [ ] can edit and update profile
+    [ ] password for client certs?
+    [ ] reload bottle on file change?
 
 questions:
     Should we store user profiles at all?
