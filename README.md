@@ -1,6 +1,21 @@
 # Prototype/Demo for [FlowKarma.Live](https://FlowKarma.Live)
 
 
+TODO:
+    [ ] client cert serial no. is not user ID
+    [ ] create user 0 client cert
+    [ ] get a simple Elm client up and running
+        [ ] can edit and update profile
+
+questions:
+    Should we store user profiles at all?
+    Should we request and store email addresses for users?
+    Should we store and forward information between users?
+
+
+=========================================================================
+THIS README IS OUT OF DATE.
+
 The whole point of the network is to publicly record the *provenance* of
 ideas or memes, the graph of who-told-whom.  You're expected to have a
 fairly stable set of direct contacts (12~25).  The network overall should

@@ -67,3 +67,8 @@ openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
   "subjectAltName=DNS:example.com,DNS:www.example.net,IP:10.0.0.1"
   
 =========================================================================
+
+
+It seems to work with Let's Encrypt supplying the site cert and my own
+self-signed (or whatever) client certs.
+

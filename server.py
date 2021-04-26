@@ -43,9 +43,13 @@ app = Bottle()
 
 @app.get('/')
 def home_page():
-    user_ID = request.headers.get('X-Ssl-Client-Serial')
-    if not user_ID:
+    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
+    if not client_cert_serial_number:
         return static_file('unknown_index.html', root=TEMPLATES)
+    sn = request.headers.get('X-Ssl-Client-Subject')
+    sn = _parse_sn(sn)
+    user_ID = sn['OU']  # for now, should be CN
+    # user_ID = sn['CN']
     data = get_user_profile(user_ID)
     data['profile'] = json.dumps(data['profile'])
 
@@ -56,6 +60,12 @@ def home_page():
 
     return INDEX_HTML % data
 
+
+def _parse_sn(sn):
+    '''
+    "/C=US/ST=CA/L=San Francisco/O=FlowKarma.Live/OU=${FROM}/CN=${NAME}"
+    '''
+    return dict(t.split('=') for t in sn.split('/') if '=' in t)
 
 @app.get('/favicon.ico')
 def favicon_ico():
@@ -76,8 +86,8 @@ def register():
     Accept an URL and return its tag, enter a register record in the DB
     if this is the first time we've seen this URL.
     '''
-    user_ID = request.headers.get('X-Ssl-Client-Serial')
-    if not user_ID:
+    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
+    if not client_cert_serial_number:
         return static_file('unknown_index.html', root=TEMPLATES)
 
     url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
@@ -93,8 +103,8 @@ def register():
 @app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def bump_anon_handler(share):
     '''Present the "Shared with you..." page.'''
-    user_ID = request.headers.get('X-Ssl-Client-Serial')
-    if not user_ID:
+    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
+    if not client_cert_serial_number:
         redirect('/')
     tag = share[1:]
     sender, subject = get_share(tag)
@@ -117,8 +127,8 @@ def bump_anon_handler(share):
 @app.get('/<share:re:∋[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def eeee(share):
     '''Record a engage event.'''
-    user_ID = request.headers.get('X-Ssl-Client-Serial')
-    if not user_ID:
+    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
+    if not client_cert_serial_number:
         redirect('/')
     tag = share[1:]
     _, subject = get_share(tag)
@@ -167,8 +177,8 @@ def engage_handler(receiver, it):
 
 @app.get('/newkey')
 def newkey():
-    user_ID = request.headers.get('X-Ssl-Client-Serial')
-    if not user_ID:
+    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
+    if not client_cert_serial_number:
         abort(401, 'Unauthorized')
     # sn = request.headers.get('X-Ssl-Client-Subject')
     # CN=rats,OU=cats,O=FlowKarma.Live,L=San Francisco,ST=CA,C=US
@@ -185,9 +195,13 @@ def newkey():
 @app.post('/profile')
 def profile():
     '''Update user's profile.'''
-    user_ID = request.headers.get('X-Ssl-Client-Serial')
-    if not user_ID:
+    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
+    if not client_cert_serial_number:
         abort(401, 'Unauthorized')
+    sn = request.headers.get('X-Ssl-Client-Subject')
+    sn = _parse_sn(sn)
+    user_ID = sn['OU']  # for now, should be CN
+    # user_ID = sn['CN']
     prof = request.body.read().decode('UTF_8')
     if len(prof) > 2048:
         abort(400, 'Profile too long.')
