@@ -60,7 +60,7 @@ def home_page():
 def get_user_ID():
     sn = request.headers.get('X-Ssl-Client-Subject')
     if not sn:
-        return static_file('unknown_index.html', root=TEMPLATES)
+        return
     return _parse_sn(sn)['OU']  # for now, should be CN
 
 
