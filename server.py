@@ -108,20 +108,29 @@ def register():
 
 
 @app.get('/<share:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
-def bump_anon_handler(share):
+def share_handler(share):
     '''Present the "Shared with you..." page.'''
-    client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
-    if not client_cert_serial_number:
+    user_ID = get_user_ID()
+    if not user_ID:
+        # TODO redirect to a page with some helpful info or something.
         redirect('/')
+
     tag = share[1:]
-    sender, subject = get_share(tag)
-    profile = get_user_profile(sender)['profile']
+
+    sender_ID, subject = get_share(tag)
+
+    profile = get_user_profile(sender_ID)['profile']
+
     server = request['HTTP_HOST']
-    if bump(sender, subject, user_ID):
-        log.info('bump %s %s %s', sender, subject, user_ID)
+
+    if bump(sender_ID, subject, user_ID):
+        log.info('bump %s %s %s', sender_ID, user_ID, subject)
+
     unseen, mytag = url2tag(user_ID, subject)
+
     if unseen:
         log.info('register %s %s %r', user_ID, tag, subject)
+
     return open(join(TEMPLATES, 'share.html'), 'r').read() % {
         'from_profile': profile,
         'from_id': sender,
@@ -144,24 +153,6 @@ def eeee(share):
     redirect(subject)
 
 
-@app.get('/bump'
-     '/<sender:re:[a-z0-9]+>'
-     '/<it:re:[a-z0-9]+>'
-     '/<receiver:re:[a-z0-9]+>')
-def bump_handler(sender, it, receiver):
-    '''Record the connection between two nodes in re: a "meme" URL.'''
-    data = dict(
-        from_url=tag2url(sender),
-        iframe_url=tag2url(it),
-        your_url=tag2url(receiver),
-        me=sender,
-        it=it,
-        you=receiver,
-        server=request['HTTP_HOST'],
-        )
-    if bump(sender, it, receiver):
-        log.info('bump %s %s %s', sender, it, receiver)
-    return str(data)
 
 
 @app.get('/engage'
