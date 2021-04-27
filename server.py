@@ -136,7 +136,7 @@ def share_handler(tag):
     return open(join(TEMPLATES, 'share.html'), 'r').read() % {
         'from_profile': profile,
         'from_id': sender_ID,
-        'subject': json.dumps(subject),
+        'subject': json.dumps(url),
         'bump_url':  "https://%s/∋%s" % (server, url_tag),
         'share_url': "https://%s/∴%s" % (server, share),
         }
