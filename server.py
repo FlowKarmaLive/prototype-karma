@@ -48,6 +48,7 @@ def home_page():
     user_ID = get_user_ID()
     if not user_ID:
         return static_file('unknown_index.html', root=TEMPLATES)
+
     data = get_user_profile(user_ID)
     data['profile'] = json.dumps(data['profile'])
 
@@ -120,7 +121,7 @@ def share_handler(tag):
         # TODO redirect to a page with some helpful info or something.
         redirect('/')
 
-    sender_ID, url_tag = tag2share(tag[1:])
+    sender_ID, url_tag = tag2share(tag.lstrip('∴'))
     url = tag2url(url_tag)
 
     sender_profile = get_user_profile(sender_ID)['profile']
@@ -148,14 +149,12 @@ def engage_handler(share):
     if not user_ID:
         redirect('/')
 
-    tag = share[1:]
+    url = tag2url(share.lstrip('∋'))
 
-    _, subject = get_share(tag)
+    if engage(user_ID, url):
+        log.info('engage %s %s', user_ID, url)
 
-    if engage(user_ID, subject):
-        log.info('engage %s %s', user_ID, subject)
-
-    redirect(subject) # TODO: append the user_ID as a query arg?
+    redirect(url) # TODO: append the user_ID as a query arg?
 
 
 @app.get('/newkey')

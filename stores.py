@@ -83,7 +83,6 @@ def get_and_increment_invite_count(user_ID):
 		c.close()
 	conn.commit()
 	return n
-	
 
 
 def connect(db_file=':memory:', create_tables=True):
