@@ -141,9 +141,10 @@ def engage(receiver, it):
 
 
 def share2tag(from_, what):
-	c, tag = conn.cursor(), tag_for('%s∴%s' % (from_, what))
+	slug = '%s∴%s' % (from_, what)
+	c, tag = conn.cursor(), tag_for(slug)
 	try:
-		result = insert(c, SQL_2, T(), tag, what)
+		result = insert(c, SQL_2, T(), tag, slug)
 	finally:
 		c.close()
 	if result:
