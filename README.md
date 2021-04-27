@@ -8,6 +8,7 @@ TODO:
         [ ] can edit and update profile
     [ ] password for client certs?
     [ ] reload bottle on file change?
+    [ ] proper table for sender-subject
 
 questions:
     Should we store user profiles at all?
