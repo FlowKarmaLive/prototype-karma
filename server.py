@@ -149,10 +149,11 @@ def engage_handler(share):
     if not user_ID:
         redirect('/')
 
-    url = tag2url(share.lstrip('∋'))
+    tag = share.lstrip('∋')
+    url = tag2url(tag)
 
     if engage(user_ID, url):
-        log.info('engage %s %s', user_ID, url)
+        log.info('engage %s %s', user_ID, tag)
 
     redirect(url) # TODO: append the user_ID as a query arg?
 
