@@ -133,7 +133,7 @@ def share_handler(tag):
     share = share2tag(user_ID, url_tag)
 
     return open(join(TEMPLATES, 'share.html'), 'r').read() % {
-        'from_profile': profile,
+        'from_profile': sender_profile,
         'from_id': sender_ID,
         'subject': json.dumps(url),
         'bump_url':  "https://%s/∋%s" % (server, url_tag),
