@@ -127,7 +127,6 @@ def share_handler(tag):
 
     server = request['HTTP_HOST']
 
-    print(sender_ID, url_tag, user_ID)
     if bump(sender_ID, url_tag, user_ID):
         log.info('bump %s %s %s', sender_ID, user_ID, url_tag)
 

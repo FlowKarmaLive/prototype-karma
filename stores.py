@@ -219,6 +219,7 @@ def tag2url(tag):
 	finally:
 		c.close()
 	if url:
+		url = url[0]
 		log.debug('Found %s %r', tag, url)
 		return url
 	log.debug('Missed %s', tag)
