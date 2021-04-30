@@ -170,11 +170,11 @@ def newkey():
 
     invite_no = get_and_increment_invite_count(user_ID)
     new_user_ID = '%s-%s' % (user_ID, invite_no)
-    print('new_user_ID', new_user_ID)
 
     filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
     if not filename:
         abort(500, 'Idunnosomedamnthing.')
+
     return static_file(filename, root=abspath('clavinger'), download=filename)
 
 
