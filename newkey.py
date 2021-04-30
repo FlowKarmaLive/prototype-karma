@@ -40,7 +40,7 @@ def genkey(client_cert_serial_number, parent, child):
         # Can't rename, tmp is on a diff fs:
         # leading to "OSError: [Errno 18] Cross-device link"
     note_cert(serial, parent, client_cert_serial_number, child)
-    return keyfn
+    return str(keyfn)
 
 
 if __name__ == '__main__':
