@@ -163,7 +163,7 @@ def engage(receiver, it):
 def share2tag(from_, what):
     c, tag = conn.cursor(), tag_for('%s∴%s' % (from_, what))
     try:
-        c.execute(SQL_9, T(), tag, from_, what)
+        c.execute(SQL_9, (T(), tag, from_, what))
     finally:
         c.close()
     conn.commit()
@@ -173,7 +173,7 @@ def share2tag(from_, what):
 def tag2share(tag):
     c = conn.cursor()
     try:
-        result = c.execute(SQL_10, tag)
+        result = c.execute(SQL_10, (tag,))
     finally:
         c.close()
     if not result:
