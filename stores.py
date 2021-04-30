@@ -180,8 +180,7 @@ def tag2share(tag):
     if not result:
         log.debug('Missed %s', tag)
         abort(400, 'Unknown tag: %s' % tag)
-    print(result)
-    return result[0]
+    return result
 
 
 def url2tag(url_):
