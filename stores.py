@@ -53,7 +53,8 @@ create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, 
 create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
 create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
 create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
-create table certs (when_ INTEGER, serial_no TEXT, parent_user TEXT, parent_cert_serial_no TEXT, user TEXT)
+create table shares (when_ INTEGER, tag TEXT PRIMARY KEY, from_ TEXT, what TEXT)
+create table certs (when_ INTEGER, serial_no TEXT PRIMARY KEY, parent_user TEXT, parent_cert_serial_no TEXT, user TEXT)
 '''.splitlines(False)
 
 
@@ -66,13 +67,13 @@ SQL_5 = 'select url from tags where tag=?'
 SQL_6 = 'select when_, from_, to_ FROM bumps WHERE what=?'
 SQL_7 = 'insert into users values (?, ?, ?, ?)'
 SQL_8 = 'insert into certs values (?, ?, ?, ?, ?)'
+SQL_9 = 'insert into shares values (?, ?, ?, ?)'
+SQL_10 = 'select from_, what FROM shares WHERE tag=?'
 
 
 INITIAL_PROFILE = '''\
 Welcome to FlowKarma.Live
-
 Edit this text and click the "Update" button below to update your profile.
-
 This will be public, use it to identify yourself and provide contact information.
 '''
 
@@ -160,35 +161,25 @@ def engage(receiver, it):
 
 
 def share2tag(from_, what):
-    slug = '%s∴%s' % (from_, what)
-    c, tag = conn.cursor(), tag_for(slug)
+    c, tag = conn.cursor(), tag_for('%s∴%s' % (from_, what))
     try:
-        result = insert(c, SQL_2, T(), tag, slug)
+        c.execute(SQL_9, T(), tag, from_, what)
     finally:
         c.close()
-    if result:
-        conn.commit()
-    else:
-        conn.rollback()
-
+    conn.commit()
     return tag
 
 
 def tag2share(tag):
     c = conn.cursor()
     try:
-        result = get_tag(c, tag)
+        result = c.execute(SQL_10, tag)
     finally:
         c.close()
-
     if not result:
         log.debug('Missed %s', tag)
         abort(400, 'Unknown tag: %s' % tag)
-
-    from_, part, what = result[0].partition('∴')
-    assert part == '∴', repr(result)
-
-    return from_, what
+    return result[0]
 
 
 def url2tag(url_):
