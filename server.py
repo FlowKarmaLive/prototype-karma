@@ -173,6 +173,8 @@ def newkey():
     print('new_user_ID', new_user_ID)
 
     filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
+    if not filename:
+        abort(500, 'Idunnosomedamnthing.')
     return static_file(filename, root=abspath('clavinger'), download=filename)
 
 
