@@ -173,7 +173,8 @@ def share2tag(from_, what):
 def tag2share(tag):
     c = conn.cursor()
     try:
-        result = c.execute(SQL_10, (tag,))
+        c.execute(SQL_10, (tag,))
+        result = c.fetchone()
     finally:
         c.close()
     if not result:
