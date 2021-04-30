@@ -49,8 +49,7 @@ def home_page():
     if not user_ID:
         return static_file('unknown_index.html', root=TEMPLATES)
 
-    data = get_user_profile(user_ID)
-    data['profile'] = json.dumps(data['profile'])
+    data['profile'] = json.dumps(get_user_profile(user_ID))
 
     INDEX_HTML = open(join(TEMPLATES, 'index.html'), 'r').read()
     # Reading the file per-request to not have to restart the server
@@ -61,6 +60,11 @@ def home_page():
 
 
 def get_user_ID():
+    '''
+    Pull the user ID from the client cert "Client Subject".
+    (We could also look up the cert serial no. in the DB and get the user
+    ID from there.)
+    '''
     sn = request.headers.get('X-Ssl-Client-Subject')
     if not sn:
         return
@@ -124,7 +128,7 @@ def share_handler(tag):
     sender_ID, url_tag = tag2share(tag.lstrip('∴'))
     url = tag2url(url_tag)
 
-    sender_profile = get_user_profile(sender_ID)['profile']
+    sender_profile = get_user_profile(sender_ID)
 
     server = request['HTTP_HOST']
 

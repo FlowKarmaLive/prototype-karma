@@ -141,7 +141,7 @@ def bump(sender, it, receiver):
         conn.commit()
         return True
     conn.rollback()
-    log.debug('duplicate bump %s %s %s', sender, it, receiver)
+    log.debug('duplicate bump %s %s %s', sender, receiver, it)
     return False
 
 
@@ -150,14 +150,14 @@ def engage(receiver, it):
     c = conn.cursor()
     try:
         result = insert(c, SQL_1, T(), key, receiver, it)
-        result = None if result is None else key
     finally:
         c.close()
     if result:
         conn.commit()
-        return result
+        return True
     conn.rollback()
     log.debug('duplicate engage %s %s', receiver, it)
+    return False
 
 
 def share2tag(from_, what):
@@ -256,9 +256,7 @@ def get_user_profile(user_ID):
     finally:
         c.close()
     if result:
-        return {  # TODO this needn't be a dict.
-            'profile': result[0]
-        }
+        return result[0]
     # A new user?
     c = conn.cursor()
     try:
@@ -268,9 +266,7 @@ def get_user_profile(user_ID):
         )
     finally:
         c.close()
-    return {'profile': INITIAL_PROFILE}
-
-    # abort(400, 'Unknown user: %r' % (user_ID,))  # TODO also remove this...
+    return INITIAL_PROFILE
 
 
 def put_user_profile(user_ID, profile):
