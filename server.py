@@ -169,7 +169,7 @@ def newkey():
         abort(401, 'Unauthorized')
 
     invite_no = get_and_increment_invite_count(user_ID)
-    new_user_ID = user_ID + '-' + invite_no
+    new_user_ID = '%s-%s' % (user_ID, invite_no)
     print('new_user_ID', new_user_ID)
 
     filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
