@@ -152,7 +152,7 @@ def engage_handler(share):
     tag = share.lstrip('∋')
     url = tag2url(tag)
 
-    if engage(user_ID, url):
+    if engage(user_ID, tag):
         log.info('engage %s %s', user_ID, tag)
 
     redirect(url) # TODO: append the user_ID as a query arg?
@@ -163,13 +163,16 @@ def newkey():
     client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
     if not client_cert_serial_number:
         abort(401, 'Unauthorized')
-    # sn = request.headers.get('X-Ssl-Client-Subject')
-    # CN=rats,OU=cats,O=FlowKarma.Live,L=San Francisco,ST=CA,C=US
+
+    user_ID = get_user_ID()
+    if not user_ID:
+        abort(401, 'Unauthorized')
+
     invite_no = get_and_increment_invite_count(user_ID)
-    new_user_ID = str(int(user_ID) * 100000 + invite_no)
-    print(user_ID, new_user_ID)
-    genkey(user_ID, new_user_ID, new_user_ID)
-    filename = new_user_ID + '.pfx'
+    new_user_ID = user_ID + '-' + invite_no
+    print('new_user_ID', new_user_ID)
+
+    filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
     return static_file(filename, root=abspath('clavinger'), download=filename)
 
 

@@ -53,17 +53,28 @@ create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, 
 create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
 create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
 create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
+create table certs (when_ INTEGER, serial_no TEXT, parent_user TEXT, parent_cert_serial_no TEXT, user TEXT)
 '''.splitlines(False)
 
 
 SQL_0 = 'insert into bumps values (?, ?, ?, ?, ?)'
 SQL_1 = 'insert into engages values (?, ?, ?, ?)'
 SQL_2 = 'insert into tags values (?, ?, ?)'
-SQL_7 = 'insert into users values (?, ?, ?, ?)'
 SQL_3 = 'select profile from users where key=?'
 SQL_4 = 'update users set profile=? where key=?'
 SQL_5 = 'select url from tags where tag=?'
 SQL_6 = 'select when_, from_, to_ FROM bumps WHERE what=?'
+SQL_7 = 'insert into users values (?, ?, ?, ?)'
+SQL_8 = 'insert into certs values (?, ?, ?, ?, ?)'
+
+
+def note_cert(serial, parent, client_cert_serial_number, child):
+	c = conn.cursor()
+	try:
+		c.execute(SQL_8, (T(), serial, parent, client_cert_serial_number, child))
+	finally:
+		c.close()
+	conn.commit()
 
 
 def get_and_increment_invite_count(user_ID):
