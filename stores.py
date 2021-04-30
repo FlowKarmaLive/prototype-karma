@@ -69,234 +69,234 @@ SQL_8 = 'insert into certs values (?, ?, ?, ?, ?)'
 
 
 def note_cert(serial, parent, client_cert_serial_number, child):
-	c = conn.cursor()
-	try:
-		c.execute(SQL_8, (T(), serial, parent, client_cert_serial_number, child))
-	finally:
-		c.close()
-	conn.commit()
+    c = conn.cursor()
+    try:
+        c.execute(SQL_8, (T(), serial, parent, client_cert_serial_number, child))
+    finally:
+        c.close()
+    conn.commit()
 
 
 def get_and_increment_invite_count(user_ID):
-	c = conn.cursor()
-	try:
-		c.execute('select invites from users where key=?', (user_ID,))
-		result = c.fetchone()
-	finally:
-		c.close()
-	if result is None:
-		raise ValueError('???')
-	n = result[0] + 1
-	c = conn.cursor()
-	try:
-		c.execute('update users set invites=? where key=?', (n, user_ID))
-	finally:
-		c.close()
-	conn.commit()
-	return n
+    c = conn.cursor()
+    try:
+        c.execute('select invites from users where key=?', (user_ID,))
+        result = c.fetchone()
+    finally:
+        c.close()
+    if result is None:
+        raise ValueError('???')
+    n = result[0] + 1
+    c = conn.cursor()
+    try:
+        c.execute('update users set invites=? where key=?', (n, user_ID))
+    finally:
+        c.close()
+    conn.commit()
+    return n
 
 
 def connect(db_file=':memory:', create_tables=True):
-	global conn
-	if conn:
-		raise RuntimeError('DB already connected %r', conn)
-	conn = sqlite3.connect(db_file)
-	conn.row_factory = VisibleRow
-	if create_tables:
-		c = conn.cursor()
-		for statement in CREATE_TABLES:
-			c.execute(statement)
-		c.execute(  # Create User Zero.
-			SQL_7,
-			(T(), '0', 'Hello, and welcome to the middle of the app.', 0)
-		)
-		c.close()
-		conn.commit()
+    global conn
+    if conn:
+        raise RuntimeError('DB already connected %r', conn)
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = VisibleRow
+    if create_tables:
+        c = conn.cursor()
+        for statement in CREATE_TABLES:
+            c.execute(statement)
+        c.execute(  # Create User Zero.
+            SQL_7,
+            (T(), '0', 'Hello, and welcome to the middle of the app.', 0)
+        )
+        c.close()
+        conn.commit()
 
 
 class VisibleRow(sqlite3.Row):
-	def __str__(self):
-		return str(tuple(self))
-	__repr__ = __str__
+    def __str__(self):
+        return str(tuple(self))
+    __repr__ = __str__
 
 
 def bump(sender, it, receiver):
-	key = tag_for('%s:%s' % (it, receiver))
-	c = conn.cursor()
-	try:
-		result = insert(c, SQL_0, T(), key, sender, it, receiver)
-	finally:
-		c.close()
-	if result:
-		conn.commit()
-		return True
-	conn.rollback()
-	log.debug('duplicate bump %s %s %s', sender, it, receiver)
-	return False
+    key = tag_for('%s:%s' % (it, receiver))
+    c = conn.cursor()
+    try:
+        result = insert(c, SQL_0, T(), key, sender, it, receiver)
+    finally:
+        c.close()
+    if result:
+        conn.commit()
+        return True
+    conn.rollback()
+    log.debug('duplicate bump %s %s %s', sender, it, receiver)
+    return False
 
 
 def engage(receiver, it):
-	key = tag_for('%s:%s' % (receiver, it))
-	c = conn.cursor()
-	try:
-		result = insert(c, SQL_1, T(), key, receiver, it)
-		result = None if result is None else key
-	finally:
-		c.close()
-	if result:
-		conn.commit()
-		return result
-	conn.rollback()
-	log.debug('duplicate engage %s %s', receiver, it)
+    key = tag_for('%s:%s' % (receiver, it))
+    c = conn.cursor()
+    try:
+        result = insert(c, SQL_1, T(), key, receiver, it)
+        result = None if result is None else key
+    finally:
+        c.close()
+    if result:
+        conn.commit()
+        return result
+    conn.rollback()
+    log.debug('duplicate engage %s %s', receiver, it)
 
 
 def share2tag(from_, what):
-	slug = '%s∴%s' % (from_, what)
-	c, tag = conn.cursor(), tag_for(slug)
-	try:
-		result = insert(c, SQL_2, T(), tag, slug)
-	finally:
-		c.close()
-	if result:
-		conn.commit()
-	else:
-		conn.rollback()
+    slug = '%s∴%s' % (from_, what)
+    c, tag = conn.cursor(), tag_for(slug)
+    try:
+        result = insert(c, SQL_2, T(), tag, slug)
+    finally:
+        c.close()
+    if result:
+        conn.commit()
+    else:
+        conn.rollback()
 
-	return tag
+    return tag
 
 
 def tag2share(tag):
-	c = conn.cursor()
-	try:
-		result = get_tag(c, tag)
-	finally:
-		c.close()
+    c = conn.cursor()
+    try:
+        result = get_tag(c, tag)
+    finally:
+        c.close()
 
-	if not result:
-		log.debug('Missed %s', tag)
-		abort(400, 'Unknown tag: %s' % tag)
+    if not result:
+        log.debug('Missed %s', tag)
+        abort(400, 'Unknown tag: %s' % tag)
 
-	from_, part, what = result[0].partition('∴')
-	assert part == '∴', repr(result)
+    from_, part, what = result[0].partition('∴')
+    assert part == '∴', repr(result)
 
-	return from_, what
+    return from_, what
 
 
 def url2tag(url_):
-	'''
-	Return (bool, tag) for an URL where the bool indicates
-	whether we have this URL in the DB already.
-	'''
-	url = normalize_url(url_)
-	if not url:
-		log.debug('Bad URL %r' % (url_,))
-		abort(400, 'Bad URL')
+    '''
+    Return (bool, tag) for an URL where the bool indicates
+    whether we have this URL in the DB already.
+    '''
+    url = normalize_url(url_)
+    if not url:
+        log.debug('Bad URL %r' % (url_,))
+        abort(400, 'Bad URL')
 
-	c, tag = conn.cursor(), tag_for(url)
-	try:
-		result = insert(c, SQL_2, T(), tag, url)
-	finally:
-		c.close()
+    c, tag = conn.cursor(), tag_for(url)
+    try:
+        result = insert(c, SQL_2, T(), tag, url)
+    finally:
+        c.close()
 
-	if result:
-		conn.commit()
-		log.debug('Tagged %s %r', tag, url)
-	else:
-		conn.rollback()
-		log.debug('Already tagged %s %r', tag, url)
+    if result:
+        conn.commit()
+        log.debug('Tagged %s %r', tag, url)
+    else:
+        conn.rollback()
+        log.debug('Already tagged %s %r', tag, url)
 
-	return bool(result), tag
+    return bool(result), tag
 
 
 def get_share(tag):
-	c = conn.cursor()
-	try:
-		result = get_tag(c, tag)
-	finally:
-		c.close()
-	if result:
-		user_ID, url = result
-		log.debug('Found %s %s %r', tag, user_ID, url)
-		return user_ID, url
-	log.debug('Missed %s', tag)
-	abort(400, 'Unknown tag: %s' % tag)
+    c = conn.cursor()
+    try:
+        result = get_tag(c, tag)
+    finally:
+        c.close()
+    if result:
+        user_ID, url = result
+        log.debug('Found %s %s %r', tag, user_ID, url)
+        return user_ID, url
+    log.debug('Missed %s', tag)
+    abort(400, 'Unknown tag: %s' % tag)
 
 
 def tag2url(tag):
-	c = conn.cursor()
-	try:
-		url = get_tag(c, tag)
-	finally:
-		c.close()
-	if url:
-		url = url[0]
-		log.debug('Found %s %r', tag, url)
-		return url
-	log.debug('Missed %s', tag)
-	abort(400, 'Unknown tag: %s' % tag)  # TODO remove this...
+    c = conn.cursor()
+    try:
+        url = get_tag(c, tag)
+    finally:
+        c.close()
+    if url:
+        url = url[0]
+        log.debug('Found %s %r', tag, url)
+        return url
+    log.debug('Missed %s', tag)
+    abort(400, 'Unknown tag: %s' % tag)  # TODO remove this...
 
 
 def normalize_url(url):
-	try:
-		result = urlparse(url)
-	except:
-		log.exception('While parsing URL %r', url)
-		return
-	if result.scheme.lower() in ('http', 'https'):
-		return result.geturl()
+    try:
+        result = urlparse(url)
+    except:
+        log.exception('While parsing URL %r', url)
+        return
+    if result.scheme.lower() in ('http', 'https'):
+        return result.geturl()
 
 
 def get_user_profile(user_ID):
-	c = conn.cursor()
-	try:
-		c.execute(SQL_3, (user_ID,))
-		result = c.fetchone()
-	finally:
-		c.close()
-	if result:
-		return {  # TODO this needn't be a dict.
-			'profile': result[0]
-		}
-	abort(400, 'Unknown user: %r' % (user_ID,))  # TODO also remove this...
+    c = conn.cursor()
+    try:
+        c.execute(SQL_3, (user_ID,))
+        result = c.fetchone()
+    finally:
+        c.close()
+    if result:
+        return {  # TODO this needn't be a dict.
+            'profile': result[0]
+        }
+    abort(400, 'Unknown user: %r' % (user_ID,))  # TODO also remove this...
 
 
 def put_user_profile(user_ID, profile):
-	c = conn.cursor()
-	try:
-		c.execute(
-			SQL_4,
-			(profile, user_ID)
-			)
-	except:
-		conn.rollback()
-	else:
-		conn.commit()
-	finally:
-		c.close()
-	# Is this okay?  Close cursor AFTER conn {commit,rollback}?
+    c = conn.cursor()
+    try:
+        c.execute(
+            SQL_4,
+            (profile, user_ID)
+            )
+    except:
+        conn.rollback()
+    else:
+        conn.commit()
+    finally:
+        c.close()
+    # Is this okay?  Close cursor AFTER conn {commit,rollback}?
 
 
 def insert(c, query, *values):
-	try:
-		c.execute(query, values)
-	except sqlite3.IntegrityError:
-		return
-	return c.lastrowid
+    try:
+        c.execute(query, values)
+    except sqlite3.IntegrityError:
+        return
+    return c.lastrowid
 
 
 def T():
-	return int(round(time(), 3) * 1000)
+    return int(round(time(), 3) * 1000)
 
 
 def get_tag(c, tag):
-	c.execute(SQL_5, (tag,))
-	return c.fetchone()
+    c.execute(SQL_5, (tag,))
+    return c.fetchone()
 
 
 def extract_graph(c, tag):
-	c.execute(SQL_6, (tag,))
-	nodes, links = set(), []
-	for when, from_, to in c.fetchall():
-		nodes.update((from_, to))
-		links.append((when, from_, to))
-	return list(nodes), links
+    c.execute(SQL_6, (tag,))
+    nodes, links = set(), []
+    for when, from_, to in c.fetchall():
+        nodes.update((from_, to))
+        links.append((when, from_, to))
+    return list(nodes), links
