@@ -68,6 +68,15 @@ SQL_7 = 'insert into users values (?, ?, ?, ?)'
 SQL_8 = 'insert into certs values (?, ?, ?, ?, ?)'
 
 
+INITIAL_PROFILE = '''\
+Welcome to FlowKarma.Live
+
+Edit this text and click the "Update" button below to update your profile.
+
+This will be public, use it to identify yourself and provide contact information.
+'''
+
+
 def note_cert(serial, parent, client_cert_serial_number, child):
     c = conn.cursor()
     try:
@@ -257,7 +266,18 @@ def get_user_profile(user_ID):
         return {  # TODO this needn't be a dict.
             'profile': result[0]
         }
-    abort(400, 'Unknown user: %r' % (user_ID,))  # TODO also remove this...
+    # A new user?
+    c = conn.cursor()
+    try:
+        c.execute(  # Create User record.
+            SQL_7,
+            (T(), user_ID, INITIAL_PROFILE, 0)
+        )
+    finally:
+        c.close()
+    return {'profile': INITIAL_PROFILE}
+
+    # abort(400, 'Unknown user: %r' % (user_ID,))  # TODO also remove this...
 
 
 def put_user_profile(user_ID, profile):

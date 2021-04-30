@@ -64,7 +64,7 @@ def get_user_ID():
     sn = request.headers.get('X-Ssl-Client-Subject')
     if not sn:
         return
-    return _parse_sn(sn)['OU']  # for now, should be CN
+    return _parse_sn(sn)['CN']
 
 
 def _parse_sn(sn):
