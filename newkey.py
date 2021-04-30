@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-from sys import platform
+from shutil import move
 from subprocess import run
+from sys import platform
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from uuid import uuid4
+
 from stores import note_cert
 
 
@@ -34,8 +36,9 @@ def genkey(client_cert_serial_number, parent, child):
         print('-' * 30)
         print(completed_proc.stderr)
         print('-' * 30)
-        (Path(tmpdirname) / fn).rename(keyfn)
-        # END OF TMPDIR!
+        move(str(Path(tmpdirname) / fn), str(keyfn))
+        # Can't rename, tmp is on a diff fs:
+        # leading to "OSError: [Errno 18] Cross-device link"
     note_cert(serial, parent, client_cert_serial_number, child)
     return keyfn
 
