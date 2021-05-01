@@ -46,4 +46,4 @@ def genkey(client_cert_serial_number, parent, child):
 
 
 if __name__ == '__main__':
-    p = genkey('0', '0-1', '01')
+    p = genkey('0', '0', '0')

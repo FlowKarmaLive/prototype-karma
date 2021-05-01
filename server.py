@@ -39,6 +39,11 @@ log = logging.getLogger('mon')
 
 STATIC_FILES = abspath('web/static')
 TEMPLATES = abspath('web/templates')
+with open(join(TEMPLATES, 'index.html'), 'r') as f:
+    INDEX_HTML = f.read()
+with open(join(TEMPLATES, 'share.html'), 'r') as f:
+    SHARE_HTML = f.read()
+
 
 app = Bottle()
 
@@ -47,15 +52,7 @@ def home_page():
     user_ID = get_user_ID()
     if not user_ID:
         return static_file('unknown_index.html', root=TEMPLATES)
-
-    data['profile'] = json.dumps(get_user_profile(user_ID))
-
-    INDEX_HTML = open(join(TEMPLATES, 'index.html'), 'r').read()
-    # Reading the file per-request to not have to restart the server
-    # to see changes to the template file.  Later this line above should
-    # go back to module scope.
-
-    return INDEX_HTML % data
+    return INDEX_HTML % dict(profile=json.dumps(get_user_profile(user_ID)))
 
 
 def get_user_ID():
@@ -136,7 +133,7 @@ def share_handler(tag):
 
     share = share2tag(user_ID, url_tag)
 
-    return open(join(TEMPLATES, 'share.html'), 'r').read() % {
+    return SHARE_HTML % {
         'from_profile': sender_profile,
         'from_id': sender_ID,
         'subject': json.dumps(url),
@@ -172,7 +169,11 @@ def newkey():
         abort(401, 'Unauthorized')
 
     invite_no = get_and_increment_invite_count(user_ID)
-    new_user_ID = '%s-%s' % (user_ID, invite_no)
+    new_user_ID = (
+        ('%s-%s' % (user_ID, invite_no))
+        if user_ID
+        else str(invite_no)
+        )
 
     filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
     if not filename:
