@@ -2,13 +2,15 @@
 
 
 TODO:
-    [ ] client cert serial no. is not user ID
+    [X] client cert serial no. is not user ID
     [ ] create user 0 client cert
-    [ ] get a simple Elm client up and running
-        [ ] can edit and update profile
+    [X] get a simple Elm client up and running
+        [X] can edit and update profile
     [ ] password for client certs?
     [ ] reload bottle on file change?
-    [ ] proper table for sender-subject
+    [X] proper table for sender-subject
+    [ ] filter domains
+    [ ] cert revocation
 
 questions:
     Should we store user profiles at all?

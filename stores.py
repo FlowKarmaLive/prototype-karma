@@ -50,11 +50,11 @@ conn = None
 
 CREATE_TABLES = '''\
 create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, to_ TEXT)
-create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
-create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
-create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
-create table shares (when_ INTEGER, tag TEXT PRIMARY KEY, from_ TEXT, what TEXT)
 create table certs (when_ INTEGER, serial_no TEXT PRIMARY KEY, parent_user TEXT, parent_cert_serial_no TEXT, user TEXT)
+create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
+create table shares (when_ INTEGER, tag TEXT PRIMARY KEY, from_ TEXT, what TEXT)
+create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
+create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
 '''.splitlines(False)
 
 
