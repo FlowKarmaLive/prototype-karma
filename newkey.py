@@ -22,15 +22,15 @@ def genkey(client_cert_serial_number, parent, child):
     with TemporaryDirectory() as tmpdirname:
         completed_proc = run(
             command,
-            shell=True,
+            capture_output=True,
+            cwd=str(KEYS_PATH),
             env=dict(
                 FROM=parent,
                 NAME=child,
                 SERIAL='0x' + serial,
                 TMPDIR=tmpdirname,
             ),
-            capture_output=True,
-            cwd=r'./clavinger',
+            shell=True,
         )
         if completed_proc.returncode:
             log.error(completed_proc.stderr)
@@ -42,7 +42,7 @@ def genkey(client_cert_serial_number, parent, child):
         # on digitalocean.
 
     note_cert(serial, parent, client_cert_serial_number, child)
-    return str(fn)
+    return fn
 
 
 if __name__ == '__main__':

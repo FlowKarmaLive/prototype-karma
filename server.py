@@ -39,7 +39,6 @@ log = logging.getLogger('mon')
 
 STATIC_FILES = abspath('web/static')
 TEMPLATES = abspath('web/templates')
-SECRET_KEY = b"not a secret"
 
 app = Bottle()
 
