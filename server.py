@@ -171,7 +171,7 @@ def newkey():
     invite_no = get_and_increment_invite_count(user_ID)
     new_user_ID = (
         ('%s-%s' % (user_ID, invite_no))
-        if user_ID
+        if user_ID == '0'
         else str(invite_no)
         )
 
