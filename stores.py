@@ -69,6 +69,8 @@ SQL_7 = 'insert into users values (?, ?, ?, ?)'
 SQL_8 = 'insert into certs values (?, ?, ?, ?, ?)'
 SQL_9 = 'insert into shares values (?, ?, ?, ?)'
 SQL_10 = 'select from_, what FROM shares WHERE tag=?'
+SQL_11 = 'select invites from users where key=?'
+SQL_12 = 'update users set invites=? where key=?'
 
 
 INITIAL_PROFILE = '''\
@@ -90,16 +92,16 @@ def note_cert(serial, parent, client_cert_serial_number, child):
 def get_and_increment_invite_count(user_ID):
     c = conn.cursor()
     try:
-        c.execute('select invites from users where key=?', (user_ID,))
+        c.execute(SQL_11, (user_ID,))
         result = c.fetchone()
     finally:
         c.close()
     if result is None:
-        raise ValueError('???')
+        raise ValueError('Unknown user %s', user_ID)
     n = result[0] + 1
     c = conn.cursor()
     try:
-        c.execute('update users set invites=? where key=?', (n, user_ID))
+        c.execute(SQL_12, (n, user_ID))
     finally:
         c.close()
     conn.commit()

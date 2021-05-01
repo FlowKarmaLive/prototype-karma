@@ -18,6 +18,7 @@ KEYS_PATH = Path('./clavinger').absolute()
 def genkey(client_cert_serial_number, parent, child):
     serial = uuid4().hex
     fn = child + '.pfx'
+    log.debug('Create new cert: %s %s', fn, serial)
     keyfn = KEYS_PATH / fn
     with TemporaryDirectory() as tmpdirname:
         completed_proc = run(
@@ -33,9 +34,9 @@ def genkey(client_cert_serial_number, parent, child):
             shell=True,
         )
         if completed_proc.returncode:
-            log.error(completed_proc.stderr)
+            log.error('newkey script failure: %r', completed_proc.stderr)
             return
-
+        log.debug('Created cert: %s %s', fn, serial)
         move(str(Path(tmpdirname) / fn), str(keyfn))
         # Can't rename, tmp is on a diff fs leading to
         # "OSError: [Errno 18] Cross-device link"
@@ -46,4 +47,5 @@ def genkey(client_cert_serial_number, parent, child):
 
 
 if __name__ == '__main__':
+    # Create "root" cert.
     p = genkey('0', '0', '0')
