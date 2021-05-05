@@ -51,7 +51,7 @@ app = Bottle()
 def home_page():
     user_ID = get_user_ID()
     if not user_ID:
-        return static_file('unknown_index.html', root=TEMPLATES)
+        redirect('/static/docs.html')
     return INDEX_HTML % dict(profile=json.dumps(get_user_profile(user_ID)))
 
 
