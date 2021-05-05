@@ -18,7 +18,8 @@
 #    along with FlowKarma.Live.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging, json
-from os.path import abspath, join
+from os.path import abspath
+from pathlib import Path
 from stores import (
     bump,
     engage,
@@ -37,13 +38,12 @@ from newkey import genkey
 
 log = logging.getLogger('mon')
 
-STATIC_FILES = abspath('web/static')
-TEMPLATES = abspath('web/templates')
-with open(join(TEMPLATES, 'index.html'), 'r') as f:
-    INDEX_HTML = f.read()
-with open(join(TEMPLATES, 'share.html'), 'r') as f:
-    SHARE_HTML = f.read()
-
+CLAVINGER = str(Path('./clavinger').resolve())
+WEB = Path('../web').resolve()
+STATIC_FILES = str(WEB / 'static')
+TEMPLATES = WEB / 'templates'
+INDEX_HTML = (TEMPLATES / 'index.html').read_text()
+SHARE_HTML = (TEMPLATES / 'share.html').read_text()
 
 app = Bottle()
 
@@ -179,7 +179,7 @@ def newkey():
     if not filename:
         abort(500, 'Idunnosomedamnthing.')
 
-    return static_file(filename, root=abspath('clavinger'), download=filename)
+    return static_file(filename, root=CLAVINGER, download=filename)
 
 
 @app.post('/profile')
