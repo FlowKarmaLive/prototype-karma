@@ -1,8 +1,8 @@
 *.pyc
+*.pfx
 memestreamer.log
 memestreamer.sqlite
 record.log
-web/sessions
 .vscode/*
 web/ca.crt
 elm-stuff/

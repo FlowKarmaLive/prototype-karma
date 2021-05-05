@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from random import choices
 
 
@@ -932,4 +933,6 @@ words = eff_large_wordlist.split()
 def gen_passphrase():
     return b' '.join(choices(words, k=7))
 
+if __name__ == '__main__':
+    print(gen_passphrase().decode('UTF_8'))
 
