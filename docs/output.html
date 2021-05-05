@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>FlowKarma.Live Documentation</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="main.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">FlowKarma.Live Documentation</h1>
+</header>
+<p>FK.L is a <a href="https://en.wikipedia.org/wiki/Provenance">provenance</a> network. By participating you help create a public graph of the spread of an idea (represented by an URL/website).</p>
+<h2 id="joining-the-flowkarma.live-network">Joining the FlowKarma.Live Network</h2>
+<p>FK.L doesn’t use passwords. Instead we rely on <a href="https://en.wikipedia.org/wiki/Client_certificate">client certificates</a> that you install in your browser. These “cert” files act as unforgeable keys that identify your web browser to our web servers automatically.</p>
+<ol type="1">
+<li>Your friend gives you a *.pfx certificate file.</li>
+<li>Install the cert file into your web browser(s).</li>
+<li>Visit <a href="https://flowkarma.live/" class="uri">https://flowkarma.live/</a> and when your browser asks which cert file to use select the one you just installed.</li>
+<li>Set your profile.</li>
+</ol>
+<p>Now you are ready to use <a href="https://flowkarma.live/">FlowKarma.Live</a>.</p>
+<h2 id="home-page">Home Page</h2>
+<p>When you visit <a href="https://flowkarma.live/">FlowKarma.Live</a> with a browser that has your cert file installed you’ll see three sections:</p>
+<h3 id="about-you">About You</h3>
+<p>This is where you can update your user profile.</p>
+<h3 id="share-an-url">Share an URL</h3>
+<p>This is where you enter <em>new</em> subject URLs to get “bump” URLs to share.</p>
+<h3 id="invite-new-members">Invite New Members</h3>
+<p>This button will create and download a new cert file for a new user. Give it to your friend and then delete your copy. (Cert files are deleted from the server after a few minutes and cannot be recovered or recreated. If you need a new cert for an existing user for some reason you should contact us on the <a href="https://lists.sr.ht/~sforman/fkl-users">mailing list</a> for manual intervention.)</p>
+<h2 id="bump-urls">Bump URLs</h2>
+<p>Someone sends you a “bump” URL that starts with “∴” followed by a code or tag that identifies the sender and the subject URL. E.g.:</p>
+<ul>
+<li><a href="https://flowkarma.live/∴t4o3328q0fdz4ov6dgeyfa" class="uri">https://flowkarma.live/∴t4o3328q0fdz4ov6dgeyfa</a></li>
+</ul>
+<p>When you visit such a link for the first time from a browser with your cert file installed in it an entry is recorded in the public FK.L database documenting the connection. This is how the per-subject connection graph grows.</p>
+<p>You then are presented with a page that has the following sections:</p>
+<h3 id="from">From</h3>
+<p>This displays the user profile of the sender.</p>
+<h3 id="sharing">Sharing</h3>
+<p>There is a direct link to the subject URL so you can click through and “preview” the content (without <em>engaging</em> with it) and an <em>Engage</em> button that will record an “engage” event between your user ID and the subject URL in the public FK.L database and then redirect you to the URL.</p>
+<h3 id="share">Share</h3>
+<p>There is a new “bump” URL that identifies <em>you</em> as the sender for the subject URL. This is the URL to share with your contacts to expand the link graph.</p>
+<hr />
+<h2 id="user-ids">User IDs</h2>
+<p>User IDs are automatically assigned and can’t be changed. They consist of numbers separated by dashes, and the encode the “lineage” of user membership. It’s easier to give an example than to explain. The user ID “4-7-3-5” is the fifth member invited by the third member invited by the seventh member invited by the fourth member to join (from direct invites at the “dawn time” of the network.)</p>
+<p>Each of the people invited by user “4-7-3-5” will get the user IDs: “4-7-3-5-1”, “4-7-3-5-2”, “4-7-3-5-3” and so on “4-7-3-5-…”.</p>
+<h2 id="user-profiles">User Profiles</h2>
+<p>User profiles are a brief (~2000 Unicode characters) piece of text that should identify you to your contacts. This information is public to all members.</p>
+<p>It is suggested that the kind of information you might want to include in your profile could be:</p>
+<ul>
+<li>Your name or handle</li>
+<li>Methods to communicate with you:
+<ul>
+<li>Email</li>
+<li>Twitter or other social networks</li>
+<li>etc…</li>
+</ul></li>
+<li>Links to your blog/site/project/etc…</li>
+<li>A bit about yourself and your motivation(s) for participating in FK.L</li>
+</ul>
+<h2 id="road-map">Road Map</h2>
+<ol type="1">
+<li>Experimental Stage</li>
+<li>Form a Business Structure</li>
+<li>Long-term Maintenance Mode</li>
+</ol>
+<h2 id="philosophy-of-business">Philosophy of Business</h2>
+<ol type="1">
+<li>Member-owned</li>
+<li>Transparent Governance</li>
+<li>Open Books (as per “Honest Business” by Phillips &amp; Rasberry)</li>
+</ol>
+<h2 id="contact-us">Contact Us</h2>
+<p>The best way to communicate with me about FK.L is on the public mailing list: <a href="https://lists.sr.ht/~sforman/fkl-users">fkl-users Mailing List</a></p>
+</body>
+</html>
