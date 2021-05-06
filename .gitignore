@@ -6,3 +6,4 @@ record.log
 .vscode/*
 web/ca.crt
 elm-stuff/
+*.swp
