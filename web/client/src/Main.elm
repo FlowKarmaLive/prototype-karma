@@ -150,6 +150,11 @@ view model =
                     , onInput EditURL
                     ]
                     []
+                , button
+                    [ class "pure-button"
+                    , disabled (model.share_status == Loading)
+                    ]
+                    [ text "Share URL (ShURL)" ]
                 ]
             , viewShareStatus model.share_status
             ]
@@ -189,25 +194,18 @@ bb event label =
 viewShareStatus : LoadingStatus -> Html Msg
 viewShareStatus share_status =
     let
-        ( b, t ) =
+        t =
             case share_status of
                 Failure ->
-                    ( bb RegisterURL "Try Again!"
-                    , text "I could not load a random cat for some reason."
-                    )
+                    text "I could not load a random cat for some reason."
 
                 Loading ->
-                    ( button [ class "pure-button", disabled True ]
-                        [ text "Get Share URL" ]
-                    , text "Loading..."
-                    )
+                    text "Loading..."
 
                 Success url ->
-                    ( bb RegisterURL "Get Share URL"
-                    , a [ href url ] [ text url ]
-                    )
+                    a [ href url ] [ text url ]
     in
-    div [] [ b, pre [] [ t ] ]
+    div [] [ pre [] [ t ] ]
 
 
 viewProfileStatus : LoadingStatus -> Html Msg

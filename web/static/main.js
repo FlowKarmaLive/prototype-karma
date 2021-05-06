@@ -6653,50 +6653,31 @@ var $elm$html$Html$Attributes$href = function (url) {
 };
 var $elm$html$Html$pre = _VirtualDom_node('pre');
 var $author$project$Main$viewShareStatus = function (share_status) {
-	var _v0 = function () {
+	var t = function () {
 		switch (share_status.$) {
 			case 'Failure':
-				return _Utils_Tuple2(
-					A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Try Again!'),
-					$elm$html$Html$text('I could not load a random cat for some reason.'));
+				return $elm$html$Html$text('I could not load a random cat for some reason.');
 			case 'Loading':
-				return _Utils_Tuple2(
-					A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('pure-button'),
-								$elm$html$Html$Attributes$disabled(true)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Get Share URL')
-							])),
-					$elm$html$Html$text('Loading...'));
+				return $elm$html$Html$text('Loading...');
 			default:
 				var url = share_status.a;
-				return _Utils_Tuple2(
-					A2($author$project$Main$bb, $author$project$Main$RegisterURL, 'Get Share URL'),
-					A2(
-						$elm$html$Html$a,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$href(url)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(url)
-							])));
+				return A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href(url)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(url)
+						]));
 		}
 	}();
-	var b = _v0.a;
-	var t = _v0.b;
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
-				b,
 				A2(
 				$elm$html$Html$pre,
 				_List_Nil,
@@ -6782,7 +6763,19 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$Attributes$value(model.content),
 										$elm$html$Html$Events$onInput($author$project$Main$EditURL)
 									]),
-								_List_Nil)
+								_List_Nil),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('pure-button'),
+										$elm$html$Html$Attributes$disabled(
+										_Utils_eq(model.share_status, $author$project$Main$Loading))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Share URL (ShURL)')
+									]))
 							])),
 						$author$project$Main$viewShareStatus(model.share_status)
 					])),
