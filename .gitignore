@@ -4,6 +4,6 @@ memestreamer.log
 memestreamer.sqlite
 record.log
 .vscode/*
-web/ca.crt
+ca.*
 elm-stuff/
 *.swp
