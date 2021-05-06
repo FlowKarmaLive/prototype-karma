@@ -6516,15 +6516,6 @@ var $author$project$Main$bb = F2(
 					$elm$html$Html$text(label)
 				]));
 	});
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$input = _VirtualDom_node('input');
@@ -6631,6 +6622,30 @@ var $elm$html$Html$Events$onSubmit = function (msg) {
 			$elm$json$Json$Decode$succeed(msg)));
 };
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $author$project$Main$stat_button = F2(
+	function (status, label) {
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('pure-button'),
+					$elm$html$Html$Attributes$disabled(
+					_Utils_eq(status, $author$project$Main$Loading))
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(label)
+				]));
+	});
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Main$viewProfileStatus = function (profile_status) {
@@ -6725,18 +6740,7 @@ var $author$project$Main$view = function (model) {
 									[
 										$elm$html$Html$text(model.profile)
 									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pure-button'),
-										$elm$html$Html$Attributes$disabled(
-										_Utils_eq(model.profile_status, $author$project$Main$Loading))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Update')
-									])),
+								A2($author$project$Main$stat_button, model.profile_status, 'Update'),
 								$author$project$Main$viewProfileStatus(model.profile_status)
 							]))
 					])),
@@ -6764,18 +6768,7 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$Events$onInput($author$project$Main$EditURL)
 									]),
 								_List_Nil),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('pure-button'),
-										$elm$html$Html$Attributes$disabled(
-										_Utils_eq(model.share_status, $author$project$Main$Loading))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Share URL (ShURL)')
-									]))
+								A2($author$project$Main$stat_button, model.share_status, 'Share URL (ShURL)')
 							])),
 						$author$project$Main$viewShareStatus(model.share_status)
 					])),

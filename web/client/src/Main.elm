@@ -133,11 +133,7 @@ view model =
             [ Html.form [ class "pure-form", onSubmit PostProfile ]
                 [ textarea [ class "pure-input-1", onInput EditProfile ]
                     [ text model.profile ]
-                , button
-                    [ class "pure-button"
-                    , disabled (model.profile_status == Loading)
-                    ]
-                    [ text "Update" ]
+                , stat_button model.profile_status "Update"
                 , viewProfileStatus model.profile_status
                 ]
             ]
@@ -150,11 +146,7 @@ view model =
                     , onInput EditURL
                     ]
                     []
-                , button
-                    [ class "pure-button"
-                    , disabled (model.share_status == Loading)
-                    ]
-                    [ text "Share URL (ShURL)" ]
+                , stat_button model.share_status "Share URL (ShURL)"
                 ]
             , viewShareStatus model.share_status
             ]
@@ -179,6 +171,15 @@ labeled_div label children =
             legend [] [ text label ] :: children
     in
     pure_full_width [ fieldset [] kids ]
+
+
+stat_button : LoadingStatus -> String -> Html msg
+stat_button status label =
+    button
+        [ class "pure-button"
+        , disabled (status == Loading)
+        ]
+        [ text label ]
 
 
 bb : Msg -> String -> Html Msg
