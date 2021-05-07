@@ -14,7 +14,7 @@ command = 'sh -x newkey.sh'
 KEYS_PATH = Path('./clavinger').absolute()
 
 
-def genkey(client_cert_serial_number, parent, child):
+def genkey(client_cert_serial_number, parent, child, nc=True):
     serial = uuid4().hex
     fn = child + '.pfx'
     log.debug('Create new cert: %s %s', fn, serial)
@@ -36,11 +36,11 @@ def genkey(client_cert_serial_number, parent, child):
             log.error('newkey script failure: %r', completed_proc.stderr)
             return
         log.debug('Created cert: %s %s', fn, serial)
-
-    note_cert(serial, parent, client_cert_serial_number, child)
+    if nc:
+        note_cert(serial, parent, client_cert_serial_number, child)
     return fn
 
 
 if __name__ == '__main__':
     # Create "root" cert.
-    p = genkey('0', '0', '0')
+    p = genkey('0', '0', '0', False)
