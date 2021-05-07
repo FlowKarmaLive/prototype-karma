@@ -18,7 +18,6 @@ def genkey(client_cert_serial_number, parent, child):
     serial = uuid4().hex
     fn = child + '.pfx'
     log.debug('Create new cert: %s %s', fn, serial)
-    keyfn = KEYS_PATH / fn
     with TemporaryDirectory() as tmpdirname:
         completed_proc = run(
             command,
