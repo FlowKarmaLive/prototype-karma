@@ -10,7 +10,7 @@ flowkarma.live {
 	tls {
 		client_auth {
 			mode verify_if_given
-			trusted_ca_cert_file /usr/home/freebsd/prototype-karma/clavinger/ca.pem
+			trusted_ca_cert_file /usr/home/freebsd/prototype-karma/src/clavinger/ca.pem
 		}
 	}
 	reverse_proxy * localhost:8000 {
