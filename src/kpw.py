@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 from random import choices
+from re import finditer
 
 
-eff_large_wordlist = b'''\
+_eff_large_wordlist = memoryview(b'''\
 abacus abdomen abdominal abide abiding ability ablaze able abnormal
 abrasion abrasive abreast abridge abroad abruptly absence absentee
 absently absinthe absolute absolve abstain abstract absurd accent
@@ -925,14 +926,19 @@ yanking yapping yard yarn yeah yearbook yearling yearly yearning yeast
 yelling yelp yen yesterday yiddish yield yin yippee yo-yo yodel yoga
 yogurt yonder yoyo yummy zap zealous zebra zen zeppelin zero zestfully
 zesty zigzagged zipfile zipping zippy zips zit zodiac zombie zone
-zoning zookeeper zoologist zoology zoom
-'''
+zoning zookeeper zoologist zoology zoom''')
 
-words = eff_large_wordlist.split()
+
+_indicies = [m.span() for m in finditer(b'\w+', _eff_large_wordlist)]
+
 
 def gen_passphrase():
-    return b' '.join(choices(words, k=7))
+    return b' '.join(
+        _eff_large_wordlist[begin:end]
+        for begin, end in choices(_indicies, k=7)
+        ).decode('UTF_8')
+
 
 if __name__ == '__main__':
-    print(gen_passphrase().decode('UTF_8'))
+    print(gen_passphrase())
 
