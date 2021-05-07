@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import logging
-from shutil import move
 from subprocess import run
 from sys import platform
 from tempfile import TemporaryDirectory
@@ -30,6 +29,7 @@ def genkey(client_cert_serial_number, parent, child):
                 NAME=child,
                 SERIAL='0x' + serial,
                 TMPDIR=tmpdirname,
+                KEYDIR=KEYS_PATH,
             ),
             shell=True,
         )
@@ -37,10 +37,6 @@ def genkey(client_cert_serial_number, parent, child):
             log.error('newkey script failure: %r', completed_proc.stderr)
             return
         log.debug('Created cert: %s %s', fn, serial)
-        move(str(Path(tmpdirname) / fn), str(keyfn))
-        # Can't rename, tmp is on a diff fs leading to
-        # "OSError: [Errno 18] Cross-device link"
-        # on digitalocean.
 
     note_cert(serial, parent, client_cert_serial_number, child)
     return fn
