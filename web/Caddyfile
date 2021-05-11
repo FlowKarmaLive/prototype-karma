@@ -3,6 +3,11 @@
 	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
 	order file_server before reverse_proxy
 }
+pub.flowkarma.live {
+	file_server /static/* {
+                root /usr/home/freebsd/prototype-karma/web/
+        }
+}
 flowkarma.live {
 	file_server /static/* {
                 root /usr/home/freebsd/prototype-karma/web/
