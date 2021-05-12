@@ -1,23 +1,15 @@
-{
-	# local_certs
-	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
-	order file_server before reverse_proxy
-}
 pub.flowkarma.live {
-	file_server /doc/* {
-                root /usr/home/freebsd/prototype-karma/web/
-        }
 	reverse_proxy /join/* localhost:8000
-        log {
-                output file /var/log/caddy/access.log
-                # Common Log Format:
-                format single_field common_log
-        }
+	file_server * {
+		root /usr/home/freebsd/prototype-karma/web/doc/
+	}
+	log {
+		output file /var/log/caddy/access.log
+		# Common Log Format:
+		format single_field common_log
+	}
 }
 flowkarma.live {
-	file_server /static/* {
-                root /usr/home/freebsd/prototype-karma/web/
-        }
 	tls {
 		client_auth {
 			trusted_ca_cert_file /usr/home/freebsd/prototype-karma/src/clavinger/ca.pem
@@ -27,9 +19,12 @@ flowkarma.live {
 		header_up X-SSL-Client-Serial {http.request.tls.client.serial}
 		header_up X-SSL-Client-Subject {http.request.tls.client.subject}
 	}
-        log {
-                output file /var/log/caddy/access.log
-                # Common Log Format:
-                format single_field common_log
-        }
+	file_server /static/* {
+		root /usr/home/freebsd/prototype-karma/web/
+	}
+	log {
+		output file /var/log/caddy/access.log
+		# Common Log Format:
+		format single_field common_log
+	}
 }

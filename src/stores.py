@@ -100,6 +100,7 @@ def store_newkey_req(new_user_ID, client_cert_serial_number):
     if result:
         conn.commit()
         return new_user_ID
+    log.error('store_newkey_req calle dwith invalid key? %r' % (new_user_ID,))
 
 
 class UnknownUserError(ValueError): pass
