@@ -1,3 +1,6 @@
+{
+	order file_server before reverse_proxy
+}
 pub.flowkarma.live {
 	reverse_proxy /join/* localhost:8000
 	file_server * {
