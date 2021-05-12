@@ -1,5 +1,5 @@
 pandoc -s \
-    -o ../web/static/docs.html \
-    --css /static/docs.css \
+    -o ../web/doc/docs.html \
+    --css /doc/docs.css \
     --metadata title="FlowKarma.Live Documentation" \
     fkl.md
