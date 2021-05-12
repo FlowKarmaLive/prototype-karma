@@ -72,6 +72,10 @@ SQL_9 = 'insert into shares values (?, ?, ?, ?)'
 SQL_10 = 'select from_, what FROM shares WHERE tag=?'
 SQL_11 = 'select invites from users where key=?'
 SQL_12 = 'update users set invites=? where key=?'
+# SQL_11&12 = 'update users set invites=invites+1 where key=? returning invites'
+# "returning" is available in sqlite 3.35.0 released on 2021-03-12
+# https://sqlite.org/releaselog/3_35_0.html
+# Too much of a PITA to compile/install that version myself at the mo'.
 SQL_13 = 'insert into newkeys values (?, ?, ?, 0)'
 
 
