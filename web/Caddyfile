@@ -3,8 +3,8 @@
 }
 pub.flowkarma.live {
 	reverse_proxy /join/* localhost:8000
-	file_server * {
-		root /usr/home/freebsd/prototype-karma/web/doc/
+	file_server /doc/* {
+		root /usr/home/freebsd/prototype-karma/web/
 	}
 	log {
 		output file /var/log/caddy/access.log
