@@ -160,6 +160,9 @@ def engage_handler(share):
 
 @app.get('/newkey')
 def newkey():
+    '''
+    This used to generate the cert, now it generates an URL to generate a cert.
+    '''
     client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
     if not client_cert_serial_number:
         abort(401, 'Unauthorized')

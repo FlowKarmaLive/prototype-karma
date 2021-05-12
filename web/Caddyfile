@@ -5,7 +5,7 @@
 }
 pub.flowkarma.live {
 	file_server /doc/* {
-                root /usr/home/freebsd/prototype-karma/web/pub.doc/
+                root /usr/home/freebsd/prototype-karma/web/
         }
 	reverse_proxy /join/* localhost:8000
 }

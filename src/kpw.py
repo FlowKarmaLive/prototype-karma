@@ -929,7 +929,7 @@ zesty zigzagged zipfile zipping zippy zips zit zodiac zombie zone
 zoning zookeeper zoologist zoology zoom''')
 
 
-_indicies = [m.span() for m in finditer(b'\w+', _eff_large_wordlist)]
+_indicies = [m.span() for m in finditer(rb'\w+', _eff_large_wordlist)]
 
 
 def gen_passphrase():
