@@ -4,9 +4,10 @@
 	order file_server before reverse_proxy
 }
 pub.flowkarma.live {
-	file_server /static/* {
-                root /usr/home/freebsd/prototype-karma/web/
+	file_server /doc/* {
+                root /usr/home/freebsd/prototype-karma/web/pub.doc/
         }
+	reverse_proxy /join/* localhost:8000
 }
 flowkarma.live {
 	file_server /static/* {
@@ -14,7 +15,6 @@ flowkarma.live {
         }
 	tls {
 		client_auth {
-			mode verify_if_given
 			trusted_ca_cert_file /usr/home/freebsd/prototype-karma/src/clavinger/ca.pem
 		}
 	}
