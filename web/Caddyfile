@@ -1,7 +1,15 @@
 {
 	# local_certs
 	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+
 	order file_server before reverse_proxy
+
+        # Enable logging:
+        log {
+                output file /var/log/caddy/access.log
+                # Common Log Format:
+                format single_field common_log
+        }
 }
 pub.flowkarma.live {
 	file_server /doc/* {
@@ -22,10 +30,4 @@ flowkarma.live {
 		header_up X-SSL-Client-Serial {http.request.tls.client.serial}
 		header_up X-SSL-Client-Subject {http.request.tls.client.subject}
 	}
-        # Enable logging:
-        log {
-                output file /var/log/caddy/access.log
-                # Common Log Format:
-                format single_field common_log
-        }
 }

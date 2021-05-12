@@ -31,6 +31,7 @@ from stores import (
     url2tag,
     share2tag,
     tag2share,
+    UnknownUserError,
     )
 from bottle import Bottle, get, post, request, run, static_file, redirect, abort
 from newkey import genkey
@@ -171,16 +172,27 @@ def newkey():
     if not user_ID:
         abort(401, 'Unauthorized')
 
-    invite_no = get_and_increment_invite_count(user_ID)
+    try:
+        invite_no = get_and_increment_invite_count(user_ID)
+    except UnknownUserError:
+        abort(401, 'Unauthorized')
+
     new_user_ID = (
         ('%s-%s' % (user_ID, invite_no))
         if user_ID != '0'
         else str(invite_no)
         )
 
-    pw, filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
-    if not filename:
-        abort(500, 'Idunnosomedamnthing.')
+    code = store_newkey_req(new_user_ID, client_cert_serial_number)
+    if not code:
+        abort(500, '>_<')
+
+    return "https://pub.flowkarma.live/join/%s" % (code,)
+
+
+##    pw, filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
+##    if not filename:
+##        abort(500, 'Idunnosomedamnthing.')
 
     return static_file(filename, root=CLAVINGER, download=filename)
 

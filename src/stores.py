@@ -55,6 +55,7 @@ create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
 create table shares (when_ INTEGER, tag TEXT PRIMARY KEY, from_ TEXT, what TEXT)
 create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
 create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
+create table newkeys (when_ INTEGER, newuid TEXT PRIMARY KEY, parent_cert_serial_no TEXT, used INTEGER)
 '''.splitlines(False)
 
 
@@ -71,6 +72,7 @@ SQL_9 = 'insert into shares values (?, ?, ?, ?)'
 SQL_10 = 'select from_, what FROM shares WHERE tag=?'
 SQL_11 = 'select invites from users where key=?'
 SQL_12 = 'update users set invites=? where key=?'
+SQL_13 = 'insert into newkeys values (?, ?, ?, 0)'
 
 
 INITIAL_PROFILE = '''\
@@ -89,6 +91,20 @@ def note_cert(serial, parent, client_cert_serial_number, child):
     conn.commit()
 
 
+def store_newkey_req(new_user_ID, client_cert_serial_number):
+    c = conn.cursor()
+    try:
+        result = insert(c, SQL_13, T(), new_user_ID, client_cert_serial_number)
+    finally:
+        c.close()
+    if result:
+        conn.commit()
+        return new_user_ID
+
+
+class UnknownUserError(ValueError): pass
+
+
 def get_and_increment_invite_count(user_ID):
     c = conn.cursor()
     try:
@@ -97,7 +113,7 @@ def get_and_increment_invite_count(user_ID):
     finally:
         c.close()
     if result is None:
-        raise ValueError('Unknown user %s', user_ID)
+        raise UnknownUserError(repr(user_ID))
     n = result[0] + 1
     c = conn.cursor()
     try:
