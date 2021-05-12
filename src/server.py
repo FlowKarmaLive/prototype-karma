@@ -159,7 +159,7 @@ def engage_handler(share):
     redirect(url) # TODO: append the user_ID as a query arg?
 
 
-@app.get('/newkey')
+@app.post('/newkey')
 def newkey():
     '''
     This used to generate the cert, now it generates an URL to generate a cert.
