@@ -175,7 +175,7 @@ def newkey():
         else str(invite_no)
         )
 
-    filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
+    pw, filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
     if not filename:
         abort(500, 'Idunnosomedamnthing.')
 

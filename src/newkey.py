@@ -6,6 +6,7 @@ from tempfile import TemporaryDirectory
 from pathlib import Path
 from uuid import uuid4
 
+from kpw import gen_passphrase
 from stores import note_cert
 
 
@@ -16,6 +17,7 @@ KEYS_PATH = Path('./clavinger').absolute()
 
 def genkey(client_cert_serial_number, parent, child, nc=True):
     serial = uuid4().hex
+    pw = gen_passphrase()
     fn = child + '.pfx'
     log.debug('Create new cert: %s %s', fn, serial)
     with TemporaryDirectory() as tmpdirname:
@@ -29,6 +31,7 @@ def genkey(client_cert_serial_number, parent, child, nc=True):
                 SERIAL='0x' + serial,
                 TMPDIR=tmpdirname,
                 KEYDIR=KEYS_PATH,
+                PW=pw,
             ),
             shell=True,
         )
@@ -38,9 +41,9 @@ def genkey(client_cert_serial_number, parent, child, nc=True):
         log.debug('Created cert: %s %s', fn, serial)
     if nc:
         note_cert(serial, parent, client_cert_serial_number, child)
-    return fn
+    return pw, fn
 
 
 if __name__ == '__main__':
     # Create "root" cert.
-    p = genkey('0', '0', '0', False)
+    print(*genkey('0', '0', '0', False))
