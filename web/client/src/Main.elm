@@ -39,6 +39,7 @@ type alias Model =
     , profile : String
     , share_status : LoadingStatus
     , profile_status : LoadingStatus
+    , newkey_status : LoadingStatus
     }
 
 
@@ -55,6 +56,7 @@ init profile =
         profile
         (Success "https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif")
         (Success "")
+        (Success "")
     , Cmd.none
     )
 
@@ -68,6 +70,7 @@ type Msg
     | RecvHash (Result Http.Error String)
     | EditURL String
     | DownloadNewKey
+    | RecvNewKeyURL (Result Http.Error String)
     | PostProfile
     | ProfileUpdated (Result Http.Error String)
     | EditProfile String
@@ -91,7 +94,14 @@ update msg model =
             ( { model | content = content }, Cmd.none )
 
         DownloadNewKey ->
-            ( model, getNewKey )
+            ( { model | newkey_status = Loading }, getNewKey )
+
+        RecvNewKeyURL result ->
+            case result of
+                Ok url ->
+                    ( { model | newkey_status = Success url }, Cmd.none )
+                Err _ ->
+                    ( { model | newkey_status = Failure }, Cmd.none )
 
         PostProfile ->
             ( { model | profile_status = Loading }, updateProfile model.profile )
@@ -151,7 +161,9 @@ view model =
             , viewShareStatus model.share_status
             ]
         , labeled_div "Invite New Members"
-            [ bb DownloadNewKey "Download key cert file to let a friend join." ]
+            [ bb DownloadNewKey "Get an URL to let a friend join."
+            , viewNewKeyStatus model.newkey_status
+            ]
         ]
     }
 
@@ -209,6 +221,23 @@ viewShareStatus share_status =
     div [] [ pre [] [ t ] ]
 
 
+viewNewKeyStatus : LoadingStatus -> Html Msg
+viewNewKeyStatus share_status =
+    let
+        t =
+            case share_status of
+                Failure ->
+                    text "."
+
+                Loading ->
+                    text "Loading..."
+
+                Success url ->
+                    a [ href url ] [ text url ]
+    in
+    div [] [ pre [] [ t ] ]
+
+
 viewProfileStatus : LoadingStatus -> Html Msg
 viewProfileStatus profile_status =
     case profile_status of
@@ -237,7 +266,11 @@ getHash url =
 
 getNewKey : Cmd Msg
 getNewKey =
-    Download.url "newkey"
+    Http.post
+        { body = Http.emptyBody
+        , url = absolute [ "newkey" ] []
+        , expect = Http.expectString RecvNewKeyURL
+        }
 
 
 updateProfile : String -> Cmd Msg

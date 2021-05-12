@@ -4547,185 +4547,7 @@ function _Url_percentDecode(string)
 	{
 		return $elm$core$Maybe$Nothing;
 	}
-}
-
-
-// DECODER
-
-var _File_decoder = _Json_decodePrim(function(value) {
-	// NOTE: checks if `File` exists in case this is run on node
-	return (typeof File !== 'undefined' && value instanceof File)
-		? $elm$core$Result$Ok(value)
-		: _Json_expecting('a FILE', value);
-});
-
-
-// METADATA
-
-function _File_name(file) { return file.name; }
-function _File_mime(file) { return file.type; }
-function _File_size(file) { return file.size; }
-
-function _File_lastModified(file)
-{
-	return $elm$time$Time$millisToPosix(file.lastModified);
-}
-
-
-// DOWNLOAD
-
-var _File_downloadNode;
-
-function _File_getDownloadNode()
-{
-	return _File_downloadNode || (_File_downloadNode = document.createElement('a'));
-}
-
-var _File_download = F3(function(name, mime, content)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var blob = new Blob([content], {type: mime});
-
-		// for IE10+
-		if (navigator.msSaveOrOpenBlob)
-		{
-			navigator.msSaveOrOpenBlob(blob, name);
-			return;
-		}
-
-		// for HTML5
-		var node = _File_getDownloadNode();
-		var objectUrl = URL.createObjectURL(blob);
-		node.href = objectUrl;
-		node.download = name;
-		_File_click(node);
-		URL.revokeObjectURL(objectUrl);
-	});
-});
-
-function _File_downloadUrl(href)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var node = _File_getDownloadNode();
-		node.href = href;
-		node.download = '';
-		node.origin === location.origin || (node.target = '_blank');
-		_File_click(node);
-	});
-}
-
-
-// IE COMPATIBILITY
-
-function _File_makeBytesSafeForInternetExplorer(bytes)
-{
-	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/10
-	// all other browsers can just run `new Blob([bytes])` directly with no problem
-	//
-	return new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-}
-
-function _File_click(node)
-{
-	// only needed by IE10 and IE11 to fix https://github.com/elm/file/issues/11
-	// all other browsers have MouseEvent and do not need this conditional stuff
-	//
-	if (typeof MouseEvent === 'function')
-	{
-		node.dispatchEvent(new MouseEvent('click'));
-	}
-	else
-	{
-		var event = document.createEvent('MouseEvents');
-		event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-		document.body.appendChild(node);
-		node.dispatchEvent(event);
-		document.body.removeChild(node);
-	}
-}
-
-
-// UPLOAD
-
-var _File_node;
-
-function _File_uploadOne(mimes)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		_File_node = document.createElement('input');
-		_File_node.type = 'file';
-		_File_node.accept = A2($elm$core$String$join, ',', mimes);
-		_File_node.addEventListener('change', function(event)
-		{
-			callback(_Scheduler_succeed(event.target.files[0]));
-		});
-		_File_click(_File_node);
-	});
-}
-
-function _File_uploadOneOrMore(mimes)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		_File_node = document.createElement('input');
-		_File_node.type = 'file';
-		_File_node.multiple = true;
-		_File_node.accept = A2($elm$core$String$join, ',', mimes);
-		_File_node.addEventListener('change', function(event)
-		{
-			var elmFiles = _List_fromArray(event.target.files);
-			callback(_Scheduler_succeed(_Utils_Tuple2(elmFiles.a, elmFiles.b)));
-		});
-		_File_click(_File_node);
-	});
-}
-
-
-// CONTENT
-
-function _File_toString(blob)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var reader = new FileReader();
-		reader.addEventListener('loadend', function() {
-			callback(_Scheduler_succeed(reader.result));
-		});
-		reader.readAsText(blob);
-		return function() { reader.abort(); };
-	});
-}
-
-function _File_toBytes(blob)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var reader = new FileReader();
-		reader.addEventListener('loadend', function() {
-			callback(_Scheduler_succeed(new DataView(reader.result)));
-		});
-		reader.readAsArrayBuffer(blob);
-		return function() { reader.abort(); };
-	});
-}
-
-function _File_toUrl(blob)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		var reader = new FileReader();
-		reader.addEventListener('loadend', function() {
-			callback(_Scheduler_succeed(reader.result));
-		});
-		reader.readAsDataURL(blob);
-		return function() { reader.abort(); };
-	});
-}
-
-var $elm$core$Basics$EQ = {$: 'EQ'};
+}var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
 var $elm$core$List$cons = _List_cons;
@@ -5514,9 +5336,9 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Main$Model = F4(
-	function (content, profile, share_status, profile_status) {
-		return {content: content, profile: profile, profile_status: profile_status, share_status: share_status};
+var $author$project$Main$Model = F5(
+	function (content, profile, share_status, profile_status, newkey_status) {
+		return {content: content, newkey_status: newkey_status, profile: profile, profile_status: profile_status, share_status: share_status};
 	});
 var $author$project$Main$Success = function (a) {
 	return {$: 'Success', a: a};
@@ -5525,11 +5347,12 @@ var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (profile) {
 	return _Utils_Tuple2(
-		A4(
+		A5(
 			$author$project$Main$Model,
 			'',
 			profile,
 			$author$project$Main$Success('https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif'),
+			$author$project$Main$Success(''),
 			$author$project$Main$Success('')),
 		$elm$core$Platform$Cmd$none);
 };
@@ -6369,17 +6192,19 @@ var $author$project$Main$getHash = function (url) {
 					]))
 		});
 };
-var $elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
+var $author$project$Main$RecvNewKeyURL = function (a) {
+	return {$: 'RecvNewKeyURL', a: a};
 };
-var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
-var $elm$file$File$Download$url = function (href) {
-	return A2(
-		$elm$core$Task$perform,
-		$elm$core$Basics$never,
-		_File_downloadUrl(href));
-};
-var $author$project$Main$getNewKey = $elm$file$File$Download$url('newkey');
+var $author$project$Main$getNewKey = $elm$http$Http$post(
+	{
+		body: $elm$http$Http$emptyBody,
+		expect: $elm$http$Http$expectString($author$project$Main$RecvNewKeyURL),
+		url: A2(
+			$elm$url$Url$Builder$absolute,
+			_List_fromArray(
+				['newkey']),
+			_List_Nil)
+	});
 var $author$project$Main$ProfileUpdated = function (a) {
 	return {$: 'ProfileUpdated', a: a};
 };
@@ -6431,7 +6256,29 @@ var $author$project$Main$update = F2(
 						{content: content}),
 					$elm$core$Platform$Cmd$none);
 			case 'DownloadNewKey':
-				return _Utils_Tuple2(model, $author$project$Main$getNewKey);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{newkey_status: $author$project$Main$Loading}),
+					$author$project$Main$getNewKey);
+			case 'RecvNewKeyURL':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var url = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								newkey_status: $author$project$Main$Success(url)
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{newkey_status: $author$project$Main$Failure}),
+						$elm$core$Platform$Cmd$none);
+				}
 			case 'PostProfile':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -6648,6 +6495,47 @@ var $author$project$Main$stat_button = F2(
 	});
 var $elm$html$Html$textarea = _VirtualDom_node('textarea');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$html$Html$pre = _VirtualDom_node('pre');
+var $author$project$Main$viewNewKeyStatus = function (share_status) {
+	var t = function () {
+		switch (share_status.$) {
+			case 'Failure':
+				return $elm$html$Html$text('.');
+			case 'Loading':
+				return $elm$html$Html$text('Loading...');
+			default:
+				var url = share_status.a;
+				return A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$href(url)
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(url)
+						]));
+		}
+	}();
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$pre,
+				_List_Nil,
+				_List_fromArray(
+					[t]))
+			]));
+};
 var $author$project$Main$viewProfileStatus = function (profile_status) {
 	switch (profile_status.$) {
 		case 'Failure':
@@ -6659,14 +6547,6 @@ var $author$project$Main$viewProfileStatus = function (profile_status) {
 			return $elm$html$Html$text('');
 	}
 };
-var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
-var $elm$html$Html$pre = _VirtualDom_node('pre');
 var $author$project$Main$viewShareStatus = function (share_status) {
 	var t = function () {
 		switch (share_status.$) {
@@ -6777,7 +6657,8 @@ var $author$project$Main$view = function (model) {
 				'Invite New Members',
 				_List_fromArray(
 					[
-						A2($author$project$Main$bb, $author$project$Main$DownloadNewKey, 'Download key cert file to let a friend join.')
+						A2($author$project$Main$bb, $author$project$Main$DownloadNewKey, 'Get an URL to let a friend join.'),
+						$author$project$Main$viewNewKeyStatus(model.newkey_status)
 					]))
 			]),
 		title: 'FlowKarma.Live'
