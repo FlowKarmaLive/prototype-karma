@@ -31,6 +31,7 @@ from stores import (
     url2tag,
     share2tag,
     tag2share,
+    store_newkey_req,
     UnknownUserError,
     )
 from bottle import Bottle, get, post, request, run, static_file, redirect, abort
