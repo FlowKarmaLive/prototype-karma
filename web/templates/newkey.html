@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Shared with you...</title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"/>
+  <link rel="stylesheet" href="/static/site.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="/static/cramberry.js"></script>
+  </head>
+<body>
+  <div class="pure-g">
+    <div class="pure-u-1-1">
+        <h1>FlowKarma.Live</h1>
+    </div>
+    </div>
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+            <div class="l-box">
+                <fieldset>
+                    <legend>From:</legend>
+                    %(from_profile)s
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+            <div class="l-box">
+                <fieldset>
+                    <legend>Sharing:</legend>
+                    <pre><a href=%(subject)s>%(subject)s</a></pre>
+                    <a class="pure-button" href="%(bump_url)s">Engage</a>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div class="pure-g">
+        <div class="pure-u-1-1">
+            <div class="l-box">
+                <fieldset>
+                    <legend>Share:</legend>
+                    <pre><a href="%(share_url)s">%(share_url)s</a></pre>
+                    Share this URL with your contacts (right-click and select
+                    "Copy Link Location".)
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
