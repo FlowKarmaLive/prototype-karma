@@ -238,7 +238,7 @@ def vrty(fn):
     stats = stat(filename)
     headers['Content-Length'] = clen = stats.st_size
     headers['Last-Modified'] = formatdate(stats.st_mtime, usegmt=True)
-    headers['Date'] = formatdate(time.time(), usegmt=True)
+    headers['Date'] = formatdate(time(), usegmt=True)
     with open(filename, 'rb') as b:
         body = b.read()
     unlink(filename)
