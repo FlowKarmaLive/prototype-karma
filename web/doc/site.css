@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative');
+
+h1 {
+    font-family: 'Cinzel Decorative', cursive;
+    text-align: center;
+}
+
+body {
+    font-family: 'EB Garamond', serif;
+}
+
+/*
+When setting the primary font stack, apply it to the Pure grid units along
+with "html", "button", "input", "select", and "textarea". Pure Grids use
+specific font stacks to ensure the greatest OS/browser compatibility.
+*/
+html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+    /* Set your content font stack here: */
+    font-family: 'EB Garamond', serif;
+}
+
+.l-box {
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    text-align: justify;
+    background-color: rgb(255, 255, 255);
+}
