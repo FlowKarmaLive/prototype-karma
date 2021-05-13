@@ -3,6 +3,7 @@
 }
 pub.flowkarma.live {
 	reverse_proxy /join/* localhost:8000
+	reverse_proxy /vrty/* localhost:8000
 	file_server /doc/* {
 		root /usr/home/freebsd/prototype-karma/web/
 	}
