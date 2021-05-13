@@ -37,6 +37,7 @@ from stores import (
     tag2share,
     store_newkey_req,
     get_newkey_req,
+    get_old_newkey_req,
     UnknownUserError,
     )
 from bottle import (
