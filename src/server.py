@@ -229,7 +229,7 @@ password: %s <br>
 def vrty(fn):
     f = CLAVINGER / fn
     if not f.exists():
-        abort(404, '%r not found' % (fn,)
+        abort(404, '%r not found' % (fn,))
     filename = str(f)
     headers = {}
     headers['Content-Type'] = 'application/x-pkcs12; charset=UTF-8'
