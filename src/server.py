@@ -62,6 +62,7 @@ STATIC_FILES = str(WEB / 'static')
 TEMPLATES = WEB / 'templates'
 INDEX_HTML = (TEMPLATES / 'index.html').read_text()
 SHARE_HTML = (TEMPLATES / 'share.html').read_text()
+NEWKEY_HTML = (TEMPLATES / 'newkey.html').read_text()
 
 app = Bottle()
 
@@ -217,14 +218,17 @@ def join(new_user_ID):
     pw, filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
     if not filename:
         abort(500, 'Idunnosomedamnthing.')
-    return '''\
-<!DOCTYPE HTML>
-<html>
-<body>
-password: %s <br>
-<a href="https://pub.flowkarma.live/vrty/%s" download>Download</a>
-</body>
-</html>''' % (pw, filename)
+    return NEWKEY_HTML % dict(pw=pw, filename=filename)
+
+##'''\
+##<!DOCTYPE HTML>
+##<html>
+##<body>
+##password: %s <br>
+##<a href="https://pub.flowkarma.live/vrty/%s" download>Download</a>
+##</body>
+##</html>''' % ()
+
 
 @app.get(r'/vrty/<fn:re:\d+(-\d+)*[.]pfx>')
 def vrty(fn):
