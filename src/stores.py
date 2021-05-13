@@ -115,6 +115,9 @@ def get_newkey_req(code):
     c.execute(SQL_14, (code,))
     if not c.rowcount:  # invalid req
         return
+    return get_old_newkey_req(code)
+
+def get_old_newkey_req(code):
     try:
         c.execute(SQL_15, (code,))
         result = c.fetchone()

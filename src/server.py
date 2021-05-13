@@ -222,8 +222,13 @@ def join(code):
     return NEWKEY_HTML % dict(pw=pw, filename=filename)
 
 
-@app.get(r'/vrty/<fn:re:\d+(-\d+)*[.]pfx>')
-def vrty(fn):
+@app.get(r'/vrty/<code:re:[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
+def vrty(code):
+    result = get_old_newkey_req(code)
+    if not result:
+        abort(404, 'join code %s invalid or expired' % (code,))
+    new_user_ID, _ = result
+    fn = new_user_ID + '.pfx'
     f = _CLAVINGER / fn
     if not f.exists():
         abort(404, '%r not found' % (fn,))
