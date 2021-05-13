@@ -18,8 +18,12 @@
 #    along with FlowKarma.Live.  If not, see <http://www.gnu.org/licenses/>.
 #
 import logging, json
+from email.utils import formatdate
+from os import stat, unlink
 from os.path import abspath
 from pathlib import Path
+from time import time
+
 from stores import (
     bump,
     engage,
@@ -35,7 +39,17 @@ from stores import (
     get_newkey_req,
     UnknownUserError,
     )
-from bottle import Bottle, get, post, request, run, static_file, redirect, abort
+from bottle import (
+    Bottle,
+    get,
+    post,
+    request,
+    run,
+    static_file,
+    redirect,
+    abort,
+    HTTPResponse,
+    )
 from newkey import genkey
 
 
@@ -210,6 +224,25 @@ password: %s <br>
 <a href="https://pub.flowkarma.live/vrty/%s" download>Download</a>
 </body>
 </html>''' % (pw, filename)
+
+@app.get(r'/vrty/<fn:re:\d+(-\d+)*[.]pfx>')
+def vrty(fn):
+    f = CLAVINGER / fn
+    if not f.exists():
+        abort(404, '%r not found' % (fn,)
+    filename = str(f)
+    headers = {}
+    headers['Content-Type'] = 'application/x-pkcs12; charset=UTF-8'
+    headers['Content-Disposition'] = 'attachment; filename="%s"' % (fn,)
+    stats = stat(filename)
+    headers['Content-Length'] = clen = stats.st_size
+    headers['Last-Modified'] = formatdate(stats.st_mtime, usegmt=True)
+    headers['Date'] = formatdate(time.time(), usegmt=True)
+    with open(filename, 'rb') as b:
+        body = b.read()
+    unlink(filename)
+    return HTTPResponse(body, **headers)
+
 
 ##    return static_file(filename, root=CLAVINGER, download=filename)
 
