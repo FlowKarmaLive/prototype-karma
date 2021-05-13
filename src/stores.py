@@ -114,10 +114,14 @@ def get_newkey_req(code):
     c = conn.cursor()
     c.execute(SQL_14, (code,))
     if not c.rowcount:  # invalid req
+        c.close()
         return
+    c.close()
     return get_old_newkey_req(code)
 
+
 def get_old_newkey_req(code):
+    c = conn.cursor()
     try:
         c.execute(SQL_15, (code,))
         result = c.fetchone()
