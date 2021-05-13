@@ -219,7 +219,7 @@ def join(code):
     pw, filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
     if not filename:
         abort(500, 'Idunnosomedamnthing.')
-    return NEWKEY_HTML % dict(pw=pw, filename=filename)
+    return NEWKEY_HTML % dict(pw=pw, code=code)
 
 
 @app.get(r'/vrty/<code:re:[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
