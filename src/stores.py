@@ -77,6 +77,8 @@ SQL_12 = 'update users set invites=? where key=?'
 # https://sqlite.org/releaselog/3_35_0.html
 # Too much of a PITA to compile/install that version myself at the mo'.
 SQL_13 = 'insert into newkeys values (?, ?, ?, 0)'
+SQL_14 = 'update newkeys set used=1 where newuid=? and used=0'
+SQL_15 = 'select parent_cert_serial_no from newkeys where newuid=? and used=1'
 
 
 INITIAL_PROFILE = '''\
@@ -105,6 +107,21 @@ def store_newkey_req(new_user_ID, client_cert_serial_number):
         conn.commit()
         return new_user_ID
     log.error('store_newkey_req calle dwith invalid key? %r' % (new_user_ID,))
+
+
+def get_newkey_req(new_user_ID):
+    c = conn.cursor()
+    c.execute(SQL_14, (new_user_ID,))
+    if not c.rowcount:  # invalid req
+        return
+    try:
+        c.execute(SQL_15, (new_user_ID,))
+        result = c.fetchone()
+    finally:
+        c.close()
+    if result is None:
+        1/0 # How the heck did we get here?
+    return result[0]
 
 
 class UnknownUserError(ValueError): pass

@@ -32,6 +32,7 @@ from stores import (
     share2tag,
     tag2share,
     store_newkey_req,
+    get_newkey_req,
     UnknownUserError,
     )
 from bottle import Bottle, get, post, request, run, static_file, redirect, abort
@@ -191,11 +192,26 @@ def newkey():
     return "https://pub.flowkarma.live/join/%s" % (code,)
 
 
-##    pw, filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
-##    if not filename:
-##        abort(500, 'Idunnosomedamnthing.')
+@app.get(r'/join/<new_user_ID:re:\d+(-\d+)*>')  # N{-N}
+def join(new_user_ID):
+    client_cert_serial_number = get_newkey_req(new_user_ID)
+    if not client_cert_serial_number:
+        abort(404, 'Huh?')
+    parent, sep, _ = new_user_ID.rpartition('-')
+    user_ID = parent if sep else '0'
+    pw, filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
+    if not filename:
+        abort(500, 'Idunnosomedamnthing.')
+    return '''\
+<!DOCTYPE HTML>
+<html>
+<body>
+password: %s <br>
+<a href="https://pub.flowkarma.live/vrty/%s" download>Download</a>
+</body>
+</html>''' % (pw, filename)
 
-    return static_file(filename, root=CLAVINGER, download=filename)
+##    return static_file(filename, root=CLAVINGER, download=filename)
 
 
 @app.post('/profile')
