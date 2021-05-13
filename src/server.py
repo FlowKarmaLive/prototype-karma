@@ -55,7 +55,8 @@ from newkey import genkey
 
 log = logging.getLogger('mon')
 
-CLAVINGER = str(Path('./clavinger').resolve())
+_CLAVINGER = Path('./clavinger').resolve()
+CLAVINGER = str(_CLA)
 WEB = Path('../web').resolve()
 STATIC_FILES = str(WEB / 'static')
 TEMPLATES = WEB / 'templates'
@@ -227,7 +228,7 @@ password: %s <br>
 
 @app.get(r'/vrty/<fn:re:\d+(-\d+)*[.]pfx>')
 def vrty(fn):
-    f = CLAVINGER / fn
+    f = _CLAVINGER / fn
     if not f.exists():
         abort(404, '%r not found' % (fn,))
     filename = str(f)
