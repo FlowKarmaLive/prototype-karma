@@ -56,7 +56,7 @@ from newkey import genkey
 log = logging.getLogger('mon')
 
 _CLAVINGER = Path('./clavinger').resolve()
-CLAVINGER = str(_CLA)
+CLAVINGER = str(_CLAVINGER)
 WEB = Path('../web').resolve()
 STATIC_FILES = str(WEB / 'static')
 TEMPLATES = WEB / 'templates'
