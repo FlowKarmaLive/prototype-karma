@@ -55,7 +55,7 @@ create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
 create table shares (when_ INTEGER, tag TEXT PRIMARY KEY, from_ TEXT, what TEXT)
 create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
 create table users (when_ INTEGER, key TEXT PRIMARY KEY, profile TEXT, invites INTEGER)
-create table newkeys (when_ INTEGER, newuid TEXT PRIMARY KEY, parent_cert_serial_no TEXT, used INTEGER)
+create table newkeys (when_ INTEGER, key TEXT PRIMARY KEY, newuid TEXT, parent_cert_serial_no TEXT, used INTEGER)
 '''.splitlines(False)
 
 
@@ -76,9 +76,9 @@ SQL_12 = 'update users set invites=? where key=?'
 # "returning" is available in sqlite 3.35.0 released on 2021-03-12
 # https://sqlite.org/releaselog/3_35_0.html
 # Too much of a PITA to compile/install that version myself at the mo'.
-SQL_13 = 'insert into newkeys values (?, ?, ?, 0)'
-SQL_14 = 'update newkeys set used=1 where newuid=? and used=0'
-SQL_15 = 'select parent_cert_serial_no from newkeys where newuid=? and used=1'
+SQL_13 = 'insert into newkeys values (?, ?, ?, ?, 0)'
+SQL_14 = 'update newkeys set used=1 where key=? and used=0'
+SQL_15 = 'select newuid, parent_cert_serial_no from newkeys where key=? and used=1'
 
 
 INITIAL_PROFILE = '''\
@@ -98,30 +98,31 @@ def note_cert(serial, parent, client_cert_serial_number, child):
 
 
 def store_newkey_req(new_user_ID, client_cert_serial_number):
+    key = tag_for('%s:%s' % (new_user_ID, client_cert_serial_number))
     c = conn.cursor()
     try:
-        result = insert(c, SQL_13, T(), new_user_ID, client_cert_serial_number)
+        result = insert(c, SQL_13, T(), key, new_user_ID, client_cert_serial_number)
     finally:
         c.close()
     if result:
         conn.commit()
-        return new_user_ID
-    log.error('store_newkey_req calle dwith invalid key? %r' % (new_user_ID,))
+        return key
+    log.error('store_newkey_req problem %r' % (new_user_ID,))
 
 
-def get_newkey_req(new_user_ID):
+def get_newkey_req(code):
     c = conn.cursor()
-    c.execute(SQL_14, (new_user_ID,))
+    c.execute(SQL_14, (code,))
     if not c.rowcount:  # invalid req
         return
     try:
-        c.execute(SQL_15, (new_user_ID,))
+        c.execute(SQL_15, (code,))
         result = c.fetchone()
     finally:
         c.close()
     if result is None:
         1/0 # How the heck did we get here?
-    return result[0]
+    return result
 
 
 class UnknownUserError(ValueError): pass

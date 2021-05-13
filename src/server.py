@@ -208,26 +208,18 @@ def newkey():
     return "https://pub.flowkarma.live/join/%s" % (code,)
 
 
-@app.get(r'/join/<new_user_ID:re:\d+(-\d+)*>')  # N{-N}
-def join(new_user_ID):
-    client_cert_serial_number = get_newkey_req(new_user_ID)
-    if not client_cert_serial_number:
-        abort(404, 'Huh?')
+@app.get(r'/join/<code:re:[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
+def join(code):
+    result = get_newkey_req(code)
+    if not result:
+        abort(404, 'join code %s invalid or expired' % (code,))
+    new_user_ID, client_cert_serial_number = result
     parent, sep, _ = new_user_ID.rpartition('-')
     user_ID = parent if sep else '0'
     pw, filename = genkey(client_cert_serial_number, user_ID, new_user_ID)
     if not filename:
         abort(500, 'Idunnosomedamnthing.')
     return NEWKEY_HTML % dict(pw=pw, filename=filename)
-
-##'''\
-##<!DOCTYPE HTML>
-##<html>
-##<body>
-##password: %s <br>
-##<a href="https://pub.flowkarma.live/vrty/%s" download>Download</a>
-##</body>
-##</html>''' % ()
 
 
 @app.get(r'/vrty/<fn:re:\d+(-\d+)*[.]pfx>')
@@ -247,9 +239,6 @@ def vrty(fn):
         body = b.read()
     unlink(filename)
     return HTTPResponse(body, **headers)
-
-
-##    return static_file(filename, root=CLAVINGER, download=filename)
 
 
 @app.post('/profile')
