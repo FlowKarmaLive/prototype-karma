@@ -30,11 +30,6 @@ There's a single module-level connection object that is initialized by
 the main module at start-time.  (The DB is a file so if the connection
 ever has a problem "reaching" it we have bigger problems than only having
 one singleton conn.)
-
-SQL code literals are scattered around;  I'm pretty sure I'm missing or
-misusing the rollback() method;  the whole thing could use a good
-cleaning.
-
 '''
 import logging, json
 from urllib.parse import urlparse
@@ -127,8 +122,6 @@ def get_old_newkey_req(code):
         result = c.fetchone()
     finally:
         c.close()
-    if result is None:
-        1/0 # How the heck did we get here?
     return result
 
 

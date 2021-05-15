@@ -19,7 +19,6 @@
 #
 import logging, json
 from email.utils import formatdate
-from os import stat, unlink
 from os.path import abspath
 from pathlib import Path
 from time import time
@@ -233,17 +232,16 @@ def vrty(code):
     f = _CLAVINGER / fn
     if not f.exists():
         abort(404, '%r not found' % (fn,))
-    filename = str(f)
-    headers = {}
-    headers['Content-Type'] = 'application/x-pkcs12; charset=UTF-8'
-    headers['Content-Disposition'] = 'attachment; filename="%s"' % (fn,)
-    stats = stat(filename)
-    headers['Content-Length'] = clen = stats.st_size
-    headers['Last-Modified'] = formatdate(stats.st_mtime, usegmt=True)
-    headers['Date'] = formatdate(time(), usegmt=True)
-    with open(filename, 'rb') as b:
-        body = b.read()
-    unlink(filename)
+    stats = f.stat()
+    headers = {
+        'Content-Type': 'application/x-pkcs12; charset=UTF-8',
+        'Content-Disposition': 'attachment; filename="%s"' % (fn,),
+        'Content-Length': stats.st_size,
+        'Last-Modified': formatdate(stats.st_mtime, usegmt=True),
+        'Date': formatdate(time(), usegmt=True),
+        }
+    body = f.read_bytes()
+    f.unlink()
     return HTTPResponse(body, **headers)
 
 
