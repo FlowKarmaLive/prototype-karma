@@ -71,7 +71,7 @@ app = Bottle()
 def home_page():
     user_ID = get_user_ID()
     if not user_ID:
-        redirect('/static/docs.html')
+        redirect('https://pub.flowkarma.live/doc/')
     return INDEX_HTML % dict(profile=json.dumps(get_user_profile(user_ID)))
 
 

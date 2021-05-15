@@ -5,39 +5,59 @@
   <title>Join FlowKarma.Live</title>
   <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"/>
   <link rel="stylesheet" href="/doc/site.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.2.0/zepto.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
-  <script src="https://d3js.org/d3.v5.min.js"></script>
-  <script src="/doc/cramberry.js"></script>
   </head>
 <body>
   <div class="pure-g">
     <div class="pure-u-1-1">
       <div class="l-box">
         <h1>FlowKarma.Live</h1>
-        <h2>Download Cert File</h2>
+        <p>This is a one-time "self-destructing" web page that will allow
+        you to download a client cert to install in your browser so that
+        you can use the FlowKarma.Live network.
+        <p>Do not reload this page, you will get a 404 "Not Found"
+        response.  You and only you should know the passphrase below and
+        use the downloaded cert file.
+        <p>If anything goes wrong you'll need to get a new "join" URL.
+        Good luck!
+        <p>TODO: link to instructions and docs maybe?  Or should we
+        expect that, by the time you're reading this page, you have
+        already been instructed what to do by your contacts and the
+        community-at-large?
       </div>
     </div>
   </div>
-    <div class="pure-g">
-        <div class="pure-u-1-1">
-            <div class="l-box">
-                <fieldset>
-                    <legend>Passphrase:</legend>
-                    %(pw)s
-                </fieldset>
-            </div>
-        </div>
+  <div class="pure-g">
+    <div class="pure-u-1-1">
+      <div class="l-box">
+        <fieldset>
+          <legend>Passphrase:</legend>
+            <pre>%(pw)s</pre>
+            Write this down.  You will need it each time you install the
+            cert file in a web browser.  This passphrase CANNOT be
+            recovered, we do not have it and cannot recreate or discover
+            it.  If you lose it you will not be able to install the cert
+            file in browsers, but already-installed certs will continue
+            to function.
+        </fieldset>
+      </div>
     </div>
-    <div class="pure-g">
-        <div class="pure-u-1-1">
-            <div class="l-box">
-                <fieldset>
-                    <legend>Download Cert File:</legend>
-                    <a class="pure-button" href="https://pub.flowkarma.live/vrty/%(code)s" download>Click to Download</a>
-                </fieldset>
-            </div>
-        </div>
+  </div>
+  <div class="pure-g">
+    <div class="pure-u-1-1">
+      <div class="l-box">
+        <fieldset>
+          <legend>Download Cert File:</legend>
+          <a class="pure-button"
+             href="https://pub.flowkarma.live/vrty/%(code)s"
+             download>Download</a>
+          <br>
+          This button will download the cert file and remove it from the
+          server.  It only works once.  Save the cert file (*.pfx) some
+          where safe and be sure to write down the passphrase above
+          carefully.
+        </fieldset>
+      </div>
     </div>
+  </div>
 </body>
 </html>
