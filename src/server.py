@@ -55,6 +55,7 @@ from newkey import genkey
 
 log = logging.getLogger('mon')
 
+
 _CLAVINGER = Path('./clavinger').resolve()
 CLAVINGER = str(_CLAVINGER)
 WEB = Path('../web').resolve()
@@ -63,14 +64,17 @@ TEMPLATES = WEB / 'templates'
 INDEX_HTML = (TEMPLATES / 'index.html').read_text()
 SHARE_HTML = (TEMPLATES / 'share.html').read_text()
 NEWKEY_HTML = (TEMPLATES / 'newkey.html').read_text()
+UNAUTH_HOME = 'https://pub.flowkarma.live/doc/'
+
 
 app = Bottle()
+
 
 @app.get('/')
 def home_page():
     user_ID = get_user_ID()
     if not user_ID:
-        redirect('https://pub.flowkarma.live/doc/')
+        redirect(UNAUTH_HOME)
     return INDEX_HTML % dict(profile=json.dumps(get_user_profile(user_ID)))
 
 
@@ -101,6 +105,26 @@ def get_user_ID():
 #     return static_file(filename, root=STATIC_FILES)
 
 
+@app.post('/profile')
+def profile():
+    '''Update user's profile.'''
+    user_ID = get_user_ID()
+    if not user_ID:
+        abort(401, 'Unauthorized')
+
+    # TODO: log the update somewhere?  In the db?
+    # client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
+
+    prof = request.body.read().decode('UTF_8')
+    # TODO: detect and handle encoding errors.
+
+    if len(prof) > 2048:
+        abort(400, 'Profile too long.')
+
+    put_user_profile(user_ID, prof)
+    return ""
+
+
 @app.post('/reg')
 def register():
     '''
@@ -129,8 +153,7 @@ def share_handler(tag):
     '''Present the "Shared with you..." page.'''
     user_ID = get_user_ID()
     if not user_ID:
-        # TODO redirect to a page with some helpful info or something.
-        redirect('/')
+        redirect(UNAUTH_HOME)
 
     sender_ID, url_tag = tag2share(tag.lstrip('∴'))
     url = tag2url(url_tag)
@@ -158,7 +181,7 @@ def engage_handler(share):
     '''Record a engage event.'''
     user_ID = get_user_ID()
     if not user_ID:
-        redirect('/')
+        redirect(UNAUTH_HOME)
 
     tag = share.lstrip('∋')
     url = tag2url(tag)
@@ -172,7 +195,7 @@ def engage_handler(share):
 @app.post('/newkey')
 def newkey():
     '''
-    This used to generate the cert, now it generates an URL to generate a cert.
+    Generate an URL to generate a cert.
     '''
     client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
     if not client_cert_serial_number:
@@ -232,23 +255,3 @@ def vrty(code):
     body = f.read_bytes()
     f.unlink()
     return HTTPResponse(body, **headers)
-
-
-@app.post('/profile')
-def profile():
-    '''Update user's profile.'''
-    user_ID = get_user_ID()
-    if not user_ID:
-        abort(401, 'Unauthorized')
-
-    # TODO: log the update somewhere?  In the db?
-    # client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
-
-    prof = request.body.read().decode('UTF_8')
-    # TODO: detect and handle encoding errors.
-
-    if len(prof) > 2048:
-        abort(400, 'Profile too long.')
-
-    put_user_profile(user_ID, prof)
-    return ""
