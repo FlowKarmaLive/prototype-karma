@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond');
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=Cinzel+Decorative');
 
 h1 {
     font-family: 'Cinzel Decorative', cursive;
@@ -16,25 +15,25 @@ body {
 }
 
 @keyframes backgroundColorPalette {
-    0% { background: #f2d9d9; }
-    8.3333333% { background: #f2e7d9; }
-    16.6666666% { background: #f0f2d9; }
-    24.9999999% { background: #e2f2d9; }
-    33.3333332% { background: #d9f2dd; }
-    41.6666665% { background: #d9f2eb; }
-    49.9999998% { background: #d9ebf2; }
-    58.3333331% { background: #d9ddf2; }
-    66.6666664% { background: #e2d9f2; }
-    74.9999999% { background: #f0d9f2; }
-    83.333333% { background: #f2d9e7; }
-    91.6666663% { background: #f2d9d9; }
+      0% { background: #f2d9d9; }
+  8.333% { background: #f2e7d9; }
+ 16.666% { background: #f0f2d9; }
+ 24.999% { background: #e2f2d9; }
+ 33.332% { background: #d9f2dd; }
+ 41.665% { background: #d9f2eb; }
+ 49.998% { background: #d9ebf2; }
+ 58.331% { background: #d9ddf2; }
+ 66.664% { background: #e2d9f2; }
+ 74.999% { background: #f0d9f2; }
+ 83.333% { background: #f2d9e7; }
+ 91.663% { background: #f2d9d9; }
     100% { background: #f2d9d9; }
 }
 
 
 
 /*
-When setting the primary font stack, apply it to the Pure grid units along
+> When setting the primary font stack, apply it to the Pure grid units along
 with "html", "button", "input", "select", and "textarea". Pure Grids use
 specific font stacks to ensure the greatest OS/browser compatibility.
 */
