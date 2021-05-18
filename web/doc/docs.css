@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond');
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=Cinzel+Decorative');
 
 html {
     font-size: x-large;
@@ -8,6 +7,7 @@ html {
 
 
 h1 {
+    font-family: 'Cinzel Decorative', cursive;
     text-align: center;
 }
 
