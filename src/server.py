@@ -81,28 +81,20 @@ def get_user_ID():
     ID from there.)
     '''
     sn = request.headers.get('X-Ssl-Client-Subject')
-    if not sn:
-        return
-    return _parse_sn(sn)['CN']
+    if sn:
+        i = sn.find('CN=')
+        if i >= 0:
+            i += 3
+            j = sn.find(',', i)
+            return sn[i:j] if j >= 0 else sn[i:]
 
 
-def _parse_sn(sn):
-    '''
-    "/C=US/ST=CA/L=San Francisco/O=FlowKarma.Live/OU=${FROM}/CN=${NAME}"
-    gets to the server as (e.g.)
-    "CN=0-1,OU=0,O=FlowKarma.Live,L=San Francisco,ST=CA,C=US"
-    '''
-    # TODO: get just the parts we want, a whole dict is a bit much.
-    return dict(t.split('=') for t in sn.split(',') if '=' in t)
+# Uncomment thse to serve static content in e.g. dev.
+# (In other words, if caddy is not there to serve them for us.)
 
-
-@app.get('/favicon.ico')
-def favicon_ico():
-    return static_file('favicon.ico', root=STATIC_FILES)
-
-
-# Uncomment this route & handler to support dev (in other words, if caddy
-# is not there to serve them for us.)
+# @app.get('/favicon.ico')
+# def favicon_ico():
+#     return static_file('favicon.ico', root=STATIC_FILES)
 
 # @app.get('/static/<filename:path>')
 # def get_static(filename):

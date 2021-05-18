@@ -2,11 +2,14 @@
 	order file_server before reverse_proxy
 }
 pub.flowkarma.live {
-	reverse_proxy /join/* localhost:8000
-	reverse_proxy /vrty/* localhost:8000
 	file_server /doc/* {
 		root /usr/home/freebsd/prototype-karma/web/
 	}
+	file_server /favicon.ico {
+		root /usr/home/freebsd/prototype-karma/web/static
+	}
+	reverse_proxy /join/* localhost:8000
+	reverse_proxy /vrty/* localhost:8000
 	log {
 		output file /var/log/caddy/access.log
 		# Common Log Format:
@@ -19,12 +22,15 @@ flowkarma.live {
 			trusted_ca_cert_file /usr/home/freebsd/prototype-karma/src/clavinger/ca.pem
 		}
 	}
+	file_server /static/* {
+		root /usr/home/freebsd/prototype-karma/web/
+	}
+	file_server /favicon.ico {
+		root /usr/home/freebsd/prototype-karma/web/static
+	}
 	reverse_proxy * localhost:8000 {
 		header_up X-SSL-Client-Serial {http.request.tls.client.serial}
 		header_up X-SSL-Client-Subject {http.request.tls.client.subject}
-	}
-	file_server /static/* {
-		root /usr/home/freebsd/prototype-karma/web/
 	}
 	log {
 		output file /var/log/caddy/access.log
