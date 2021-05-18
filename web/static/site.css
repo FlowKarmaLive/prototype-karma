@@ -9,7 +9,7 @@ h1 {
 body {
     font-family: 'EB Garamond', serif;
     animation-name: backgroundColorPalette;
-    animation-duration: 2s;
+    animation-duration: 420s;
     animation-iteration-count: infinite;
     animation-direction: normal;
     animation-timing-function: linear;
