@@ -15,10 +15,10 @@ command = 'sh -x newkey.sh'
 KEYS_PATH = Path('./clavinger').absolute()
 
 
-def genkey(client_cert_serial_number, parent, child, nc=True):
+def genkey(newuid, parent_serial, nc=True):
     serial = uuid4().hex
     pw = gen_passphrase()
-    fn = child + '.pfx'
+    fn = newuid + '.pfx'
     log.debug('Create new cert: %s %s', fn, serial)
     with TemporaryDirectory() as tmpdirname:
         completed_proc = run(
@@ -26,8 +26,7 @@ def genkey(client_cert_serial_number, parent, child, nc=True):
             capture_output=True,
             cwd=str(KEYS_PATH),
             env=dict(
-                FROM=parent,
-                NAME=child,
+                NAME=newuid,
                 SERIAL='0x' + serial,
                 TMPDIR=tmpdirname,
                 KEYDIR=KEYS_PATH,
@@ -38,9 +37,9 @@ def genkey(client_cert_serial_number, parent, child, nc=True):
         if completed_proc.returncode:
             log.error('newkey script failure: %r', completed_proc.stderr)
             return
-        log.debug('Created cert: %s %s', fn, serial)
+    log.debug('Created cert: %s %s', fn, serial)
     if nc:
-        note_cert(serial, parent, client_cert_serial_number, child)
+        note_cert(serial, parent_serial, newuid)
     return pw, fn
 
 

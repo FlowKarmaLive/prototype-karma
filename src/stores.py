@@ -45,7 +45,7 @@ conn = None
 
 CREATE_TABLES = '''\
 create table bumps (when_ INTEGER, key TEXT PRIMARY KEY, from_ TEXT, what TEXT, to_ TEXT)
-create table certs (when_ INTEGER, serial_no TEXT PRIMARY KEY, parent_user TEXT, parent_cert_serial_no TEXT, user TEXT)
+create table certs (when_ INTEGER, serial_no TEXT PRIMARY KEY, parent_cert_serial_no TEXT, user TEXT)
 create table engages (when_ INTEGER, key TEXT PRIMARY KEY, who TEXT, what TEXT)
 create table shares (when_ INTEGER, tag TEXT PRIMARY KEY, from_ TEXT, what TEXT)
 create table tags (when_ INTEGER, tag TEXT PRIMARY KEY, url TEXT)
@@ -62,7 +62,7 @@ SQL_4 = 'update users set profile=? where key=?'
 SQL_5 = 'select url from tags where tag=?'
 SQL_6 = 'select when_, from_, to_ FROM bumps WHERE what=?'
 SQL_7 = 'insert into users values (?, ?, ?, ?)'
-SQL_8 = 'insert into certs values (?, ?, ?, ?, ?)'
+SQL_8 = 'insert into certs values (?, ?, ?, ?)'
 SQL_9 = 'insert into shares values (?, ?, ?, ?)'
 SQL_10 = 'select from_, what FROM shares WHERE tag=?'
 SQL_11 = 'select invites from users where key=?'
@@ -83,10 +83,10 @@ This will be public, use it to identify yourself and provide contact information
 '''
 
 
-def note_cert(serial, parent, client_cert_serial_number, child):
+def note_cert(serial, parent_serial, newuid):
     c = conn.cursor()
     try:
-        c.execute(SQL_8, (T(), serial, parent, client_cert_serial_number, child))
+        c.execute(SQL_8, (T(), serial, parent_serial, newuid))
     finally:
         c.close()
     conn.commit()
