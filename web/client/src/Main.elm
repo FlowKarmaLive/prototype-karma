@@ -54,7 +54,7 @@ init profile =
     ( Model
         ""
         profile
-        (Success "https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif")
+        (Success "")
         (Success "")
         (Success "")
     , Cmd.none

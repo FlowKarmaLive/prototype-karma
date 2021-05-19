@@ -5351,7 +5351,7 @@ var $author$project$Main$init = function (profile) {
 			$author$project$Main$Model,
 			'',
 			profile,
-			$author$project$Main$Success('https://media.giphy.com/media/13Zdt5rMO2Ngc0/giphy.gif'),
+			$author$project$Main$Success(''),
 			$author$project$Main$Success(''),
 			$author$project$Main$Success('')),
 		$elm$core$Platform$Cmd$none);
