@@ -27,7 +27,8 @@
 <h2 id="joining-the-flowkarma.live-network">Joining the FlowKarma.Live Network</h2>
 <p>FK.L doesn’t use passwords. Instead we rely on <a href="https://en.wikipedia.org/wiki/Client_certificate">client certificates</a> that you install in your browser. These “cert” files act as unforgeable keys that identify your web browser to our web servers automatically.</p>
 <ol type="1">
-<li>Your friend gives you a *.pfx certificate file.</li>
+<li>Your friend gives you a one-use “join” URL like: <code>https://pub.flowkarma.live/join/xxxxxxxxxxxxxxxxxxxxxx</code> (The x’s would be replaced by a code.)</li>
+<li>The page at that URL will have a <em>passphrase</em> and a button for downloading the *.pfx certificate file. Write down the passphrase and download the cert file.</li>
 <li>Install the cert file into your web browser(s).</li>
 <li>Visit <a href="https://flowkarma.live/" class="uri">https://flowkarma.live/</a> and when your browser asks which cert file to use select the one you just installed.</li>
 <li>Set your profile.</li>
@@ -56,7 +57,7 @@
 <p>There is a new “bump” URL that identifies <em>you</em> as the sender for the subject URL. This is the URL to share with your contacts to expand the link graph.</p>
 <hr />
 <h2 id="user-ids">User IDs</h2>
-<p>User IDs are automatically assigned and can’t be changed. They consist of numbers separated by dashes, and the encode the “lineage” of user membership. It’s easier to give an example than to explain. The user ID “4-7-3-5” is the fifth member invited by the third member invited by the seventh member invited by the fourth member to join (from direct invites at the “dawn time” of the network.)</p>
+<p>User IDs are automatically assigned and can’t be changed. They consist of numbers separated by dashes, and they encode the “lineage” of user membership. It’s easier to give an example than to explain. The user ID “4-7-3-5” is the fifth member invited by the third member invited by the seventh member invited by the fourth member to join (from direct invites at the “dawn time” of the network.)</p>
 <p>Each of the people invited by user “4-7-3-5” will get the user IDs: “4-7-3-5-1”, “4-7-3-5-2”, “4-7-3-5-3” and so on “4-7-3-5-…”.</p>
 <h2 id="user-profiles">User Profiles</h2>
 <p>User profiles are a brief (~2000 Unicode characters) piece of text that should identify you to your contacts. This information is public to all members.</p>

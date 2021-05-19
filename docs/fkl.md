@@ -10,11 +10,15 @@ FK.L doesn't use passwords.  Instead we rely on
 that you install in your browser.  These "cert" files act as unforgeable
 keys that identify your web browser to our web servers automatically.
 
-1. Your friend gives you a \*.pfx certificate file.
-2. Install the cert file into your web browser(s).
-3. Visit <https://flowkarma.live/> and when your browser asks which
+1. Your friend gives you a one-use "join" URL like:
+   `https://pub.flowkarma.live/join/xxxxxxxxxxxxxxxxxxxxxx`
+   (The x's would be replaced by a code.)
+2. The page at that URL will have a *passphrase* and a button for downloading the \*.pfx certificate file.
+   Write down the passphrase and download the cert file.
+3. Install the cert file into your web browser(s).
+4. Visit <https://flowkarma.live/> and when your browser asks which
    cert file to use select the one you just installed.
-4. Set your profile.
+5. Set your profile.
 
 Now you are ready to use [FlowKarma.Live](https://flowkarma.live/).
 
@@ -78,7 +82,7 @@ link graph.
 ## User IDs
 
 User IDs are automatically assigned and can't be changed.  They consist
-of numbers separated by dashes, and the encode the "lineage" of user
+of numbers separated by dashes, and they encode the "lineage" of user
 membership.  It's easier to give an example than to explain.  The user ID
 "4-7-3-5" is the fifth member invited by the third member invited by the
 seventh member invited by the fourth member to join (from direct invites
