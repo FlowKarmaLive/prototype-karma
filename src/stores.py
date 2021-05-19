@@ -32,7 +32,6 @@ ever has a problem "reaching" it we have bigger problems than only having
 one singleton conn.)
 '''
 import logging, json
-from urllib.parse import urlparse
 import sqlite3
 from bottle import abort
 from tagly import tag_for
@@ -225,29 +224,18 @@ def tag2share(tag):
     return result
 
 
-def url2tag(url_):
+def url2tag(url):
     '''
     Return (bool, tag) for an URL where the bool indicates
     whether we have this URL in the DB already.
     '''
-    url = normalize_url(url_)
-    if not url:
-        log.debug('Bad URL %r' % (url_,))
-        abort(400, 'Bad URL')
-
     c, tag = conn.cursor(), tag_for(url)
     try:
         result = insert(c, SQL_2, T(), tag, url)
     finally:
         c.close()
-
     if result:
         conn.commit()
-        log.debug('Tagged %s %r', tag, url)
-    else:
-        conn.rollback()
-        log.debug('Already tagged %s %r', tag, url)
-
     return bool(result), tag
 
 
@@ -277,16 +265,6 @@ def tag2url(tag):
         return url
     log.debug('Missed %s', tag)
     abort(400, 'Unknown tag: %s' % tag)  # TODO remove this...
-
-
-def normalize_url(url):
-    try:
-        result = urlparse(url)
-    except:
-        log.exception('While parsing URL %r', url)
-        return
-    if result.scheme.lower() in ('http', 'https'):
-        return result.geturl()
 
 
 def get_user_profile(user_ID):

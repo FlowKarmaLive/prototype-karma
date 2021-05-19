@@ -22,6 +22,7 @@ from email.utils import formatdate
 from os.path import abspath
 from pathlib import Path
 from time import time
+from urllib.parse import quote, urlparse
 
 from stores import (
     bump,
@@ -125,6 +126,16 @@ def profile():
     return ""
 
 
+def normalize_url(url):
+    try:
+        result = urlparse(url)
+    except:
+        log.exception('While parsing URL %r', url)
+        return
+    if result.scheme.lower() in ('http', 'https'):
+        return quote(result.geturl())
+
+
 @app.post('/reg')
 def register():
     '''
@@ -135,17 +146,16 @@ def register():
     if not user_ID:
         abort(401, 'Unauthorized')
 
-    url = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
+    url_ = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
+    url = normalize_url(url_)
+    if not url:
+        abort(400, 'Bad URL')
+
     unseen, tag = url2tag(url)
     if unseen:
-        log.info('register %s %s %r', user_ID, tag, url)
+        log.info('register %s %s %s', user_ID, tag, url)
 
-    share = share2tag(user_ID, tag)
-
-    server = request['HTTP_HOST']
-    # TODO: check this value for hijinks.
-
-    return "https://%s/∴%s" % (server, share)
+    return "https://flowkarma.live/∴" + share2tag(user_ID, tag)
 
 
 @app.get('/<tag:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
