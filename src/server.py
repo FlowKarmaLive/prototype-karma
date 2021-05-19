@@ -106,12 +106,17 @@ def get_user_ID():
 #     return static_file(filename, root=STATIC_FILES)
 
 
-@app.post('/profile')
-def profile():
-    '''Update user's profile.'''
+def get_user_ID_or_abort()
     user_ID = get_user_ID()
     if not user_ID:
         abort(401, 'Unauthorized')
+    return user_ID
+
+
+@app.post('/profile')
+def profile():
+    '''Update user's profile.'''
+    user_ID = get_user_ID_or_abort()
 
     # TODO: log the update somewhere?  In the db?
     # client_cert_serial_number = request.headers.get('X-Ssl-Client-Serial')
@@ -142,9 +147,7 @@ def register():
     Accept an URL and return its tag, enter a register record in the DB
     if this is the first time we've seen this URL.
     '''
-    user_ID = get_user_ID()
-    if not user_ID:
-        abort(401, 'Unauthorized')
+    user_ID = get_user_ID_or_abort()
 
     url_ = request.params['url']  # Value 'request.params' is unsubscriptable ?  Linter error.
     url = normalize_url(url_)
@@ -211,9 +214,7 @@ def newkey():
     if not client_cert_serial_number:
         abort(401, 'Unauthorized')
 
-    user_ID = get_user_ID()
-    if not user_ID:
-        abort(401, 'Unauthorized')
+    user_ID = get_user_ID_or_abort()
 
     try:
         invite_no = get_and_increment_invite_count(user_ID)
