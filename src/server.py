@@ -106,7 +106,7 @@ def get_user_ID():
 #     return static_file(filename, root=STATIC_FILES)
 
 
-def get_user_ID_or_abort()
+def get_user_ID_or_abort():
     user_ID = get_user_ID()
     if not user_ID:
         abort(401, 'Unauthorized')
