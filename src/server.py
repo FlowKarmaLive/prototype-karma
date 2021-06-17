@@ -71,14 +71,6 @@ UNAUTH_HOME = 'https://pub.flowkarma.live/doc/'
 app = Bottle()
 
 
-@app.get('/')
-def home_page():
-    user_ID = get_user_ID()
-    if not user_ID:
-        redirect(UNAUTH_HOME)
-    return INDEX_HTML % dict(profile=json.dumps(get_user_profile(user_ID)))
-
-
 def get_user_ID():
     '''
     Pull the user ID from the client cert "Client Subject".
@@ -94,6 +86,20 @@ def get_user_ID():
             return sn[i:j] if j >= 0 else sn[i:]
 
 
+def get_user_ID_or_abort():
+    user_ID = get_user_ID()
+    if not user_ID:
+        abort(401, 'Unauthorized')
+    return user_ID
+
+
+def get_user_ID_or_redirect():
+    user_ID = get_user_ID()
+    if not user_ID:
+        redirect(UNAUTH_HOME)
+    return user_ID
+
+
 # Uncomment thse to serve static content in e.g. dev.
 # (In other words, if caddy is not there to serve them for us.)
 
@@ -106,11 +112,10 @@ def get_user_ID():
 #     return static_file(filename, root=STATIC_FILES)
 
 
-def get_user_ID_or_abort():
-    user_ID = get_user_ID()
-    if not user_ID:
-        abort(401, 'Unauthorized')
-    return user_ID
+@app.get('/')
+def home_page():
+    user_ID = get_user_ID_or_redirect()
+    return INDEX_HTML % dict(profile=json.dumps(get_user_profile(user_ID)))
 
 
 @app.post('/profile')
@@ -164,9 +169,7 @@ def register():
 @app.get('/<tag:re:∴[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def share_handler(tag):
     '''Present the "Shared with you..." page.'''
-    user_ID = get_user_ID()
-    if not user_ID:
-        redirect(UNAUTH_HOME)
+    user_ID = get_user_ID_or_redirect()
 
     sender_ID, url_tag = tag2share(tag.lstrip('∴'))
     url = tag2url(url_tag)
@@ -192,10 +195,7 @@ def share_handler(tag):
 @app.get('/<share:re:∋[23479cdfghjkmnp-tv-z]+>')  # tagly._chars
 def engage_handler(share):
     '''Record a engage event.'''
-    user_ID = get_user_ID()
-    if not user_ID:
-        redirect(UNAUTH_HOME)
-
+    user_ID = get_user_ID_or_redirect()
     tag = share.lstrip('∋')
     url = tag2url(tag)
 
